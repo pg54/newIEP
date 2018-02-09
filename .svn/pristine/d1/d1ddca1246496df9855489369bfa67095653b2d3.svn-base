@@ -1,0 +1,118 @@
+<template>
+    <div>
+        <div class="tab-content" v-for="(paper, paperIndex) in paperResultData.Papers">
+            <div v-for="(section, sectionIndex) in paper.Sections">
+                <div class="questionsBox">
+                    <p class="testTitle">{{paper.Name}}评测</p>
+                    <p class="testSubTitle">{{paper.Name}}-----{{section.Name}}</p>
+                    <div class="questionContent">
+                        <div v-for="(question, questionIndex) in section.Questions" class="questiones">
+                            <p class="questionDescrib">题{{questionIndex+1}}:  {{ question.Description}}({{paperResultData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result}})</p>
+                            <div v-for="(option, optionIndex) in question.Options" class="questionChoses">
+                                <input  class="radioclass " type="radio" :disabled="true" :value="option.Code" :id="option.ID"
+                                        :name="question.ID" v-model="paperResultData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result">
+                                <label :for="option.ID" class="simbleBox"></label>
+                                <label :for="option.ID" class="testLabel">{{ option.Code }}&nbsp;{{ option.Name }}</label>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'testResultPaper',
+        props: ['paperResultData'],
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+
+        },
+        methods: {
+
+        },
+        created() {
+
+        },
+        beforeMount() {
+
+        },
+        mounted() {
+
+        }
+    }
+
+</script>
+
+<style>
+    .tab-content {
+        width: 100%;
+        margin: 30px auto;
+    }
+    .testTitle {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        margin: 5px 0 30px;
+    }
+
+    .testSubTitle {
+        margin-left: 20px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: bold
+    }
+    .questionContent {
+        left: 68px;
+        top: 50px;
+    }
+
+
+
+    .questionDescrib {
+        margin-left: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .questionChoses {
+        display: flex;
+        align-items: center;
+        height: 28px;
+        margin: 5px 0;
+        cursor: pointer;
+    }
+
+    .radioclass {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+
+    .simbleBox {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+        cursor: pointer;
+        background-image: url("../assets/images/serviceToolImg/默认选框.png");
+    }
+    .testLabel {
+        cursor: pointer;
+        display: inline-block;
+        width: calc(100% - 41px);
+    }
+    input[type=radio]:checked + label {
+        background-image: url("../assets/images/serviceToolImg/black-nike.png");
+    }
+</style>

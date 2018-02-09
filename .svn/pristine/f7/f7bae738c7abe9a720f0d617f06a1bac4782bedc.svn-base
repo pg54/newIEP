@@ -1,0 +1,310 @@
+<template>
+    <div class="paperform-content">
+        <div id="paperform-form1">
+            <DIV style="LINE-HEIGHT: 30px;font-size: 22px" class=size16 align=center>
+                <STRONG><font color="#20a0ff">{{ paperTitle }}</font></STRONG>
+            </DIV>
+
+        </div>
+        <div id="paperform-form2">
+            <table class="tg">
+                <tr>
+                    <th class="tg-s6z2" colspan="2" rowspan="2">姓名</th>
+                    <th class="tg-s6z2" colspan="5" rowspan="2">{{ patientName }}</th>
+                    <th class="tg-s6z2" colspan="2" rowspan="2">性别</th>
+                    <th class="tg-s6z2" colspan="5" rowspan="2">{{ (patientSex === 1)? '男':'女' }}</th>
+                    <th class="tg-s6z2" colspan="3" rowspan="2">出生日期</th>
+                    <th class="tg-s6z2" colspan="7" rowspan="2">{{ patientBirthday.split(' ')[0] }}</th>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="2">评估<br>人</td>
+                    <td class="tg-s6z2" colspan="5"></td>
+                    <td class="tg-s6z2" colspan="7">评估日期</td>
+                    <td class="tg-s6z2" colspan="10"></td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="2" rowspan="2">评估<br>领域</td>
+                    <td class="tg-s6z2" colspan="18" rowspan="2">评估内容</td>
+                    <td class="tg-s6z2" colspan="4">评估结果</td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2">3</td>
+                    <td class="tg-s6z2">2</td>
+                    <td class="tg-s6z2">1</td>
+                    <td class="tg-s6z2">0</td>
+                </tr>
+
+                <template v-for="(paper, paperIndex) in paperResultData.Papers">
+                    <tr>
+                        <td class="tg-s6z2" colspan="2" :rowspan="getNumber(paper)">
+                            <template v-for='el in paper.Name'>
+                                {{ el }}<br>
+                            </template>
+                        </td>
+                        <td class="tg-yw4l heavyFont" colspan="22">{{ paper.Sections[0].Name}}</td>
+                    </tr>
+                    <tr v-for="(question, questionIndex) in paper.Sections[0].Questions">
+                        <td class="tg-yw4l" colspan="18">{{ question.Description }}</td>
+                        <td class="tg-yw4l">
+                            <img v-if="question.Result === 'A'" src="../assets/images/print/勾.png" alt="print">
+                        </td>
+                        <td class="tg-yw4l">
+                            <img v-if="question.Result === 'B'" src="../assets/images/print/勾.png" alt="print">
+                        </td>
+                        <td class="tg-yw4l">
+                            <img v-if="question.Result === 'C'" src="../assets/images/print/勾.png" alt="print">
+                        </td>
+                        <td class="tg-yw4l">
+                            <img v-if="question.Result === 'D'" src="../assets/images/print/勾.png" alt="print">
+                        </td>
+                    </tr>
+                    <template v-for="(section, sectionIndex) in paper.Sections">
+                        <template v-if='sectionIndex > 0'>
+                            <tr>
+                                <td class="tg-yw4l heavyFont" colspan="22">{{ section.Name }}</td>
+                            </tr>
+                            <template v-for="(question, questionIndex) in section.Questions">
+                                <tr>
+                                    <td class="tg-yw4l" colspan="18"> {{ question.Description }}</td>
+                                    <td class="tg-yw4l">
+                                        <img v-if="question.Result === 'A' || question.Result === '3'" src="../assets/images/print/勾.png" alt="print">
+                                    </td>
+                                    <td class="tg-yw4l">
+                                        <img v-if="question.Result === 'B' || question.Result === '2'" src="../assets/images/print/勾.png" alt="print">
+                                    </td>
+                                    <td class="tg-yw4l">
+                                        <img v-if="question.Result === 'C' || question.Result === '1'" src="../assets/images/print/勾.png" alt="print">
+                                    </td>
+                                    <td class="tg-yw4l">
+                                        <img v-if="question.Result === 'D' || question.Result === '0'" src="../assets/images/print/勾.png" alt="print">
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                    </template>
+                    <tr>
+                        <td class="tg-lqy6" colspan="18" style="border-right: transparent;">本领域计分</td>
+                        <td class="tg-yw4l noLeftBorder" colspan="4">{{ paperStore(paper) }}</td>
+                    </tr>
+
+                </template>
+                <tr>
+                    <td class="tg-s6z2" colspan="2">备注</td>
+                    <td class="tg-yw4l" colspan="22">
+                        <p><span style="display:inline-block;width:40%">0-表示不能完成</span>1-表示在触体帮助下可完成</p>
+                        <p><span style="display:inline-block;width:40%">2-表示在语言提示下可完成 </span>3-表示能独立完成</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="2">综<br>合<br>评<br>估<br>意<br>见</td>
+                    <td class="tg-yw4l" colspan="22">
+                        <p style="margin: 100px">{{ paperResultData.Summary}}</p>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+    </div>
+
+</template>
+
+<script>
+    export default {
+        name: 'testResultPaper',
+        props: ['paperResultData'],
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+            patientName: function () {
+                return this.$store.state.mystudent.patientDeptObj.Name;
+            },
+            patientSex: function () {
+                return this.$store.state.mystudent.patientDeptObj.Sex;
+            },
+            patientBirthday: function () {
+                return this.$store.state.mystudent.patientDeptObj.BirthDate;
+            },
+            paperTitle: function() {
+                return this.$store.state.printPaper.printPaperPackageName
+            }
+        },
+        methods: {
+            getNumber(obj) {
+                let arr = obj.Sections,
+                    result = 0;
+                for (let i = 0; i < arr.length; i++) {
+                    result += arr[i].Questions.length + 1
+                }
+                return result = result + 1
+            },
+            paperStore(obj) {
+                let arr = obj.Sections,
+                    result = 0;
+                for (let i = 0; i < arr.length; i++) {
+                    for (let j = 0; j < arr[i].Questions.length; j++) {
+                        switch (arr[i].Questions[j].Result) {
+                            case 'A':
+                                result += 3;
+                                break;
+                            case 'B':
+                                result += 2;
+                                break;
+                            case 'C':
+                                result += 1;
+                                break;
+                            case 'D':
+                                result += 0;
+                                break;
+                        }
+                    }
+                }
+                return result;
+            },
+            setOneWord(str) {
+                return str.split('').map(ele => ele + '<br>').join('');
+            }
+
+        },
+        created() {
+
+        },
+        beforeMount() {
+
+        },
+        mounted() {
+
+        }
+    }
+
+</script>
+
+<style scoped>
+    .tab-content {
+        width: 100%;
+        margin: 30px auto;
+    }
+
+    .testTitle {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        margin: 5px 0 30px;
+    }
+
+    .testSubTitle {
+        margin-left: 20px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: bold
+    }
+
+    .questionContent {
+        left: 68px;
+        top: 50px;
+    }
+
+
+
+    .questionDescrib {
+        margin-left: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .questionChoses {
+        display: flex;
+        align-items: center;
+        height: 28px;
+        margin: 5px 0;
+        cursor: pointer;
+    }
+
+    .radioclass {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+
+    .simbleBox {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+        cursor: pointer;
+        background-image: url("../assets/images/serviceToolImg/默认选框.png");
+    }
+
+    .testLabel {
+        cursor: pointer;
+        display: inline-block;
+        width: calc(100% - 41px);
+    }
+
+    input[type=radio]:checked+label {
+        background-image: url("../assets/images/serviceToolImg/black-nike.png");
+    }
+
+
+
+
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border-color: black;
+        width: 714px;
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: normal;
+        padding: 10px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+    }
+
+    .tg .tg-s6z2 {
+        text-align: center
+    }
+
+    .tg .tg-lqy6 {
+        text-align: right;
+        vertical-align: top;
+    }
+
+    .tg .tg-yw4l {
+        vertical-align: top;
+        text-align: left
+    }
+
+    .noLeftBorder {
+        border-left-color: transparent;
+    }
+
+    .heavyFont {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+</style>

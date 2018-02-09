@@ -1,0 +1,28 @@
+<template>
+    <div>
+        <TeachSchedule :isIEP="false"></TeachSchedule>
+    </div>
+</template>
+<script>
+    import TeachSchedule from '../../../components/teachSchedule.vue'
+export default {
+    name: 'iepPlan',
+    components: {
+        TeachSchedule
+    },
+    data() {
+        return {}
+    },
+    computed: {
+    },
+    methods: {},
+    created() {
+
+    }
+};
+</script>
+
+<style scoped>
+
+</style>
+

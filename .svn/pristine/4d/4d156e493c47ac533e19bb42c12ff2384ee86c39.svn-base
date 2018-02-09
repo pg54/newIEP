@@ -1,0 +1,393 @@
+<template>
+    <div class="paperform-content">
+        <div id="paperform-form1">
+            <DIV style="LINE-HEIGHT: 30px;font-size: 22px" class=size16 align=center>
+                <STRONG><font color="#20a0ff">学习能力评估结果综合分析报告</font></STRONG>
+            </DIV>
+            <TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+                <TBODY>
+                    <TR>
+                        <TD width="33%">
+                            <font color="#20a0ff">姓名：
+                                <SPAN id=rpt_Pro_Order_List_ctl00_lbl_eShop_Name><b>{{ patientName }}</b></SPAN>
+                            </font>
+                        </TD>
+                        <TD width="33%">
+                            <font color="#20a0ff">性别：
+                                <SPAN>{{ (patientSex === 1)? '男':'女' }}</SPAN>
+                            </font>
+                        </TD>
+                        <TD width="33%">
+                            <font color="#20a0ff">出生年月：
+                                <SPAN>{{ patientBirthday }}</SPAN>
+                            </font>
+                        </TD>
+                    </TR>
+                    <TR>
+                        <TD>
+                            <font color="#20a0ff">教育诊断人:
+                                <SPAN></SPAN>
+                            </font>
+                        </TD>
+                        <TD>
+                            <font color="#20a0ff">教育诊断日期：
+                                <SPAN></SPAN>
+                            </font>
+                        </TD>
+                    </TR>
+                </TBODY>
+            </TABLE>
+        </div>
+        <div id="paperform-form2">
+            <table class="tg">
+                <tr>
+                    <td>项目</td>
+                    <td colspan="23" style='text-align: center'>情况/结果摘要</td>
+                </tr>
+                <tr>
+                    <th class="tg-031e" rowspan="4">学<br>生<br>基<br>本<br>资<br>料</th>
+                    <th class="tg-031e" colspan="3">姓名</th>
+                    <th class="tg-031e" colspan="4">{{ userInfo.PatientAgentDetails.Name}}</th>
+                    <th class="tg-031e" colspan="3">性别</th>
+                    <th class="tg-031e" colspan="4">{{ (userInfo.PatientAgentDetails.Sex === 1)? '男':'女' }}</th>
+                    <th class="tg-031e" colspan="3">出生日期</th>
+                    <th class="tg-031e" colspan="6">{{ userInfo.PatientAgentDetails.BirthDate.split(' ')[0] }}</th>
+                </tr>
+                <tr>
+                    <td class="tg-031e" colspan="3">家庭电话 </td>
+                    <td class="tg-031e" colspan="4"></td>
+                    <td class="tg-031e" colspan="3">入学时间</td>
+                    <td class="tg-031e" colspan="4"></td>
+                    <td class="tg-031e" colspan="3">身份证号码</td>
+                    <td class="tg-031e" colspan="6">{{ userInfo.PatientAgentDetails.IDCard}}</td>
+                </tr>
+                <tr>
+                    <td class="tg-031e" colspan="3">户籍所在地</td>
+                    <td class="tg-031e tg-textleft" colspan="20">{{ userInfo.PatientAgentDetails.Area}}</td>
+                </tr>
+                <tr>
+                    <td class="tg-031e" colspan="3">现居住地址</td>
+                    <td class="tg-031e tg-textleft" colspan="20">{{ userInfo.PatientAgentDetails.Address2 }}</td>
+                </tr>
+
+                <tr v-if="userInfo.PatientAgentDetails.Member1">
+                    <td class="tg-s6z2" rowspan="8">家<br>庭<br>情<br>况</td>
+                    <td class="tg-s6z2" colspan="3">父亲姓名</td>
+                    <td class="tg-031e" colspan="3">{{ userInfo.PatientAgentDetails.Member1.Name }}</td>
+                    <td class="tg-s6z2" rowspan="3">年<br>龄</td>
+                    <td class="tg-s6z2" colspan="2">{{ userInfo.PatientAgentDetails.Member1.Age }}</td>
+                    <td class="tg-s6z2" rowspan="3">文<br>化<br>程<br>度</td>
+                    <td class="tg-s6z2" colspan="2">{{ userInfo.PatientAgentDetails.Member1.Degree }}</td>
+                    <td class="tg-s6z2" rowspan="3">工<br>作<br>单<br>位<br>及<br>职<br>务</td>
+                    <td class="tg-s6z2" colspan="4">{{ userInfo.PatientAgentDetails.Member1.WorkUnit }}</td>
+                    <td class="tg-s6z2" rowspan="3">联<br>系<br>电<br>话</td>
+                    <td class="tg-s6z2" colspan="5">{{ userInfo.PatientAgentDetails.Member1.Mobile }}</td>
+                </tr>
+                <tr v-else>
+                    <td class="tg-s6z2" rowspan="8">家<br>庭<br>情<br>况</td>
+                    <td class="tg-s6z2" colspan="3">父亲姓名</td>
+                    <td class="tg-031e" colspan="3"></td>
+                    <td class="tg-s6z2" rowspan="3">年<br>龄</td>
+                    <td class="tg-s6z2" colspan="2"></td>
+                    <td class="tg-s6z2" rowspan="3">文<br>化<br>程<br>度</td>
+                    <td class="tg-s6z2" colspan="2"></td>
+                    <td class="tg-s6z2" rowspan="3">工<br>作<br>单<br>位<br>及<br>职<br>务</td>
+                    <td class="tg-s6z2" colspan="4"></td>
+                    <td class="tg-s6z2" rowspan="3">联<br>系<br>电<br>话</td>
+                    <td class="tg-s6z2" colspan="5"></td>
+                </tr>
+                <tr v-if="userInfo.PatientAgentDetails.Member2">
+                    <td class="tg-s6z2" colspan="3">母亲姓名</td>
+                    <td class="tg-031e" colspan="3">{{ userInfo.PatientAgentDetails.Member2.Name }}</td>
+                    <td class="tg-s6z2" colspan="2">{{ userInfo.PatientAgentDetails.Member2.Age }}</td>
+                    <td class="tg-s6z2" colspan="2">{{ userInfo.PatientAgentDetails.Member2.Degree }}</td>
+                    <td class="tg-s6z2" colspan="4">{{ userInfo.PatientAgentDetails.Member2.WorkUnit }}</td>
+                    <td class="tg-s6z2" colspan="5">{{ userInfo.PatientAgentDetails.Member2.Mobile }}</td>
+                </tr>
+                <tr v-else>
+                    <td class="tg-s6z2" colspan="3">母亲姓名</td>
+                    <td class="tg-031e" colspan="3"></td>
+                    <td class="tg-s6z2" colspan="2"></td>
+                    <td class="tg-s6z2" colspan="2"></td>
+                    <td class="tg-s6z2" colspan="4"></td>
+                    <td class="tg-s6z2" colspan="5"></td>
+                </tr>
+
+                <tr v-if="userInfo.PatientAgentDetails.Member3">
+                    <td class="tg-s6z2" colspan="3">其他成员</td>
+                    <td class="tg-031e" colspan="3">{{ userInfo.PatientAgentDetails.Member3.Name }}</td>
+                    <td class="tg-s6z2" colspan="2"> {{ userInfo.PatientAgentDetails.Member3.Age }}</td>
+                    <td class="tg-s6z2" colspan="2"> {{ userInfo.PatientAgentDetails.Member3.Degree }}</td>
+                    <td class="tg-s6z2" colspan="4"> {{ userInfo.PatientAgentDetails.Member3.WorkUnit }}</td>
+                    <td class="tg-s6z2" colspan="5"> {{ userInfo.PatientAgentDetails.Member3.Mobile }}</td>
+                </tr>
+                <tr v-else>
+                    <td class="tg-s6z2" colspan="3">其他成员</td>
+                    <td class="tg-031e" colspan="3"></td>
+                    <td class="tg-s6z2" colspan="2"></td>
+                    <td class="tg-s6z2" colspan="2"></td>
+                    <td class="tg-s6z2" colspan="4"></td>
+                    <td class="tg-s6z2" colspan="5"></td>
+                </tr>
+
+                <tr>
+                    <td class="tg-s6z2" colspan="3">家庭模式</td>
+                    <td class="tg-031e tg-textleft" colspan="20">
+
+
+                        <span v-for="(ele,index) in fcData[0]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.FamilyModel === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="3">居住社区</td>
+                    <td class="tg-031e tg-textleft" colspan="20">
+                        <span v-for="(ele,index) in fcData[1]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.Community === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="3">教养方式</td>
+                    <td class="tg-031e tg-textleft" colspan="20">
+                        <span v-for="(ele,index) in fcData[2]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.EducationStyle === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="3">语言环境</td>
+                    <td class="tg-031e tg-textleft" colspan="20">
+                        <span v-for="(ele,index) in fcData[3]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.Language === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                        <span>{{userInfo.Language}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="3">抚养/<br>带教人</td>
+                    <td class="tg-031e tg-textleft" colspan="20">
+                        <span v-for="(ele,index) in fcData[4]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.Dependents === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                </tr>
+                 <tr>
+                        <th class="tg-s6z2">课程</th>
+                        <th class="tg-s6z2" colspan="3">主题</th>
+                        <th class="tg-s6z2" colspan="20">主题分析</th>
+                    </tr>
+
+                    <template v-for='course in userInfo.Courses'>
+
+                        <tr>
+                            <td class="tg-s6z2" :rowspan="course.Subjects.length">
+                                <template v-for="el in course.Name.split('')">
+                                    {{ el }}<br>
+                                </template>
+                            </td>
+                            <td class="tg-s6z2" colspan="3">{{ course.Subjects[0].Name }}</td>
+                            <td class="tg-textleft" colspan="20">
+                        
+                                <P>
+                                    优势：
+                                    <span v-for='item in course.Subjects[0].Advantages'>{{ item }}</span>
+                                </P>
+                                <P>
+                                    劣势：
+                                    <span v-for='item in course.Subjects[0].Disadvantages'>{{ item }}</span>
+                                </P>
+
+                            </td>
+                        </tr>
+
+                        <template v-for="(ele, index) in course.Subjects">
+                            <template v-if='index > 0'>
+                                <tr>
+                                    <td class="tg-s6z2" colspan="3">{{ ele.Name }}</td>
+                                    <td class="tg-textleft" colspan="20">
+                                        <div>
+                                            <p style="float: left;width:50px;">优势：</p>
+                                            <p style="margin-left: 50px">
+                                                <span v-for="item in ele.Advantages" style="margin-right: 30px">{{ item }}</span>
+                                            </p> 
+                                        </div>
+
+                                        <div>
+                                            <p style="float: left;width:50px;">劣势：</p>
+                                            <p style="margin-left: 50px">
+                                                <span v-for="item in ele.Disadvantages" style="margin-right: 30px">{{ item }}</span>
+                                            </p> 
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            </template>
+                        </template>
+
+                    </template>
+
+            </table>
+
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'analysisReportPrinter',
+        props: ['userInfo', 'fcData'],
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+            patientName: function () {
+                return this.$store.state.mystudent.patientDeptObj.Name;
+            },
+            patientSex: function () {
+                return this.$store.state.mystudent.patientDeptObj.Sex;
+            },
+            patientBirthday: function () {
+                return this.$store.state.mystudent.patientDeptObj.BirthDate.split(' ')[0];
+            }
+        },
+        methods: {
+            insertTT() {
+                let targetElement = document.getElementById('insertTarget')
+                let parent = targetElement.parentNode
+                let tArr = document.getElementsByClassName('tt')
+
+                for (let i = 0; i < tArr.length; i++) {
+                    let tt = document.getElementsByClassName('tt')[i].childNodes
+                    let newFrag = document.createDocumentFragment();
+                    newFrag.appendChild(tt[0])
+                    newFrag.appendChild(tt[1])
+                    newFrag.appendChild(tt[2])
+                    newFrag.appendChild(tt[3])
+                    newFrag.appendChild(tt[4])
+                    newFrag.appendChild(tt[5])
+                    parent.insertBefore(newFrag, targetElement)
+                }
+
+            },
+            setNewName(name) {
+                let arr = name.split('')
+                let str = ''
+                for (let i = 0; i < arr.length; i++) {
+                    if (i < arr.length - 1) {
+                        let a = arr[i] + '<br>'
+                        str += a
+                    } else {
+                        str += arr[i]
+                    }
+                }
+                return str;
+            }
+
+        },
+        created() {
+
+        },
+        beforeMount() {
+
+        },
+        updated() {
+            // this.insertTT()
+        }
+    }
+
+</script>
+<style scoped>
+    .tg {
+        border-collapse: collapse;
+        border-spacing: 0;
+        width: 100%
+    }
+
+    .tg td {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+    }
+
+    .tg th {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        font-weight: normal;
+        padding: 4px 8px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        word-break: normal;
+    }
+
+    .tg .tg-s6z2 {
+        text-align: center;
+        vertical-align: center
+    }
+
+    .tg .tg-baqh {
+        text-align: center;
+        vertical-align: center
+    }
+
+    .tg .tg-yw4l {
+        text-align: center;
+        vertical-align: center
+    }
+
+    .tg .tg-textleft {
+        text-align: left;
+        vertical-align: center
+    }
+
+    table {
+        border-color: black
+    }
+
+    th {
+        border-color: black
+    }
+
+    td {
+        border-color: black
+    }
+
+    .paperform-subtitle {
+        padding-left: 2%;
+    }
+
+    .noHeight {
+        visibility: hidden
+    }
+
+    .tNew {
+        border: none
+    }
+
+    .subj {
+        width: 29px
+    }
+
+    .subjTag {
+        width: 42px
+    }
+
+    .subjContent {
+        /*width: 523px*/
+    }
+
+
+
+    .tg .tg-s6z2 {
+        text-align: center
+    }
+
+</style>

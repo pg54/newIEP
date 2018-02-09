@@ -1,0 +1,30 @@
+.print-content {
+    /*box-sizing: border-box;*/
+}
+
+.paperform-title {
+    font-size: 22px;
+    text-align: center
+}
+
+.tg  {border-collapse:collapse;border-spacing:0;width: 100%}
+.tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg .tg-s6z2{text-align:center;vertical-align:center}
+.tg .tg-baqh{text-align:center;vertical-align:center}
+.tg .tg-yw4l{text-align:center;vertical-align:center}
+.tg .tg-textleft{text-align:left;vertical-align:top}
+
+table {border-color: black}
+th {border-color: black}
+td{border-color: black}
+
+.paperform-subtitle {text-align: center}
+
+.noHeight {visibility: hidden}
+
+.tNew {border: none}
+
+.subj {width: 4.16%}
+.subjTag{width: 12.5%}
+.subjContent {width: 83.3%}

@@ -1,0 +1,283 @@
+<template>
+    <div class="dataAnalysisBox">
+        <div class="slidebarOne">
+            <el-select v-model="groupValue" placeholder="请选择" @change="getPacientList">
+                <el-option v-for="(item, index) in groups" :key="item.groupName" :label="item.groupName" :value="index">
+                </el-option>
+            </el-select>
+            <li v-for="(ele, index) in patientIDs" class="pacientLink" :class="{active : currentTab === index }"
+                @click="selectedPaticent(index)">
+                {{ele.Name}}
+            </li>
+        </div>
+        <div class="contentOne">
+            <div class="center-content">
+                <el-row :gutter="20">
+                    <el-col :span="6">
+                        <div class="grid-content bg-purple">
+                            <el-select v-model="packageID" placeholder="请选择课程包" @change="toSelectCourse">
+                                <el-option v-for="(o,index) in packageData" :label="o.Name" :value="o.ID" ></el-option>
+                            </el-select>
+                        </div>
+                    </el-col>
+                    <el-col :span="6">
+                        <div class="grid-content bg-purple">
+                            <el-select v-model="courseID" placeholder="请选择课程">
+                                <el-option v-for="(o,index) in courseData" :label="o.Name" :value="o.ID" ></el-option>
+                            </el-select>
+                        </div>
+                    </el-col>
+                    <el-col :span="6">
+                        <div class="grid-content bg-purple">
+
+                        </div>
+                    </el-col>
+                    <el-col :span="6">
+                        <div class="grid-content bg-purple">
+                            <el-button @click="refreshEcharts">确定</el-button>
+                        </div>
+
+
+
+                    </el-col>
+                </el-row>
+
+                <!--<echarts :chartTitledata="titleData" :chartXdata="xData" :chartSeriesdata="seriesData"></echarts>-->
+                <div class="chart-container">
+                    <div id="chartLine" style="width:100%; height:520px;"></div>
+                </div>
+
+                <!--<ve-line :data="chartData"></ve-line>-->
+
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    //    import echarts from '../../components/echarts.vue';
+    import api from '../../api/index.js'
+    import Highcharts from 'highcharts/highcharts'
+
+
+    export default {
+        name: 'highChart',
+        computed: {
+            groups: function () {
+                return this.$store.state.mystudent.patientList;
+            }
+        },
+        data() {
+            return {
+                groupValue: 0, // 选中的组,默认第一组
+                currentTab: 0, // 选中的患者
+                patientIDs: [],
+                patientID: null, // 选中的患者ID
+                packageData: [], // package的数据源
+                courseData: [], // 课程的数据源
+                packageID: null, // 选中的packageID
+                courseID: null, //选中的课程ID
+                xData: [], //x轴数据
+                titleData: [],  //线名
+                seriesData: []  //多条线的数据组
+            }
+        },
+        methods: {
+            drawLineChart() {
+                this.chart = new Highcharts.Chart('chartLine', {
+                    title: {
+                        text: '评测分析',
+                        x: -20
+                    },
+                    xAxis: {
+                        categories: this.xData
+                    },
+                    yAxis: {
+                        title: {
+                            text: '分数'
+                        },
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+                    tooltip: {
+                        valueSuffix: '°C'
+                    },
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle',
+                        borderWidth: 0
+                    },
+                    series: this.seriesData
+                });
+            },
+            drawCharts() {
+                this.drawLineChart()
+            },
+            getPacientList(value) {
+                this.patientIDs = this.groups[value].groupPatients;
+                console.log('foo');
+                console.log(this.patientIDs)
+                this.selectedPaticent(0);
+            },
+            selectedPaticent(index) {
+                console.log('选中的患者ID');
+                console.log(this.patientIDs[index].ID);
+                this.patientID = this.patientIDs[index].ID
+                this.currentTab = index;
+            },
+            toSelectCourse() {
+                console.log('触发方法')
+                this.courseID = null;  //清空选择的课程
+                let arr = this.packageData;
+                for (let i=0;i<arr.length;i++) {
+                    if(arr[i].ID === this.packageID  ){
+                        this.courseData = arr[i].Courses;
+                    }
+                }
+            },
+            refreshEcharts() {
+                let params = {
+                    PatientAgentID: this.patientID,
+                    PackageID: this.packageID,
+                    CourseID: this.courseID
+                }
+                api.echartPackage(params)
+                    .then( res => {
+                        console.log('请求数据');
+                        console.log(res.data.List);
+                        this.dataReset();
+                        this.dataProcessing(res.data.List);
+                    })
+            },
+            dataReset() {
+                this.xData = [];
+                this.titleData = [];
+                this.seriesData = []
+            },
+            dataProcessing(arr) {
+                let titleArr = []
+                arr[0].History.forEach(function(ele,index) {
+                    let str = '第' + String(index+1) + '次评测';
+                    titleArr.push(str);
+                })
+                this.titleData = titleArr;
+
+                let xData = [];
+                arr.map( ele => {
+                    xData.push(ele.Name)
+                })
+                this.xData = xData
+
+                let length = this.titleData.length;
+                let bigData = []
+
+                for (let i=0;i<length;i++) {
+                    let obj = {
+                        name: '第' + String(i+1) + '次评测',
+                        data: []
+                    }
+                    arr.map(function (ele) {
+                        let score = ele.History[i].Score
+                        obj.data.push(score)
+                    })
+                    bigData.push(obj)
+                }
+
+                this.seriesData = bigData;
+                console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+                console.log(bigData);
+                console.log(xData);
+                this.drawLineChart();
+            },
+        },
+        created() {
+            api.requestCourseList().then(res => {
+                this.packageData = res.List;
+            });
+            this.getPacientList(0) //默认选中第一组患者
+            //加载v-chart数据
+        },
+        mounted: function () {
+            this.drawCharts()
+        },
+        updated: function () {
+            this.drawCharts()
+        }
+    };
+</script>
+<style scoped>
+    /*@import '../../../src/assets/css/template/index.css';*/
+
+    .dataAnalysisBox {
+        width: 100%;
+        height: 626px;
+        position: absolute
+    }
+    .slidebarOne {
+        width: 94px;
+        height: 584px;
+        position: absolute;
+        border-right: 1px solid #cccccc;
+        background-color: #EEEFF0;
+    }
+
+    .slidebarOne li {
+        width: 93px;
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        cursor: pointer;
+    }
+
+    .contentOne {
+        width: 1186px;
+        height: 584px;
+        position: absolute;
+        left: 94px;
+    }
+
+    .slidebarOne .active {
+        color: #48C4FC;
+        border-left: 4px solid #48C4FC;
+        background-color: #FEFFFF;
+    }
+    .center-content {
+        width: 100%;
+        height: 584px;
+        padding: 5px 20px;
+    }
+    .chart-container {
+        width: 100%;
+        height: 530px;
+        border: 1px solid red;
+    }
+    .el-row {
+        margin-bottom: 10px;
+    &:last-child {
+         margin-bottom: 0;
+     }
+    }
+    .el-col {
+        border-radius: 4px;
+    }
+    .bg-purple-dark {
+        background: #99a9bf;
+    }
+    .bg-purple {
+        background: #d3dce6;
+    }
+    .bg-purple-light {
+        background: #e5e9f2;
+    }
+    .grid-content {
+        border-radius: 4px;
+        min-height: 36px;
+    }
+    .row-bg {
+        padding: 10px 0;
+        background-color: #f9fafc;
+    }
+</style>

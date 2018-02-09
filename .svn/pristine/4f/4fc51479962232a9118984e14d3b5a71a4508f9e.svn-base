@@ -1,0 +1,197 @@
+<template>
+    <div class="reportPaper">
+        <div class="tabs">
+            <div class="tabs-chose">
+                <li v-for="(section, index) in reportSections"
+                    :class="{active : currentTab === index }"
+                    @click="currentTab = index">
+                    <p>{{section}}</p>
+                </li>
+            </div>
+
+            <div class="tabs-content">
+                <div class="toolBox">
+                    <div class="blockItem" style="width: 140px">
+                        <span>名称:</span>
+                        <el-input  v-model="form.patient" style="width: 100px" disabled></el-input>
+                    </div>
+                    <div class="blockItem" style="width: 140px">
+                        <span>性别:</span>
+                        <el-select v-model="form.sex"  style="width: 100px" disabled>
+                            <el-option
+                                    v-for="(item, index) in sexOptions"
+                                    :key="item.value"
+                                    :label=item.label
+                                    :value=item.value>
+                            </el-option>
+                        </el-select>
+                    </div>
+                    <div class="blockItem" style="width: 280px">
+                        <span>出生日期:</span>
+                        <el-date-picker type="date" placeholder="" v-model="form.date1" style="width: 200px" disabled></el-date-picker>
+                    </div>
+                    <div class="blockItem" style="width: 280px">
+                        <span>诊断日期:</span>
+                        <el-time-picker type="fixed-time" placeholder="" v-model="form.date2" style="width: 200px" disabled></el-time-picker>
+
+                    </div>
+                    <div class="blockItem" style="width: 160px">
+                        <span>诊断人:</span>
+                        <el-input v-model="form.patient" style="width: 100px" disabled></el-input>
+                    </div>
+                </div>
+                <div v-show="currentTab === 0" class="tab-content">
+
+                </div>
+                <div v-show="currentTab === 1" class="tab-content">
+
+                </div>
+                <div v-show="currentTab === 2" class="tab-content">
+
+                    <div class="center-content">
+                        <div class="courseContent" v-for="course in data">
+                            <p class="courseHeader">{{ course.Name}}</p>
+                            <el-table
+                                    :data="course.Subjects"
+                                    height="480"
+                                    style="width: 100%">
+                                <el-table-column
+                                        type="index"
+                                        width="54">
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="Name"
+                                        label="主题名"
+                                        width="280">
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="Advantages"
+                                        label="优势"
+                                        width="350">
+                                    <template scope="scope">
+                                        <span v-for="item in scope.row.Advantages" class="textBlock">{{ item }}</span>
+                                    </template>
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="Disadvantages"
+                                        label="劣势"
+                                        width="350">
+                                    <template scope="scope">
+                                        <span v-for="item in scope.row.Disadvantages" class="textBlock">{{ item }}</span>
+                                    </template>
+                                </el-table-column>
+
+                            </el-table>
+                        </div>
+                    </div>
+
+                </div>
+                <div v-show="currentTab === 3" class="tab-content">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    import { getPacientTestReport } from '../../../../api/api';
+
+    export default {
+        name: 'reportPaper',
+        props: ['testID', 'paticentID'],
+        data() {
+            return {
+                currentTab: 0,
+                reportSections: ['学生基本资料','家庭资料','优势，劣势','学习能力综合分析'],
+                form : {
+                    patient: '',
+                    sex: '',
+                    date1: '',
+                    date2: ''
+                },
+                sexOptions: [
+                    {label: '男', value: 1},
+                    {label: '女', value: 0}
+                ],
+                selectedGroup: this.$store.state.mystudent.patientList,
+                selectedPacientIDS: '',
+                selectedGroupPacientes: [],
+                data: []
+            }
+        },
+        methods: {
+            setPatientInfo(paticentID) {
+                console.log('paticentID');
+                console.log(paticentID);
+                let originData = this.$store.state.mystudent.patientList;
+                console.log('originData');
+                console.log(originData);
+                for (let i=0;i<originData.length;i++) {
+                    if (originData[i].groupPatients.length) {
+                        for (let k=0;k<originData[i].groupPatients.length;k++) {
+                            if (originData[i].groupPatients[k].ID === paticentID) {
+                                this.form.patient = originData[i].groupPatients[k].Name;
+                                this.form.sex = originData[i].groupPatients[k].Sex;
+                                this.form.date1 = originData[i].groupPatients[k].BirthDate;
+                                this.form.date2 = new Date();
+                            }
+                        }
+                    }
+                }
+            },
+            goback() {
+                this.$router.go(-1);
+                this.$parent.tabsShow = true;
+            },
+            requestData() {
+                this.setPatientInfo(this.paticentID);
+                getPacientTestReport(this.testID).then(res => {
+                    this.data = res.Courses;
+                });
+            }
+        },
+        mounted() {
+            this.requestData();
+        }
+    };
+</script>
+<style scoped>
+    .reportPaper {position: relative;width: 1185px;top: 0;left: 0;height: 583px;z-index: 10;margin-left: -30px}
+    .tabs {position: absolute;width: 1120px;height: 520px;left: 0;top: 0}
+    .tabs-chose {position: absolute;width: 105px;height: 428px;border-right: 1px solid #cccccc;border-radius: 6px 0 0 6px;padding-top: 0.5px}
+    .toolBox {width: 1125px;height: 66px;position: absolute;left: 0;top: 0}
+    .tabs-content {
+        position: absolute;
+        left: 106px;
+        top: 0;
+        width: 1079px;
+        height: 580px;
+        overflow-y: scroll;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
+    }
+    .tab-content {}
+    .tabs-chose li{
+        width: 105px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid #cccccc;
+    }
+    .tabs-chose .active {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+    }
+    .courseHeader {font-size: 16px;font-weight: bold}
+    .center-content {
+        width: 1034px;
+        margin: 0 20px;
+    }
+    .toolBox { }
+    .textBlock {display: inline-block;width: 140px;margin-right: 10px}
+    .blockItem {display: inline-block;height: 60px;margin-right: 20px;line-height: 60px}
+</style>

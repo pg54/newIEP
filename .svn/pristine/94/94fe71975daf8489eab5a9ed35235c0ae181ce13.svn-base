@@ -1,0 +1,209 @@
+<template>
+  <div>
+      <div class="twoPage" v-show="!chosedFunction">
+          <!--<p style="text-align: center">一新康复-IEP</p>-->
+          <p>
+              <button class="fourFunction" @click="tofour">体验版</button>
+              <button class="eightFunction" @click="stillEight">专业版</button>
+          </p>
+      </div>
+    <el-form v-show="chosedFunction" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="left" label-width="0px" class="login-container">
+      <h3 class="title">系统登录</h3>
+      <el-form-item prop="account">
+        <el-input type="text" v-model="ruleForm.account" auto-complete="off" placeholder="账号"></el-input>
+      </el-form-item>
+      <el-form-item prop="checkPass">
+        <el-input type="password" v-model="ruleForm.checkPass" auto-complete="off" placeholder="密码"></el-input>
+      </el-form-item>
+      <el-checkbox v-model="checked" class="remember">记住密码</el-checkbox>
+      <el-form-item style="width:100%;">
+        <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit" :loading="logining">登录</el-button>
+      </el-form-item>
+    </el-form>
+  </div>
+</template>
+
+<script>
+import { setToken, drProfile } from '../api/api';
+import MD5 from 'spark-md5';
+import axios from 'axios';
+export default {
+  name: 'login',
+  components: {
+  },
+  data() {
+    return {
+        chosedFunction: false,
+      logining: false,
+      ruleForm: {
+        account: '',
+        checkPass: ''
+      },
+      rules: {
+        account: [
+          { required: true, message: '请输入账号', trigger: 'blur' }
+        ],
+        checkPass: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ]
+      },
+      checked: true
+    };
+  },
+  methods: {
+      setCookie (name,value){
+          var Days = 30;
+          var exp = new Date();
+          exp.setTime(exp.getTime() + Days*24*60*60*1000);
+          document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+      },
+      getCookie(name) {
+         var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+         if(arr=document.cookie.match(reg))
+            return unescape(arr[2]);
+         else
+           return null;
+      },
+      tofour() {
+          this.$store.dispatch('setNotFullFuction', false);
+          var _this = this;
+          setTimeout(function () {
+              _this.chosedFunction = true;
+          },500)
+      },
+      stillEight() {
+          this.$store.dispatch('setNotFullFuction', true);
+          var _this = this;
+          setTimeout(function () {
+              _this.chosedFunction = true;
+          },500)
+      },
+    handleReset() {
+      this.$refs.ruleForm.resetFields();
+    },
+    handleSubmit(ev) {
+      var _this = this;
+          this.$refs.ruleForm.validate((valid) => {
+              if (valid) {
+                  this.logining = true;
+                  var loginParams = {
+                      'UserName': this.ruleForm.account,
+                      'Password': MD5.hash(this.ruleForm.checkPass),
+                      'Type': 2
+                  };
+                  axios.post('http://devapi.account.onenewcare.com/Account/Login', loginParams).then(res => {
+                      //http://192.168.0.143/OPEM.API.Account/Account/Login
+                      var data = res.data;
+                      this.logining = false;
+                      if (data.Code === 0) {
+                          localStorage.removeItem('accessToken');
+                          localStorage.setItem('accessToken', data.Message);
+                          setToken();
+                          var userInfo = {
+                              'UserName': this.ruleForm.account,
+                              'Password': "",
+                              'Checked': this.checked,
+                          }
+                          if (this.checked) {
+                              userInfo.Password = this.ruleForm.checkPass;
+                          }
+//                          sessionStorage.setItem('user', JSON.stringify(userInfo));
+                          this.setCookie('name', this.ruleForm.account)
+                          this.setCookie('password', this.ruleForm.checkPass)
+                          this.$router.push({ path: '/dynamicConsultation' });
+                      } else {
+                          _this.$message({ message: '登录失败', type: 'error' });
+                      }
+                  });
+              }
+          });
+    },
+  },
+  mounted() {
+      let name = this.getCookie('name');
+    if (name) {
+      this.checked = true;
+      this.ruleForm.account = name;
+      let password = this.getCookie('password');
+      this.ruleForm.checkPass = password;
+    }
+  }
+};
+</script>
+<style scoped>
+.login-container {
+  /*box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);*/
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  background-clip: padding-box;
+  margin: 180px auto;
+  width: 350px;
+  padding: 35px 35px 15px 35px;
+  background: #fff;
+  border: 1px solid #eaeaea;
+  box-shadow: 0 0 25px #cac6c6;
+}
+
+.login-container .title {
+  margin: 0px auto 40px auto;
+  text-align: center;
+  color: #505458;
+}
+
+.login-container .remember {
+  margin: 0px 0px 35px 0px;
+}
+    .twoPage {
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        background-clip: padding-box;
+        margin: 280px auto;
+        width: 450px;
+        padding: 35px 35px 15px 35px;
+        background: #fff;
+        /*border: 1px solid #eaeaea;*/
+        /*box-shadow: 0 0 25px #cac6c6;*/
+    }
+
+.twoPage button{
+    display: inline-block;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: center;
+    white-space: nowrap;
+    text-decoration: none;
+    vertical-align: middle;
+    height: 3rem;
+    padding: 0 .5rem;
+    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 2.625rem;
+    -webkit-font-smoothing: antialiased;
+    border-radius: .25rem;
+    letter-spacing: .125rem;
+    transition: all .3s ease;
+    color: #fff;
+    background-color: rgba(32, 160, 255,1);
+    border: .125rem solid transparent;
+    width: 7.75rem;
+    box-shadow: 8px 10px 20px 0 rgba(46,61,73,.15);
+}
+.twoPage button:hover {
+    box-shadow: 2px 4px 8px 0 rgba(46,61,73,.2);
+}
+    .fourFunction {
+        float: left;
+    }
+    .eightFunction {
+        float: right;
+    }
+</style>

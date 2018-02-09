@@ -1,0 +1,18 @@
+<template>
+  <div>
+    <div class="content clearfix">
+      <div class="block-area">
+        <p> news </p>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+
+  export default {
+    name: 'news'
+  };
+</script>
+<style scoped>
+  .block-area {background-color: #1c8de0}
+</style>

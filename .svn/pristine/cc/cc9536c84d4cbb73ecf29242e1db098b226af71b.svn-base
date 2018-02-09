@@ -1,0 +1,267 @@
+<template>
+  <div class="tabs">
+
+      <div class="tabs-chose">
+        <el-select v-model="groupValue" placeholder="请选择" @change="getPacientList">
+          <el-option
+            v-for="(item, index) in groups"
+            :key="item.groupName"
+            :label="item.groupName"
+            :value="index">
+          </el-option>
+        </el-select>
+        <li v-for="(tab, index) in pacientIDs" class="pacientLink"
+            :class="{active : currentTab === index }"
+            @click="selectedPaticent(index)">
+          {{tab.Name}}
+        </li>
+      </div>
+
+      <div class="tabs-content">
+        <vueTab :tabtitles="['咨询详情','评测管理','训练教学','随访反馈']" :current-page="1">
+          <div class="tab-content-container">
+            <div class="boxWrap" v-bind:class="{ showScroll: consultData.length > 3 }">
+
+              <div class="toolBox">
+                <el-button @click="toAddPaper" style="float: right">
+                  新增安排
+                </el-button>
+              </div>
+
+              <div class="paperBox" v-for="(item, index) in consultData" :key="item.CreatedOn" @click="toPaper(item.Key)">
+                <div class="timebox">{{ item.CreatedOn.split(' ')[0] }}</div>
+                <div class="contentBox">
+                  <div class="drInfo">
+                    <div class="logoBox">
+                      <img :src="item.DoctorLogo" alt="logo">
+                    </div>
+                    <div>
+                      <p>医生:{{ item.DoctorName }}</p>
+                    </div>
+                      <div>
+                          <p>{{ item.Name }}</p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-content-container">
+            <div class="boxWrap" v-bind:class="{ showScroll: evaluationData.length > 3 }">
+                <div class="toolBox">
+                    <el-button @click="toAddPaper" style="float: right">
+                        新增安排
+                    </el-button>
+                </div>
+              <div class="paperBox" v-for="(item, index) in evaluationData" :key="item.CreatedOn" @click="toPaper(item.Key)">
+                <div class="timebox">{{ item.CreatedOn.split(' ')[0] }}</div>
+                <div class="contentBox">
+                  <div class="drInfo">
+                    <div class="logoBox">
+                      <img :src="item.DoctorLogo" alt="logo">
+                    </div>
+                    <div>
+                      <p>医生:{{ item.DoctorName }}</p>
+                    </div>
+                      <div>
+                          <p>{{ item.Name }}</p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-content-container">
+            <div class="boxWrap" v-bind:class="{ showScroll: trainingData.length > 3 }">
+                <div class="toolBox">
+                    <el-button @click="toAddPaper" style="float: right">
+                        新增安排
+                    </el-button>
+                </div>
+              <div class="paperBox" v-for="(item, index) in trainingData" :key="item.CreatedOn" @click="toPaper(item.Key)">
+                <div class="timebox">{{ item.CreatedOn.split(' ')[0] }}</div>
+                <div class="contentBox">
+                  <div class="drInfo">
+                    <div class="logoBox">
+                      <img :src="item.DoctorLogo" alt="logo">
+                    </div>
+                    <div>
+                      <p>医生:{{ item.DoctorName }}</p>
+                    </div>
+                      <div>
+                          <p>{{ item.Name }}</p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tab-content-container">
+            <div class="boxWrap" v-bind:class="{ showScroll: feedbackData.length > 3 }">
+                <div class="toolBox">
+                    <el-button @click="toAddPaper" style="float: right">
+                        新增安排
+                    </el-button>
+                </div>
+              <div class="paperBox" v-for="(item, index) in feedbackData" :key="item.CreatedOn" @click="toPaper(item.Key)">
+                <div class="timebox">{{ item.CreatedOn.split(' ')[0] }}</div>
+                <div class="contentBox">
+                  <div class="drInfo">
+                    <div class="logoBox">
+                      <img :src="item.DoctorLogo" alt="logo">
+                    </div>
+                    <div>
+                      <p>医生:{{ item.DoctorName }}</p>
+                    </div>
+                      <div>
+                          <p>{{ item.Name }}</p>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </vueTab>
+
+      </div>
+
+      <el-dialog v-model="previewFormVisible" size="small" :close-on-click-modal="false">
+          <div class="paperContent">
+              <QuestionPaper></QuestionPaper>
+          </div>
+          <div slot="footer" class="dialog-footer">
+              <el-button @click.native="previewFormVisible = false">返回</el-button>
+          </div>
+      </el-dialog>
+
+  </div>
+</template>
+<script>
+  import { patientRecoveryHistory, paperDetails } from '../../api/api';
+  import QuestionPaper from '../../components/QuestionPaper.vue';
+  import vueTab from '../../components/vue-tab.vue';
+  export default {
+    name: 'mystudentTrack',
+    components: {
+      QuestionPaper,
+        vueTab
+    },
+    data() {
+      return {
+        groups: this.$store.state.mystudent.patientList,
+        previewFormVisible: false,
+        groupValue: '',
+        pacientIDs: [],
+        currentTab: 0,
+        activeName: 'first',
+        consultData: [], // 咨询详情
+        evaluationData: [], // 评测管理
+        trainingData: [], // 训练教学
+        feedbackData: [] // 随访反馈
+      };
+    },
+    methods: {
+      handleClick(tab, event) {
+        console.log(tab, event);
+      },
+      selectedPaticent(index) {
+        // console.log('第几个病人');
+        // console.log(index);
+        this.currentTab = index;
+        var id = this.pacientIDs[index].ID;
+        patientRecoveryHistory(id, 1, 20, 1).then(res => {
+          // console.log('咨询详情');
+          // console.log(id);
+          // console.log(res.data.Records);
+          this.consultData = res.data.Records;
+        });
+        patientRecoveryHistory(id, 1, 20, 2).then(res => {
+          // console.log('评测详情');
+          // console.log(res.data.Records);
+          this.evaluationData = res.data.Records;
+        });
+        patientRecoveryHistory(id, 1, 20, 3).then(res => {
+          // console.log('训练详情');
+          // console.log(res.data.Records);
+          this.trainingData = res.data.Records;
+        });
+        patientRecoveryHistory(id, 1, 20, 4).then(res => {
+          // console.log('随访');
+          // console.log(res.data.Records);
+          this.feedbackData = res.data.Records;
+        });
+
+      },
+      getPacientList(value) {
+        // console.log(this.groups);
+        // console.log('输出病人组');
+        // console.log(value);
+        this.pacientIDs = this.groups[value].groupPatients;
+        this.selectedPaticent(0);
+        // console.log(this.pacientIDs);
+      },
+      toAddPaper() {
+        this.$message.warning('暂无接口');
+      },
+      toPaper(id) {
+        // console.log('输出ID');
+        // console.log(id);
+        paperDetails(id).then(res => {
+          // console.log(res.data);
+          this.$store.dispatch('addPaper', res.data);
+          this.previewFormVisible = true;
+        });
+      }
+    },
+    mounted() {
+      this.groupValue = 0;
+      this.getPacientList(0);
+      this.selectedPaticent(0);
+    }
+  };
+</script>
+<style scoped>
+  .tabs {width: 100%;height: 626px;position: absolute}
+  .tabs-chose {position: absolute;width: 94px;height: 626px;background-color: #EEEFF0}
+  .tabs-content {position: absolute;left: 94px;top: 0;width: 1186px;height: 626px;}
+  .tabs-chose li{
+    width: 94px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+  }
+  .tabs-chose .active {
+    color: #48C4FC;
+      border-left: 4px solid #48C4FC;
+      background-color: #FEFFFF;
+  }
+  .boxWrap {width: 100%;height: 580px;}
+  .showScroll {overflow-y: scroll}
+  .toolBox {width: 1130px;height:50px;margin: 10px 28px;}
+  .paperBox {position: relative;width: 784px;height:126px;border-left: 1px dotted #30BCFC;margin: 18px auto;cursor: pointer}
+  .timebox {position: absolute;width: 100px;height: 24px;left: -20px;top: 26px;background-color: #30BCFC;text-align: center;line-height: 24px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    color: #F6F6F6;
+  }
+  .contentBox {position: absolute;top: 0;right: 0;width: 643px;height: 112px;background-color: #E7F8FF;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+  }
+  .logoBox>img {display: block;width: 30px;height: 30px;
+    -webkit-border-radius: 15px;
+    -moz-border-radius: 15px;
+    border-radius: 15px;}
+  .contentHeader {height: 20px;background-color: #3BBDF9;
+    -webkit-border-radius: 6px 6px 0 0;
+    -moz-border-radius: 6px 6px 0 0;
+    border-radius: 6px 6px 0 0;
+  }
+  .contentHeader p{margin-left: 20px}
+  .drInfo{ width: 100%;height: 96px;display: flex;align-items: center;justify-content: center;flex-direction: column}
+  .pacientLink {cursor: pointer}
+</style>

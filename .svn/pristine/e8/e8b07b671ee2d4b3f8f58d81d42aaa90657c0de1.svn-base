@@ -1,0 +1,215 @@
+<template>
+    <el-dialog :title="dialogTitle" v-model="isShowDialogFlag">
+    
+        <el-form ref="addServiceformEle" :model="addServiceform" label-width="80px">
+    
+            <el-form-item label="发布类型:">
+                <el-form-item label="发布类型:">
+                    <el-select v-model="addServiceform.CategoryCode" :disabled='hiddenIt' placeholder="请选择">
+                        <el-option v-for="item in categories" :key="item.Name" :label="item.Name" :value="item.Code">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form-item>
+    
+            <el-form-item label="新闻封面">
+                <el-upload class="avatar-uploader" :action="getuploadURL()" :headers="getAuth()" :show-file-list="false" :on-success="handleAvatarScucess" :before-upload="beforeAvatarUpload">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar" v-model="addServiceform.Logo" style="width: 84px;height: 84px">
+                    <Icon v-else type="upload" size="60"></Icon>
+                </el-upload>
+            </el-form-item>
+    
+            <el-form-item label="文章标题:">
+                <el-input v-model="addServiceform.Title"></el-input>
+            </el-form-item>
+    
+            <el-form-item label="文章小节:">
+                <el-input v-model="addServiceform.Summary"></el-input>
+            </el-form-item>
+    
+            <el-form-item label="文章段落:" v-for="(item, index) in addServiceform.Items ">
+                <el-input type="textarea" :rows="6" v-model="item.Content"></el-input>
+                <el-button style="float: right" @click="reduceNewSection(index)">删除</el-button>
+            </el-form-item>
+    
+            <el-button @click="addNewSection">增加段落</el-button>
+    
+        </el-form>
+    
+        <div slot="footer" class="dialog-footer">
+            <el-button @click.native="cancel()">返回</el-button>
+            <el-button type="primary" @click.native="addArticle()">提交</el-button>
+        </div>
+    
+    </el-dialog>
+</template>
+<script>
+import { uploadIMGURL, addNewArticle, requestArticleCate } from '../api/api';
+export default {
+    name: 'addNewsForm',
+    data() {
+        return {
+            hiddenIt: false,
+            categories: [],
+            imageUrl: '',
+            addServiceform: {
+                ID: '',
+                Title: '',
+                Summary: '',
+                CategoryCode: '',
+                Items: [
+                    {
+                        Content: ''
+                    }
+                ],
+                Logo: ''
+            }
+        };
+    },
+    computed: {
+        isShowDialogFlag: function () {
+            this.getCateCodes();
+            var isModify = this.$store.state.questionPaper.isModify;
+            if (isModify) {
+                this.addServiceform = this.$store.state.questionPaper.formContent;
+                this.imageUrl = this.$store.state.questionPaper.formContent.Logo;
+            }
+            return this.$store.state.questionPaper.addFormVisble;
+        },
+        newsCategoryOptionsaComputed: function () {
+            return this.newsCategoryOptions;
+        },
+        dialogTitle: function () {
+            var isModify = this.$store.state.questionPaper.isModify;
+            if (isModify) {
+                return "更新文章";
+            }
+            return "新增文章";
+        }
+    },
+    props: ['newsCategoryOptions'],
+    methods: {
+        getAuth() {
+            return { 'authorization': sessionStorage.getItem('accessToken') };
+        },
+        getuploadURL() {
+            return uploadIMGURL;
+        },
+        handleAvatarScucess(res, file) {
+            console.log('图片上传res');
+            console.log(res);
+            if (res.Code === 0) {
+                this.imageUrl = res.Path;
+                this.addServiceform.Logo = res.Msg;
+            } else {
+                this.$message.error('没有找到文件');
+            }
+        },
+        beforeAvatarUpload() {
+
+        },
+        resetForm() {
+            this.imageUrl = '';
+            this.addServiceform = {
+                ID: '',
+                Title: '',
+                Summary: '',
+                CategoryCode: '',
+                Items: [
+                    {
+                        Content: ''
+                    }
+                ],
+                Logo: ''
+            };
+
+        },
+        //添加文章
+        addArticle() {
+            var params = this.addServiceform;
+            addNewArticle(params).then(res => {
+                if (res.Code === 0) {
+                    this.$message.success('文章上传成功');
+                } else {
+                    this.$message.error(res.Msg);
+                }
+                this.$store.dispatch('addFormInvisible');
+                switch (this.addServiceform.CategoryCode) {
+                    case 1:
+                        this.$parent.requestEduNews(1);
+                        //this.$store.dispatch('getEduDataAll', 1);
+                        break;
+                    case 2:
+                        this.$parent.requestArticleNews(1);
+                        this.$parent.myArticlenextPage(1);
+                        //this.$store.dispatch('getArticleDataAll', 1);
+                        break;
+                    case 3:
+                        // this.$store.dispatch('getTrainingDataAll', 1);
+                        this.$parent.requestTrainingData(1);
+                        break;
+                    case 4:
+                        this.$parent.requestCompanyNews(1);
+                        //this.$store.dispatch('getCompanyNewsDataAll', 1);
+                        break;
+                    case 5:
+                        this.$parent.requestIndustryNews(1);
+                        //this.$store.dispatch('getIndustryNewsDataAll', 1);
+                        break;
+                    case 6:
+                        this.$parent.requestPlatformNews(1);
+                        //this.$store.dispatch('getPlatformNewsDataAll', 1);
+                        break;
+                }
+                this.resetForm();
+                this.$store.dispatch('notModify');
+
+            });
+        },
+        cancel() {
+            this.resetForm();
+            this.$store.dispatch('addFormInvisible');
+            this.$store.dispatch('notModify');
+            //this.closeDialog();
+        },
+        closeDialog() {
+            console.log('关闭');
+        },
+        //增加段落
+        addNewSection() {
+            var obj = {
+                Content: ''
+            };
+            this.addServiceform.Items.push(obj);
+            console.log(this.addServiceform.Items);
+        },
+        reduceNewSection(index) {
+            if (this.addServiceform.Items.length === 0) {
+                this.$message.warning('当前段落为空，无法删除');
+            } else {
+                this.addServiceform.Items.splice(index, 1);
+            }
+        },
+        getCateCodes() {
+            requestArticleCate().then(res => {
+                let _this = this;
+                _this.categories = res.data.List;
+                var index = _this.newsCategoryOptions;
+                console.log('传入Index：' + index);
+                for (var i = 0; i < _this.categories.length; i++) {
+                    if (_this.categories[i].Code == index) {
+                        _this.addServiceform.CategoryCode = _this.categories[i].Code;
+                        break;
+                    }
+                }
+                _this.hiddenIt = true;
+            });
+        },
+    },
+    mounted() {
+    }
+};
+</script>
+<style scoped>
+
+</style>

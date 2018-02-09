@@ -1,0 +1,528 @@
+<template>
+    <div class="main">
+        <div class="newsWrap" v-show="showEduWrap" v-loading.fullscreen.lock="articleLoading">
+            <div class="tabs-chose">
+                <li v-for="(tab, index) in tabs" :class="{active : currentTab === index }" @click="currentTab = index">{{tab}}
+                </li>
+            </div>
+            <div class="tabs-content">
+                <div v-show="currentTab === 0" class="tab-content">
+                    <div class="toolBox">
+                        <el-button @click="goAddIndustryNewsForm" style="float:right">
+                            <Icon type="plus-round"></Icon>
+                            新增行业新闻
+                        </el-button>
+                    </div>
+                    <div class="center-content">
+                        <div class="newsList">
+                            <div v-for="(o,index) in allIndustryNewsData" class="item">
+                                <div class="linkBox">
+                                    <img :src="o.Logo" alt="logo" class="linkImg">
+                                    <div class="linkContent">
+                                        <p @click="gotoIframe(o)">
+                                            <span class="newsTitle">{{ o.Title }}</span>
+                                            <span class="hot" v-show="index < 3">hot</span>
+                                        </p>
+                                        <p class="icons" style="visibility:hidden">
+                                            <span>
+                                                <Icon type="eye" size="20"></Icon>1200</span>
+                                            <span>
+                                                <Icon type="chatbox-working" size="20"></Icon>1200</span>
+                                            <span>
+                                                <Icon type="ios-star" size="20"></Icon>1200</span>
+                                        </p>
+                                        <p class="toolBtns" v-show="o.DoctorID === doctorID">
+                                            <el-button @click="modifyIndustryItem(o)">修改</el-button>
+                                            <el-button @click="deleteIndustryItem(o)">删除</el-button>
+                                        </p>
+                                    </div>
+                                    <div class="newsTime">
+                                        <Icon type="clock" size="20"></Icon>
+                                        <span>{{ o.CreatedOn }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page">
+                        <el-pagination @current-change="nextPageIndustryNews" layout="prev, pager, next" :page-size="5" :total="industryPageTotal">
+                        </el-pagination>
+                    </div>
+
+                </div>
+
+                <div v-show="currentTab === 1" class="tab-content">
+
+                    <div class="toolBox">
+                        <el-button @click="goAddPlatformNewsForm" style="float:right">
+                            <Icon type="plus-round"></Icon>
+                            新增平台新闻
+                        </el-button>
+                    </div>
+
+                    <div class="center-content">
+                        <div class="newsList">
+                            <div v-for="(o,index) in allPlatformNewsData" class="item">
+                                <div class="linkBox">
+                                    <img :src="o.Logo" alt="logo" class="linkImg">
+                                    <div class="linkContent">
+                                        <p @click="gotoIframe(o)">
+                                            <span class="newsTitle">{{ o.Title }}</span>
+                                            <span class="hot" v-show="index<3">hot</span>
+                                        </p>
+                                        <p class="icons" style="visibility:hidden">
+                                            <span>
+                                                <Icon type="eye" size="20"></Icon>1200</span>
+                                            <span>
+                                                <Icon type="chatbox-working" size="20"></Icon>1200</span>
+                                            <span>
+                                                <Icon type="ios-star" size="20"></Icon>1200</span>
+                                        </p>
+                                        <p class="toolBtns" v-show="o.DoctorID === doctorID">
+                                            <el-button @click="modifyPlatformItem(o)">修改</el-button>
+                                            <el-button @click="deletePlatformItem(o)">删除</el-button>
+                                        </p>
+
+                                    </div>
+                                    <div class="newsTime">
+                                        <Icon type="clock" size="20"></Icon>
+                                        <span>{{ o.CreatedOn }}</span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page">
+                        <el-pagination @current-change="nextPagePlatformNews" layout="prev, pager, next" :page-size="5" :total="platformPageTotal">
+                        </el-pagination>
+                    </div>
+                </div>
+
+                <div v-show="currentTab === 2" class="tab-content">
+                    <div class="toolBox">
+                        <el-button @click="goAddCompanyNewsForm" style="float:right">
+                            <Icon type="plus-round"></Icon>
+                            新增公司新闻
+                        </el-button>
+                    </div>
+
+                    <div class="center-content">
+                        <div class="newsList">
+                            <div v-for="(o, index) in allCompanyNewsData" class="item">
+                                <div class="linkBox">
+
+                                    <img :src="o.Logo" alt="logo" class="linkImg">
+                                    <div class="linkContent">
+                                        <p @click="gotoIframe(o)">
+                                            <span class="newsTitle">{{ o.Title }}</span>
+                                            <span class="hot" v-show="index<3">hot</span>
+                                        </p>
+                                        <p class="icons" style="visibility:hidden">
+                                            <span>
+                                                <Icon type="eye" size="20"></Icon>1200</span>
+                                            <span>
+                                                <Icon type="chatbox-working" size="20"></Icon>1200</span>
+                                            <span>
+                                                <Icon type="ios-star" size="20"></Icon>1200</span>
+                                        </p>
+                                        <p class="toolBtns" v-show="o.DoctorID === doctorID">
+                                            <el-button @click="modifyCompanyItem(o)">修改</el-button>
+                                            <el-button @click="deleteCompanyItem(o)">删除</el-button>
+                                        </p>
+                                    </div>
+                                    <div class="newsTime">
+                                        <Icon type="clock" size="20"></Icon>
+                                        <span>{{ o.CreatedOn }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page">
+                        <el-pagination @current-change="nextPageCompanyNews" layout="prev, pager, next" :page-size="5" :total="companyPageTotal">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-show="showEduIframe" class="eduIframeWrap">
+            <iframe width="1280" height="580" name="newsIframe" id="newsIframe" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+            <!--<el-button @click="cancelIframe">返回</el-button>-->
+        </div>
+        <addNewsForm :newsCategoryOptions="newsIndex"></addNewsForm>
+    </div>
+</template>
+<script>
+    import addNewsForm from '../../../components/addNewsForm.vue';
+    import axios from 'axios';
+    import {
+        getArticleDetail,
+        deleteArticle,
+        requestArticle
+    } from '../../../api/api';
+
+    export default {
+        name: 'dymaNews',
+        components: {
+            addNewsForm
+        },
+        computed: {
+            doctorID: function () {
+                return this.$store.state.questionPaper.drProfile.ID;
+            },
+            showEduWrap: function () {
+                return this.$store.state.questionPaper.generalNewsStatus;
+            },
+            showEduIframe: function () {
+                return this.$store.state.questionPaper.newsIframeStatus;
+            }
+        },
+        data() {
+            return {
+                currentTab: 0,
+                newsIndex: 4,
+                industryCurrentPage: 1,
+                companyCurrentPage: 1,
+                platformCurrentPage: 1,
+                tabs: ['行业新闻', '平台新闻', '公司新闻'],
+                allIndustryNewsData: [],
+                industryPageTotal: 1,
+                allPlatformNewsData: [],
+                platformPageTotal: 1,
+                allCompanyNewsData: [],
+                companyPageTotal: 1,
+                // newsURL: '',
+                articleLoading: false,
+            }
+        },
+        methods: {
+            goBack() {
+                this.$router.push('/dynamicConsultation');
+            },
+            gotoIframe(o) {
+                var path = o.Path;
+                var isURL = /^http[s]{0,1}:\/\/.+$/.test(path)
+                if (!isURL) return this.$message.warning('该链接为空')
+                this.articleLoading = true;
+                if (/mp\.weixin\.qq\.com/.test(path)) {
+                    var urlHead = window.location.protocol === 'http:' ? 'http:' : 'https:'
+                    var url = urlHead + '//cors-anywhere.herokuapp.com/' + path
+                    let _this = this
+                    axios.get(url)
+                        .then(function (response) {
+                            var html = response.data;
+                            html = html.replace(/data-src/g, "src");
+                            var html_src = 'data:text/html;charset=utf-8,' + html;
+                            document.querySelector("#newsIframe").setAttribute("src", html_src);
+                            _this.$store.dispatch('showGeneralNews', false);
+                            _this.$store.dispatch('showNewsIframe', true);
+                            _this.articleLoading = false;
+                        })
+                        .catch(function (error) {
+                            _this.$message.error(error)
+                            _this.articleLoading = false;
+                        });
+                } else {
+                    document.querySelector("#newsIframe").setAttribute("src", path);
+                    this.$store.dispatch('showGeneralNews', false);
+                    this.$store.dispatch('showNewsIframe', true);
+                    this.articleLoading = false;
+                }
+            },
+            requestIndustryNews(pageIndex) {
+                var params = {
+                    'CategoryType': 5,
+                    'IsRecommend': 0,
+                    'PageIndex': pageIndex,
+                    'PageSize': 5
+                };
+                requestArticle(params).then(res => {
+                    //console.log('行业新闻全部');
+                    //console.log(res);
+                    this.allIndustryNewsData = res.Records;
+                    this.industryPageTotal = res.Total;
+                });
+            },
+            requestPlatformNews(pageIndex) {
+                var params = {
+                    'CategoryType': 6,
+                    'IsRecommend': 0
+                };
+                requestArticle(params).then(res => {
+                    //console.log('平台新闻全部');
+                    //console.log(res);
+                    this.allPlatformNewsData = res.Records;
+                    this.platformPageTotal = res.Total;
+                });
+            },
+            requestCompanyNews(pageIndex) {
+                var params = {
+                    'CategoryType': 4,
+                    'IsRecommend': 0,
+                    'PageIndex': pageIndex,
+                    'PageSize': 5
+                };
+                requestArticle(params).then(res => {
+                    //console.log('公司新闻全部');
+                    //console.log(res);
+                    this.allCompanyNewsData = res.Records;
+                    this.companyPageTotal = res.Total;
+                });
+            },
+            goAddIndustryNewsForm() {
+                this.$store.dispatch('addFormVisible');
+                this.newsIndex = 5;
+            },
+            goAddPlatformNewsForm() {
+                this.$store.dispatch('addFormVisible');
+                this.newsIndex = 6;
+            },
+            goAddCompanyNewsForm() {
+                this.$store.dispatch('addFormVisible');
+                this.newsIndex = 4;
+            },
+            nextPageIndustryNews(curPage) {
+                this.industryCurrentPage = curPage;
+                this.requestIndustryNews(this.industryCurrentPage);
+            },
+            nextPagePlatformNews(curPage) {
+                this.platformCurrentPage = curPage;
+                this.requestPlatformNews(this.platformCurrentPage);
+            },
+            nextPageCompanyNews(curPage) {
+                this.companyCurrentPage = curPage;
+                this.requestCompanyNews(this.companyCurrentPage);
+            },
+            modifyIndustryItem(o) {
+                getArticleDetail(o.ID)
+                    .then(res => {
+                        this.$store.dispatch('setFormContent', res.data);
+                        this.newsIndex = 5;
+                        this.$store.dispatch('isModify');
+                        this.$store.dispatch('addFormVisible');
+                    })
+                    .catch(function (error) {
+                        this.$message.error(error)
+                    });
+            },
+            modifyPlatformItem(o) {
+                getArticleDetail(o.ID)
+                    .then(res => {
+                        this.$store.dispatch('setFormContent', res.data);
+                        this.newsIndex = 6;
+                        this.$store.dispatch('isModify');
+                        this.$store.dispatch('addFormVisible');
+                    })                    
+                    .catch(function (error) {
+                        this.$message.error(error)
+                    });
+            },
+            modifyCompanyItem(o) {
+                getArticleDetail(o.ID)
+                    .then(res => {
+                        this.$store.dispatch('setFormContent', res.data);
+                        this.newsIndex = 4;
+                        this.$store.dispatch('isModify');
+                        this.$store.dispatch('addFormVisible');
+                    })
+                    .catch(function (error) {
+                        this.$message.error(error)
+                    });
+            },
+            deleteIndustryItem(o) {
+                deleteArticle(o.ID).then(res => {
+                    //console.log('删除新闻');
+                    //console.log(res);
+                    if (res.Code === 0) {
+                        this.$message.success('删除成功');
+                        this.requestIndustryNews(this.industryCurrentPage);
+                    } else {
+                        this.$message.error('未能删除');
+                    }
+                });
+            },
+            deletePlatformItem(o) {
+                deleteArticle(o.ID).then(res => {
+                    //console.log('删除新闻');
+                    //console.log(res);
+                    if (res.Code === 0) {
+                        this.$message.success('删除成功');
+                        this.requestPlatformNews(this.platformCurrentPage);
+                    } else {
+                        this.$message.error('未能删除');
+                    }
+                });
+            },
+            deleteCompanyItem(o) {
+                deleteArticle(o.ID).then(res => {
+                    //console.log('删除新闻');
+                    //console.log(res);
+                    if (res.Code === 0) {
+                        this.$message.success('删除成功');
+                        this.requestCompanyNews(this.companyCurrentPage);
+                    } else {
+                        this.$message.error('未能删除');
+                    }
+                });
+            }
+        },
+        mounted() {
+            this.requestIndustryNews(1);
+            this.requestPlatformNews(1);
+            this.requestCompanyNews(1);
+        }
+    };
+
+</script>
+<style scoped>
+    .main {
+        position: absolute;
+        left: 0;
+        top: 43px;
+        width: 100%;
+        height: 583px
+    }
+
+    .newsWrap {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 583px
+    }
+
+    .tabs-chose {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 94px;
+        height: 583px;
+        background-color: #EEEFF0
+    }
+
+    .tabs-content {
+        position: absolute;
+        left: 94px;
+        top: 0;
+        width: 1185px;
+        height: 583px;
+        border-left: 1px solid #EFEFEF;
+    }
+
+    .tabs-chose li {
+        width: 94px;
+        height: 60px;
+        background-color: RGBA(238, 239, 240, 1.00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .tabs-chose .active {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+        border-left: 6px solid #31BBFC;
+    }
+
+    .center-content {
+        width: 1080px;
+        margin: 0 auto;
+        height: 500px;
+        margin-top: 40px;
+        overflow-y: scroll;
+    }
+
+    .toolBox {
+        width: 1080px;
+        margin: 0 auto;
+        padding-top: 10px;
+    }
+
+    .item {
+        padding: 8px 0;
+        border-bottom: 1px solid #EFF0F1
+    }
+
+    .linkBox {
+        display: block;
+        width: 100%;
+        height: 80px;
+        position: relative
+    }
+
+    .linkImg {
+        position: absolute;
+        left: 0;
+        right: 0;
+        width: 126px;
+        height: 80px
+    }
+
+    .linkContent {
+        margin-left: 130px;
+        font-size: 16px;
+    }
+
+    .tabs-content .newsTitle {
+        position: relative;
+        left: 5px;
+        line-height: 0px
+    }
+
+    .tabs-content .newsTime {
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 12px;
+        line-height: 30px;
+    }
+
+    .tabs-content .hot {
+        display: inline-block;
+        width: 35px;
+        height: 20px;
+        margin-left: 5px;
+        text-align: center;
+        line-height: 20px;
+        background-color: #FBBB2C;
+        color: #FEF8ED;
+    }
+
+    .tabs-content .toolBtns {
+        margin-top: 8px;
+    }
+
+    .tabs-content .toolBtns button {
+        height: 25px;
+        padding: 0px 15px;
+    }
+
+    .formOne {
+        z-index: 2005
+    }
+
+    .navigation {
+        font-size: 16px;
+        padding-left: 18px;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        width: 100%;
+        padding-top: 10px;
+        border-bottom: 1px solid gray;
+    }
+
+    .navigation span:hover {
+        text-decoration: underline;
+        color: #42ABD8;
+    }
+
+    .page {
+        float: right;
+        margin-right: 45px;
+    }
+
+</style>

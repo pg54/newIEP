@@ -1,0 +1,354 @@
+<template>
+    <div class="paperform-form">
+        <table class="tg">
+            <tr>
+                <th class="tg-yw4l tranFourBorders" colspan="7">
+                    姓名：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </th>
+                <th class="tg-nrw8 tranThreeBorders" colspan="4">各项总和#</th>
+                <th class="tg-031e">6</th>
+                <th class="tg-031e">7</th>
+                <th class="tg-031e">6</th>
+                <th class="tg-031e">14</th>
+                <th class="tg-031e">11</th>
+                <th class="tg-031e tranThreeBorders">#</th>
+                <th class="tg-031e">10</th>
+                <th class="tg-031e">11</th>
+                <th class="tg-031e">10</th>
+                <th class="tg-031e">11</th>
+                <th class="tg-031e">14</th>
+                <th class="tg-031e">20</th>
+                <th class="tg-yw4l">19</th>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="7">
+                    性别：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l tranThreeBorders" colspan="4">合计数A</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l tranThreeBorders">P</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="7">
+                    年龄：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l tranThreeBorders" colspan="4">合计数M</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l tranThreeBorders">E</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="7">
+                    出生日期：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l tranThreeBorders" colspan="4">合计数S</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l tranThreeBorders">F</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="7">
+                    测试日期：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l tranFourBorders" colspan="17"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="7">
+                    测试者：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l tranFourBorders" colspan="10"></td>
+                <td class="tg-baqh tranFourBorders" colspan="5">发展评分</td>
+                <td class="tg-baqh tranFourBorders" colspan="2">
+                    <span class="fourBorder">71</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="7">
+                    住址：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l tranFourBorders" colspan="17"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="7">
+                    父母姓名：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l tranFourBorders" colspan="17"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="7">
+                    联系电话：
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l tranFourBorders" colspan="17"></td>
+            </tr>
+        </table>
+
+        <table class="tg">
+            <thead>
+            <tr>
+                <th class="tg-yw4l tranThreeBorders" colspan="11" rowspan="4"></th>
+                <th class="tg-s6z2" rowspan="4">情<br>感</th>
+                <th class="tg-031e" rowspan="4">人<br>际<br>关<br>系</th>
+                <th class="tg-031e" rowspan="4">物<br>品<br>喜<br>好</th>
+                <th class="tg-031e" rowspan="4">感<br>觉<br>模<br>式</th>
+                <th class="tg-031e" rowspan="4">语<br>言</th>
+                <th class="tg-031e" rowspan="4">
+                    &nbsp;&nbsp;&nbsp;
+                </th>
+                <th class="tg-031e" rowspan="4">模<br>仿</th>
+                <th class="tg-031e" rowspan="4">知<br>觉</th>
+                <th class="tg-031e" rowspan="4">精<br>细<br>动<br>作</th>
+                <th class="tg-031e" rowspan="4">粗<br>大<br>动<br>作</th>
+                <th class="tg-031e" rowspan="4">手<br>眼<br>协<br>调</th>
+                <th class="tg-031e" rowspan="4">认<br>知<br>表<br>现</th>
+                <th class="tg-031e" rowspan="4">口<br>语<br>认<br>知</th>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+            </tr>
+            </thead>
+            <tr>
+                <td class="tg-yw4l leftAlign tranFourBorders" colspan="11">
+                    四件式图形拼图
+                </td>
+                <td class="tg-yw4l" colspan="13" style="border-right: transparent"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l leftAlign tranThreeBorders" colspan="11">
+                    9 拼出拼图
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l leftAlign tranThreeBorders" colspan="11">
+                    10 不跨过中线（无/轻/重）
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="24"></td>
+            </tr>
+
+            <tr></tr>
+            <tr>
+                <td class="tg-yw4l tranThreeBorders" colspan="11" rowspan="3"></td>
+                <th class="tg-031e" rowspan="2">
+                    情<br>感
+                </th>
+                <td class="tg-031e" rowspan="2">关<br>系</td>
+                <td class="tg-031e" rowspan="2">喜<br>好</td>
+                <td class="tg-031e" rowspan="2">感<br>觉</td>
+                <td class="tg-031e" rowspan="2">语<br>言</td>
+                <td class="tg-031e onlySides" rowspan="2"></td>
+                <td class="tg-031e" rowspan="2">模<br>仿</td>
+                <td class="tg-031e" rowspan="2">知<br>觉</td>
+                <td class="tg-031e" rowspan="2">细<br>动</td>
+                <td class="tg-031e" rowspan="2">粗<br>动</td>
+                <td class="tg-031e" rowspan="2">协<br>调</td>
+                <td class="tg-031e" rowspan="2">认<br>知</td>
+                <td class="tg-031e" rowspan="2">口<br>语</td>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+                <td class="tg-yw4l">0</td>
+                <td class="tg-yw4l">0</td>
+                <td class="tg-yw4l">0</td>
+                <td class="tg-yw4l">2</td>
+                <td class="tg-yw4l">0</td>
+                <td class="tg-yw4l onlySides"></td>
+                <td class="tg-yw4l">2</td>
+                <td class="tg-yw4l">5</td>
+                <td class="tg-yw4l">0</td>
+                <td class="tg-yw4l">0</td>
+                <td class="tg-yw4l">3</td>
+                <td class="tg-yw4l">5</td>
+                <td class="tg-yw4l">5</td>
+            </tr>
+            <tr>
+                <td class="tg-lqy6 rightAlign tranThreeBorders" colspan="11">A</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l onlySides">P</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-lqy6 rightAlign tranThreeBorders" colspan="11">M</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l onlySides">E</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-lqy6 rightAlign tranThreeBorders" colspan="11">S</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l onlySides">F</td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+        </table>
+
+
+
+    </div>
+
+</template>
+
+<script>
+    export default {
+        name: 'printCECP',
+        props: ['urlData'],
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+
+
+        },
+        methods: {
+
+        }
+    }
+</script>
+<style scoped>
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-baqh{text-align:center;vertical-align:top}
+    .tg .tg-nrw8{font-size:14px}
+    .tg .tg-yw4l{vertical-align:top}
+
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center}
+    .tg .tg-yw4l{vertical-align:top}
+
+    .leftAlign {
+        text-align: left;
+    }
+    .rightAlign {
+        text-align: right;
+    }
+
+    .tranFourBorders {
+        border: transparent;
+    }
+    .tranThreeBorders {
+        border-top: transparent;
+        border-bottom: transparent;
+        border-left: transparent;
+    }
+    .onlyBottom {
+        border-top: transparent;
+        border-right: transparent;
+        border-left: transparent;
+    }
+    .onlySides {
+        border-top: transparent;
+        border-bottom: transparent;
+    }
+
+    .fourBorder {
+        display: block;
+        border: 1px solid #000000;
+    }
+
+</style>

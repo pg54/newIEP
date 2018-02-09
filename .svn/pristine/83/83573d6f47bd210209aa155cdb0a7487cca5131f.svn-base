@@ -1,0 +1,937 @@
+<template>
+    <div class="tabs">
+        <div class="tabs-chose">
+            <li v-for="(tab, index) in tabs" :class="{active : currentTab === index }" @click="tabSelect(index)">{{tab}}
+            </li>
+        </div>
+    
+        <!--教学计划列表-->
+        <div class="tabs-content" v-show="showTabsContentFlag">
+            <div v-for="(tab,index) in tabs" class="tab-content" v-show="currentTab === index">
+                <!--集体计划-->
+                <div v-if="index === 0">
+                    <div class="center-content">
+                        <div class="toolBox">
+                            <div class="addWrap">
+                                <el-button @click="addGroupPlan">新增计划</el-button>
+                            </div>
+                        </div>
+    
+                        <div class="newsList">
+                            <div v-for="o in groupPlanData.Records" class="item">
+                                <div class="planBox">
+                                    <div class="planBoxLeft">
+                                        <span class="planTitle">{{o.Title}}</span>
+                                    </div>
+                                    <div class="planBoxRight">
+                                        <el-button @click="goPlanDetails(o.ID)">详情</el-button>
+                                        <el-button @click="modifyGroupPlan(o)">修改</el-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="float: right">
+                            <el-pagination @current-change="requestGroupPlanData" layout="prev, pager, next" :total="groupPlanData.Total">
+                            </el-pagination>
+                        </div>
+                    </div>
+                </div>
+    
+                <!--个人计划-->
+                <div v-if="index === 1">
+                    <div class="center-content">
+                        <div class="toolBox">
+                            <div class="addWrap">
+                                <el-button @click="addPersonoalPlan">新增计划</el-button>
+                            </div>
+                        </div>
+    
+                        <div class="newsList">
+                            <div v-for="o in personalPlanData.Records" class="item">
+                                <div class="planBox">
+                                    <div class="planBoxLeft">
+                                        <span class="planTitle">{{o.Title}}</span>
+                                    </div>
+                                    <div class="planBoxRight">
+                                        <el-button @click="goPlanDetails(o.ID)">详情</el-button>
+                                        <el-button @click="modifyPersonoalPlan(o)">修改</el-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="float: right">
+                            <el-pagination @current-change="requestPersonalPlanData" layout="prev, pager, next" :total="personalPlanData.Total">
+                            </el-pagination>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <router-view></router-view>
+    
+        <!--新增计划Dialog-->
+        <el-dialog title="新增计划" v-model="addPlanDialogFlag" :close-on-click-modal="false" :show-close="false" size="large">
+    
+            <el-form ref="form" :model="planFormData" label-width="80px">
+    
+                <el-form-item label="标题">
+                    <el-input v-model="planFormData.Title"></el-input>
+                </el-form-item>
+    
+                <el-form-item label="时间">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="planFormData.StartDate" style="width: 60%;"></el-date-picker>
+                </el-form-item>
+    
+                <el-form-item label="课程">
+                    <div class="checkBoxWrap">
+                        <el-checkbox-group v-model="planFormData.Courses">
+                            <el-checkbox v-for="item in courseData" :label="item.ID" class="courseCheckBox">{{ item.Name }}</el-checkbox>
+                        </el-checkbox-group>
+                    </div>
+    
+                </el-form-item>
+    
+                <div v-show="!isPeronalPlanFlag">
+                    <el-form-item label="学生">
+                        <el-select v-model="planFormData.GroupID" placeholder="请选择小组" @change="groupChange">
+                            <el-option v-for="(item, index) in groupData" :key="item.GroupID" :label=item.groupName :value=item.groupID>
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </div>
+    
+                <div v-show="isPeronalPlanFlag">
+                    <el-form-item label="学生">
+                        <el-select v-model="planFormData.GroupID" placeholder="请选择小组" @change="groupChange">
+                            <el-option v-for="(item, index) in groupData" :key="item.groupID" :label=item.groupName :value=item.groupID>
+                            </el-option>
+                        </el-select>
+    
+                        <el-select v-model="planFormData.StudentID" placeholder="请选择患者">
+                            <el-option v-for="item in patientData" :key="item.ID" :label=item.Name :value=item.ID>
+                            </el-option>
+                        </el-select>
+    
+                    </el-form-item>
+                </div>
+    
+            </el-form>
+    
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="planCancel()">返回</el-button>
+                <el-button type="primary" @click.native="planSubmit()">提交</el-button>
+            </div>
+        </el-dialog>
+    
+        <!--教学计划详情页-->
+        <div class="planWrap" v-show="showPlanDetailsFlag">
+            <vueTab :tabtitles="['学期计划','月计划','周计划']" :current-page="1">
+                <div class="tab-content-container">
+    
+                    <div class="center-content">
+                        <div class="toolBox">
+    
+                        </div>
+                        <div class="contentBox">
+                            <div v-for="(item, index) in planDetailsData.TremPlans" class="item">
+                                <div class="titleBox">
+                                    <span>{{ item.Name}}</span>
+    
+                                    <el-button @click="goPlanLineDetails(item)">详情</el-button>
+                                    <el-button @click="editMouthPlan(item)">编辑月计划</el-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
+    
+                <div class="tab-content-container">
+    
+                    <div class="center-content">
+                        <div class="toolBox">
+    
+                        </div>
+                        <div class="contentBox">
+                            <div v-for="(item, index) in planDetailsData.MonthPlans" class="item">
+                                <div class="titleBox">
+                                    <span>{{ item.Name}}</span>
+                                    <el-button @click="goPlanLineDetails(item)">详情</el-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="tab-content-container">
+                    <div class="center-content">
+                        <div class="toolBox">
+    
+                        </div>
+                        <div class="contentBox">
+                            <div v-for="(item, index) in planDetailsData.WeekPlans" class="item">
+                                <div class="titleBox">
+                                    <span>{{ item.Name}}</span>
+
+                                    <el-button @click="goPlanLineDetails(item)">详情</el-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </vueTab>
+    
+        </div>
+    
+        <!--教学计划Item详情-->
+        <div class="planItem-content" v-show="showPlanItemContentFlag">
+            <div class="toolBox">
+                <el-button @click="editCourseDetails()">编辑课程</el-button>
+            </div>
+            <div class="contentBox">
+                <div v-for="(item, index) in planItemContentsData" class="item">
+                    <div class="titleBox">
+                        <p>{{ item.Name}}</p>
+                    </div>
+                    <div class="planBox">
+                        <p>教学内容： {{ item.TeachContent }}</p>
+                        <p>教学目标： {{ item.TeachTarget }}</p>
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+    
+        <!--教学计划主题、章节编辑-->
+        <div class="course-content" v-show="showCourseContentFlag">
+            <div class="iepmultiChose">
+                <div class="choseBoxHeader">
+                    <span>主题</span>
+                    <span>月份一</span>
+                    <span>月份二</span>
+                    <span>月份三</span>
+                    <span>月份四</span>
+                    <span>月份五</span>
+                </div>
+                <div v-for="(course, courseIndex) in planCourseData">
+                    <div>
+                        <p>{{ course.Name }}</p>
+                        <div v-for="chapt in course.Child">
+                            <span>{{ chapt.Name }}</span>
+                            <input :name="course.Name" type="checkbox" :value="chapt.ID" />
+                            <input :name="course.Name" type="checkbox" :value="chapt.ID" />
+                            <input :name="course.Name" type="checkbox" :value="chapt.ID" />
+                            <input :name="course.Name" type="checkbox" :value="chapt.ID" />
+                            <input :name="course.Name" type="checkbox" :value="chapt.ID" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolBox">
+                    <el-button @click="submitCourseData">提交课程</el-button>
+                </div>
+    
+            </div>
+        </div>
+    
+    </div>
+</template>
+<script>
+import vueTab from '../../components/vue-tab.vue'
+import api from '../../api/index.js'
+import { Loading } from 'element-ui';
+
+export default {
+    name: 'iepPlan',
+    components: {
+        vueTab,
+    },
+    computed: {
+    },
+    data() {
+        return {
+            currentTab: 0,
+            tabs: ['集体计划', '个人计划'],
+            groupPlanCurrentPage: 1,
+            persononalCurrentPage: 1,
+            groupPlanData: '',//集体计划ListData
+            personalPlanData: '',//个人计划ListData
+            addPlanDialogFlag: false,
+            planFormData: {
+                ID: '',
+                Title: "",
+                Template: '',
+                Type: '',
+                StartDate: "",
+                Courses: [],
+                GroupID: '',
+                StudentID: ''
+            },
+            courseData: [],
+            patientData: [],
+            groupData: [],
+            isPeronalPlanFlag: false,//当前选项卡是否是个人计划
+            showPlanDetailsFlag: false,//设置是否显示教学计划详情页
+            showTabsContentFlag: true,
+            planDetailsData: '',//教学计划详情Data
+            showPlanItemContentFlag: false,//设置是否显示教学计划Item详情页
+            planItemContentsData: '',//教学计划Item详情Data
+            showCourseContentFlag: false,//设置是否显示编辑教学计划主题、章节页
+            planCourseData: [],//已选择教学计划主题、章节Data
+            currentPlanLine: '',
+            selectCourseCollection: [],//新选主题、章节
+        }
+    },
+    methods: {
+        //切换选项卡
+        tabSelect: function (index) {
+            this.currentTab = index
+            this.showPlanDetailsFlag = false;
+            this.showTabsContentFlag = true;
+            this.showCourseContentFlag = false;
+            this.showPlanItemContentFlag = false;
+        },
+        addGroupPlan: function () {
+            this.addPlanDialogFlag = true;
+            this.isPeronalPlanFlag = false;
+        },
+        //更新集体计划
+        modifyGroupPlan: function (item) {
+            api.getPlanDetail(item.ID).then(res => {
+                this.addPlanDialogFlag = true;
+                this.isPeronalPlanFlag = false;
+                this.planFormData.ID = res.ID;
+                this.planFormData.Title = res.Title;
+                this.planFormData.StudentID = res.StudentID;
+                this.planFormData.GroupID = res.GroupID;
+                this.planFormData.Type = res.Type;
+                this.planFormData.StartDate = res.StartDate;
+                this.planFormData.Template = res.Template;
+                this.planFormData.Courses = this.getCourseArray(res.Courses);
+            });
+        },
+        //添加个人计划
+        addPersonoalPlan: function () {
+            this.addPlanDialogFlag = true;
+            this.isPeronalPlanFlag = true;
+        },
+        //更新个人计划
+        modifyPersonoalPlan: function (item) {
+            api.getPlanDetail(item.ID).then(res => {
+                this.addPlanDialogFlag = true;
+                this.isPeronalPlanFlag = true;
+                this.planFormData.ID = res.ID;
+                this.planFormData.Title = res.Title;
+                this.planFormData.StudentID = res.StudentID;
+                var isFind = false;
+                for (var i = 0; i < this.groupData.length; i++) {
+                    for (var j = 0; j < this.groupData[i].groupPatients.length; j++) {
+                        if (this.groupData[i].groupPatients[j].ID == res.StudentID) {
+                            this.planFormData.GroupID = this.groupData[i].groupID;
+                            isFind = true;
+                            break;
+                        }
+                    }
+                    if (isFind)
+                        break;
+                }
+                this.planFormData.Type = res.Type;
+                this.planFormData.StartDate = res.StartDate;
+                this.planFormData.Template = res.Template;
+                this.planFormData.Courses = this.getCourseArray(res.Courses);
+                this.groupChange(this.planFormData.GroupID);
+            });
+        },
+        //查看教学计划详情
+        goPlanDetails: function (id) {
+            this.requestPlanDetails(id);
+            this.showPlanDetailsFlag = true;
+            this.showTabsContentFlag = false;
+        },
+        //获取教学计划详情，包含学期、月、周计划信息
+        requestPlanDetails(id) {
+            api.getPlanDetail(id).then(res => {
+                this.planDetailsData = res;
+                console.log(this.planDetailsData);
+            });
+        },
+        goPlanLineDetails(item) {
+            this.showPlanDetailsFlag = false;
+            this.showTabsContentFlag = false;
+            this.showPlanItemContentFlag = true;
+            this.requestItemDetails(item.ID);
+            this.currentPlanLine = item;
+        },
+        // 直接编辑月计划
+        editMouthPlan(item) {
+            this.requestItemDetails(item.ID);
+            this.currentPlanLine = item;
+            api.getSelectCourse(item.ID).then(res => {
+                console.log('已选中的内容');
+                console.log(res);
+            });
+            this.getPlanCourseDetails(item.ID);
+        },
+        //获取学期、月、周计划详情
+        requestItemDetails(id) {
+            api.getPlanItemDetail(id).then(res => {
+                this.planItemContentsData = res.List;
+                console.log(this.planItemContentsData);
+            });
+        },
+        //编辑月、周计划的主题章节
+        editCourseDetails() {
+            this.showPlanDetailsFlag = false;
+            this.showTabsContentFlag = false;
+            this.showPlanItemContentFlag = false;
+            this.showCourseContentFlag = true;
+            this.getPlanCourseDetails();
+        },
+        //通过LineID获取当前计划的主题、章节
+        getPlanCourseDetails(lineID) {
+            console.log(lineID);
+            var params = {
+                lineID: lineID
+            };
+            api.getCourseDetails(params).then(res => {
+                console.log('获取吗月计划的返回值');
+                console.log(res);
+                this.planCourseData = res.List;
+                this.showPlanDetailsFlag = false;
+                this.showTabsContentFlag = false;
+                this.showPlanItemContentFlag = false;
+                this.showCourseContentFlag = true;
+//                for (let i = 0; i < res.List.length; i++) {
+//                    this.selectCourseCollection.push([]);
+//                }
+//                console.log(res.List);
+            });
+        },
+        //提交计划所选主题、章节
+        submitCourseData() {
+            let len = this.selectCourseCollection.length;
+            let originData = this.selectCourseCollection;
+            let data = [];
+            for (let i = 0; i < len; i++) {
+                data = data.concat(originData[i]);
+            }
+            let params = {
+                LineID: this.currentPlanLine.ID,
+                CourseIds: data
+            };
+            editSubPlan(params).then(res => {
+                if (res.Status) {
+                    this.$message.success(res.Message);
+                    this.showPlanDetailsFlag = false;
+                    this.showTabsContentFlag = false;
+                    this.showPlanItemContentFlag = true;
+                    this.showCourseContentFlag = false;
+                    this.selectCourseCollection = [];
+                    this.requestItemDetails(this.currentPlanLine.ID);
+                } else {
+                    this.$message.error('提交失败');
+                }
+            });
+        },
+        //获取集体计划列表
+        requestGroupPlanData: function (pageIndex) {
+            var params = {
+                'pageIndex': pageIndex,
+                'pageSize': 5,
+                'planType': 0
+            };
+            api.drTeachingPlan(params).then(res => {
+                this.groupPlanData = res.data;
+            });
+        },
+        //获取个人计划列表
+        requestPersonalPlanData: function (pageIndex) {
+            var params = {
+                'pageIndex': pageIndex,
+                'pageSize': 5,
+                'planType': 1
+            };
+            api.drTeachingPlan(params).then(res => {
+                this.personalPlanData = res.data;
+            });
+        },
+        getCheckBoxContents() {
+            api.getIEPCourses().then(res => {
+                this.courseData = res.data.List;
+            });
+        },
+        //获取已选中课程
+        getCourseArray(obj) {
+            let arr = Object.keys(obj);
+            let newArr = [];
+            for (let i = 0; i < arr.length; i++) {
+                let num = Number(arr[i]);
+                newArr.push(num);
+            }
+            return newArr;
+        },
+        groupChange(id) {
+            if (this.isPeronalPlanFlag) {
+                for (var i = 0; i < this.groupData.length; i++) {
+                    if (this.groupData[i].groupID == id) {
+                        this.patientData = this.groupData[i].groupPatients;
+                        break;
+                    }
+                }
+            }
+        },
+        //获取当前医生的病人组
+        getGroups() {
+            api.getDoctorPatientList().then(res => {
+                var groupInfo = res.data.List;
+                for (var i = 0, j = groupInfo.length; i < j; i++) {
+                    var obj = {
+                        'groupName': groupInfo[i].Name,
+                        'groupID': groupInfo[i].ID,
+                        'groupPatients': groupInfo[i].Agents
+                    };
+                    this.groupData.push(obj);
+                }
+            });
+        },
+        planCancel() {
+            this.resetFormState();
+        },
+        //保存教学计划
+        planSubmit() {
+            this.planFormData.Template = 0;
+
+            if (this.isPeronalPlanFlag) {
+                this.planFormData.Type = 1;
+            } else {
+                this.planFormData.Type = 0;
+            }
+
+            if (this.planFormData.Courses.length == 0) {
+                console.log('请选择课程后提交！');
+                return;
+            }
+            if (this.planFormData.StudentID != '' && this.planFormData.StudentID != null) {
+                this.planFormData.GroupID = null;
+            }
+            var params = this.planFormData;
+            api.modifyPlan(params).then(res => {
+                if (res.Status) {
+                    this.$message.success(res.Message);
+                } else {
+                    this.$message.error(res.Message);
+                }
+            });
+            this.resetFormState();
+        },
+        resetFormState() {
+            this.planFormData = {
+                ID: '',
+                Title: "",
+                Template: '',
+                Type: '',
+                StartDate: "",
+                Courses: [],
+                GroupID: '',
+                StudentID: ''
+            };
+            this.patientData = [];
+            this.addPlanDialogFlag = false;
+        }
+    },
+    created: function () {
+        api.setToken();
+        this.requestPersonalPlanData(1);
+        this.getCheckBoxContents();
+        this.getGroups();
+        this.requestGroupPlanData(1);
+    },
+    mounted() {
+  
+    }
+
+};
+</script>
+<style scoped>
+/***教学计划列表style***/
+
+.tabs {
+    position: relative;
+    width: 100%;
+    height: 626px
+}
+
+.tabs-chose {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 105px;
+    height: 626px;
+    border-right: 1px solid #eeeeee
+}
+
+.tabs-content {
+    position: absolute;
+    ;
+    width: 1080px;
+    height: 626px;
+    top: 0;
+    left: 106px;
+    z-index: 0;
+    overflow-y: scroll;
+}
+
+.tabs-chose li {
+    width: 105px;
+    height: 70px;
+    text-align: center;
+    line-height: 70px;
+    cursor: pointer;
+}
+
+.icon-msnui-cloud-upload {
+    font-size: 60px
+}
+
+.tabs-chose .active {
+    color: #48C4FC;
+}
+
+.center-content {
+    width: 100%;
+    padding: 20px;
+}
+
+.toolBox {
+    width: 1020px;
+    height: 54px
+}
+
+.item {
+    position: relative;
+    width: 1020px;
+    height: 104px;
+    margin-bottom: 16px;
+}
+
+.planBox {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    width: 100%;
+    height: 72px;
+    background-color: #E9F8FF;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+
+.planTitle {
+    font-size: 16px;
+}
+
+.addWrap {
+    float: right
+}
+
+.planBoxLeft {
+    position: absolute;
+    border-right: 1px dotted #30BCFC;
+    width: 252px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
+}
+
+.planBoxRight {
+    position: absolute;
+    top: 0;
+    left: 510px;
+    width: 510px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+.iepmultiChose {width: 1030px;margin: 10px auto}
+.choseBoxHeader {width: 100%;height: 42px}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***教学计划详情Style****/
+
+.planWrap {
+    position: absolute;
+    ;
+    width: 1080px;
+    height: 626px;
+    top: 0;
+    left: 106px;
+    z-index: 10;
+    overflow-y: scroll;
+}
+
+.center-content {
+    width: 1080px;
+    padding: 30px;
+    height: 540px;
+}
+
+.item {
+    position: relative;
+    width: 1020px;
+    height: 104px;
+    margin-bottom: 20px
+}
+
+.titleBox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #3BBDF9;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    border-radius: 6px 6px 6px 6px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.planBox {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    width: 100%;
+    height: 72px;
+    background-color: #E9F8FF;
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+}
+
+.planBoxLeft {
+    position: absolute;
+    border-right: 1px dotted #30BCFC;
+    width: 252px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
+}
+
+.planBoxRight {
+    position: absolute;
+    top: 0;
+    left: 510px;
+    width: 510px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*教学计划ItemStyle*/
+
+.planItem-content {
+    position: absolute;
+    ;
+    width: 1080px;
+    height: 626px;
+    top: 0;
+    left: 106px;
+    z-index: 20;
+    overflow-y: scroll;
+}
+
+.item {
+    position: relative;
+    width: 1020px;
+    height: 104px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.titleBox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 32px;
+    background-color: #3BBDF9;
+}
+
+.toolBox {
+    margin-bottom: 10px;
+    margin-top: 10px
+}
+
+.planBox {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    width: 100%;
+    height: 72px;
+    background-color: #E9F8FF;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center
+}
+
+.planBoxLeft {
+    position: absolute;
+    border-right: 1px dotted #30BCFC;
+    width: 252px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
+}
+
+.planBoxRight {
+    position: absolute;
+    top: 0;
+    left: 510px;
+    width: 510px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*教学计划主题、章节编辑*/
+
+.course-content {
+    position: absolute;
+    ;
+    width: 1080px;
+    height: 626px;
+    top: 0;
+    left: 106px;
+    z-index: 40;
+    overflow-y: scroll;
+}
+
+.toolBox {
+    margin-bottom: 10px;
+    margin-top: 10px
+}
+
+.planBox {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    width: 100%;
+    height: 72px;
+    background-color: #E9F8FF;
+}
+
+.courseContent {
+    position: absolute;
+    top: 104px;
+    right: 0;
+    width: 100%;
+    height: 100px;
+    background-color: #3BBDF9;
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+}
+
+.planBoxLeft {
+    position: absolute;
+    border-right: 1px dotted #30BCFC;
+    width: 252px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
+}
+
+.planBoxRight {
+    position: absolute;
+    top: 0;
+    left: 510px;
+    width: 510px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+</style>

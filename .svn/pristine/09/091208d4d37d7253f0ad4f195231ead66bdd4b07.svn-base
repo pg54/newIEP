@@ -1,0 +1,99 @@
+<template>
+    <div>
+        <resultPaper :paticentID="TestPaticentID" :testID="TesttestID"></resultPaper>
+    </div>
+</template>
+<script>
+    import resultPaper from '../../rehabilitationFile/RF-Assessment/child/resultPaper.vue';
+    export default {
+        name: 'testResult',
+        components: {
+            resultPaper
+        },
+        data() {
+            return {
+                TestPaticentID: '',
+                TesttestID: ''
+            };
+        },
+        methods: {
+           setComponProps() {
+               this.TesttestID = this.$route.params.testID;
+               this.TestPaticentID = this.$route.params.patiend_id;
+           }
+        },
+        created() {
+            this.setComponProps();
+        }
+    };
+</script>
+<style scoped>
+    .testPaper {position: absolute;width: 100%;top: 42px;left: 0;height: 583px;z-index: 10;}
+    .toolBox {width: 1180px;margin: 0 auto;height: 66px;position: absolute;top: 0;left: 0;}
+    .formBox {width: 100%;height: 517px;position: absolute;left: 0;top: 66px;}
+    .blockItem {display: inline-flex;height: 60px;margin-right: 20px;justify-content: center;align-items: center}
+    .tabs {position: absolute;width: 1180px;height: 517px;top: 0;left: 50px;border-radius: 6px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);}
+    .tabs-chose {position: absolute;width: 94px;height: 517px;background-color: #EEEFF0;border-right: 1px solid #EFEFEF;}
+    .secondLevel {position: absolute;width: 106px;height: 517px;left: 94px;top: 0}
+    .questionsBox {position: absolute;width: 900px;height: 517px;left: 106px;top: 0;overflow-y: scroll;border-left: 1px solid #cccccc}
+    .questiones {padding-left: 68px}
+    .tab-content {
+        width: 1000px;
+        margin: 30px auto;
+    }
+    .tabs-chose li{
+        width: 94px;
+        height: 60px;
+        background-color: RGBA(238, 239, 240, 1.00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .tabs-chose .active {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+        border-left: 6px solid #31BBFC;
+    }
+    .chaptTitle {
+        width: 106px;
+        height: 40px;
+        font-size: 14px;
+        padding-left: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .secondActive {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+    }
+    .optionsSpace {width: 100%;height: 20px}
+    .testWrap {width: 100px}
+    .questionDescrib {font-size: 16px;margin-top: 24px;margin-bottom: 12px}
+
+    .sectionhasAnswered {
+        width: 18px;
+        height: 18px;
+        background-image: url("../../../assets/images/iep/选中选框.png");
+        background-repeat: no-repeat;
+    }
+    .radioclass {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+    .simbleBox {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        background-image: url("../../../assets/images/serviceToolImg/默认选框.png");
+    }
+    input[type=radio]:checked + label {
+        background-image: url("../../../assets/images/serviceToolImg/选中选框.png");
+    }
+</style>

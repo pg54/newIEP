@@ -1,0 +1,180 @@
+<template>
+    <div class="iepScheduleBox">
+        <div class="pageNavbar">
+            <span style="color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span style="cursor: none;color: black">课程表&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+        </div>
+        <div class="scheduleBox">
+            <el-button @click="addScheduleItem">添加课程</el-button>
+            <el-dialog title="添加课程" :visible.sync="scheduleAddVisible" @close="resetScheduleForm">
+                <el-form ref="form" :model="scheduleAddForm" label-width="80px">
+                    <el-form-item label="课程名称">
+                        <el-col :span="13">
+                            <el-input v-model="scheduleAddForm.Name"></el-input>
+                        </el-col>
+                    </el-form-item>
+
+
+
+                    <el-form-item label="上课时间" v-for="item in schedulePeriod">
+
+                        <el-row :gutter="20">
+
+                            <el-col :span="5">
+                                <el-time-picker  placeholder="开始时间" v-model="item.classStart"
+                                                 format="HH:mm"
+                                                 :picker-options="{selectableRange: '08:30:00 - 20:30:00'}"
+                                                 style="width: 100%;"></el-time-picker>
+                            </el-col>
+                            <el-col class="line" :span="1">-</el-col>
+                            <el-col :span="5">
+                                <el-time-picker  placeholder="结束时间" v-model="item.classStop"
+                                                 format="HH:mm"
+                                                 :picker-options="{selectableRange: '08:30:00 - 20:30:00'}"
+                                                 style="width: 100%;"></el-time-picker>
+                            </el-col>
+                            <el-col class="line" :span="1">
+                                <el-button @click="addSchedulePeriod">增加时间段</el-button>
+                            </el-col>
+
+                        </el-row>
+                        <p>{{ item.classStart }}</p>
+                        <p>{{ item.classStop }}</p>
+
+
+                    </el-form-item>
+
+                    <el-form-item label="课程安排">
+                        <el-checkbox-group v-model="days">
+                            <el-checkbox label="周一" ></el-checkbox>
+                            <el-checkbox label="周二" ></el-checkbox>
+                            <el-checkbox label="周三" ></el-checkbox>
+                            <el-checkbox label="周四" ></el-checkbox>
+                            <el-checkbox label="周五" ></el-checkbox>
+                            <el-checkbox label="周六" ></el-checkbox>
+                            <el-checkbox label="周日" ></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    {{ days }}
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button @click.native="scheduleAddVisible = false">返回</el-button>
+                    <el-button type="primary"  @click="scheduleSubmit()">提交课程</el-button>
+                </div>
+            </el-dialog>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        name: 'iepSchedule',
+        data() {
+            return {
+                scheduleAddVisible: false, //切换添加课程表弹窗
+                scheduleAddForm: {
+                    ID: '',
+                    Name: '',
+                    Lines: [],
+                },
+                days: [],
+                schedulePeriod: [
+                    {classStart: '' ,classStop: ''}
+                ],
+            };
+        },
+        computed: {
+        },
+        methods: {
+            addScheduleItem() {
+                this.scheduleAddVisible = true
+            },
+            addSchedulePeriod() {
+                this.schedulePeriod.push({classStart: '' ,classStop: ''});
+            },
+            scheduleSubmit() {
+                let formatDays = [];
+                for (let i=0;i<this.days.length;i++) {
+                    let foo = this.outputFormatDay(this.days[i])
+                    formatDays.push(foo)
+                }
+
+                for (let i=0;i<this.schedulePeriod.length;i++) {
+                    console.log('输出时间');
+                    console.log(this.schedulePeriod[i].classStart);
+                    console.log(this.schedulePeriod[i].classStop);
+                }
+
+
+
+
+
+                this.scheduleAddVisible = false;
+            },
+            resetScheduleForm() {
+
+            },
+            outputFormatDay(str) {
+                let foo;
+                switch (str) {
+                    case '周一':
+                        foo = {'Mon': '周一'}
+                        break;
+                    case '周二':
+                        foo = {'Tue': '周二'}
+                        break;
+                    case '周三':
+                        foo = {'Wed': '周三'}
+                        break;
+                    case '周四':
+                        foo = {'Thu': '周四'}
+                        break;
+                    case '周五':
+                        foo = {'Fri': '周五'}
+                        break;
+                    case '周六':
+                        foo = {'Sat': '周六'}
+                        break;
+                    case '周日':
+                        foo = {'Sun': '周日'}
+                        break;
+                }
+                return foo;
+            }
+        },
+        components: {
+        },
+        mounted() {
+        }
+    };
+</script>
+<style scoped>
+    .iepScheduleBox {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    .pageNavbar {
+        position: absolute;
+        left: -94px;
+        top: 0;
+        width: 1280px;
+        height: 42px;
+        border-bottom: 1px solid #cccccc;
+    }
+    .scheduleBox {
+        position: absolute;
+        left: 0;
+        top: 43px;
+        width: 1185px;
+        height: 583px;
+    }
+    .pageNavbar span {
+        font-size: 16px;
+        cursor: pointer;
+        line-height: 42px;
+    }
+    .pageNavbar span:hover {
+        color: rgb(66, 171, 216);
+    }
+
+</style>

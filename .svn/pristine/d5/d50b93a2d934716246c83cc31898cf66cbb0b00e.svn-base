@@ -1,0 +1,25 @@
+/**
+ * Created by pangang on 2017/4/23.
+ */
+import * as types from '../../mutation_type';
+import { getDoctorPatientList } from '../../../api/api';
+export default {
+  addPatientList({ commit }) {
+    var arr = [];
+    getDoctorPatientList().then(res => {
+      var groupInfo = res.data.List;
+      for (var i = 0, j = groupInfo.length; i < j; i++) {
+        var obj = {
+          'groupName': groupInfo[i].Name,
+          'groupID': groupInfo[i].ID,
+          'groupPatients': groupInfo[i].Agents
+        };
+        arr.push(obj);
+      }
+    });
+    commit(types.RECORD_GROUPINFO, arr);
+  },
+  emptyPatientList({ commit }) {
+    commit(types.EMPTY_GROUPINFO);
+  }
+};

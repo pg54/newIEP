@@ -1,0 +1,164 @@
+<template>
+  <div class="contentWrap">
+      <div class="center-content">
+          <div class="toolArea">
+              <el-row :gutter="20">
+                  <el-col :span="6">
+                      <div class="grid-content">
+                          <span>请选择时间范围</span>
+                      </div>
+                  </el-col>
+                  <el-col :span="6">
+                      <div class="grid-content">
+                          <span>开始时间</span>
+                          <el-date-picker
+                              v-model="serviceStartDate"
+                              type="date"
+                              placeholder="选择开始日期">
+                          </el-date-picker>
+                      </div>
+                  </el-col>
+                  <el-col :span="6">
+                      <div class="grid-content">
+                          <span>结束时间</span>
+                          <el-date-picker
+                              v-model="serviceEndDate"
+                              type="date"
+                              placeholder="选择结束日期">
+                          </el-date-picker>
+                      </div>
+                  </el-col>
+                  <el-col :span="6">
+                       <el-button @click="getTimeRangeData">查询</el-button>
+                  </el-col>
+              </el-row>
+          </div>
+          <el-card class="cardBox colorHeader" :body-style="{ padding: '0px'}">
+              <div class="tableWrap">
+                  <el-table :data="sourceData" style="width: 100%">
+                      <el-table-column type="index" >
+                      </el-table-column>
+
+                      <el-table-column prop="StudentName" label="患者">
+                      </el-table-column>
+
+                      <el-table-column prop="BirthDate" label="年龄">
+                      </el-table-column>
+
+                      <el-table-column prop="DiagnosisName" label="病种" >
+                      </el-table-column>
+
+                      <el-table-column prop="DoctorName" label="医生" >
+                      </el-table-column>
+
+                      <el-table-column prop="CreatedOn" label="时间" >
+                      </el-table-column>
+
+                  </el-table>
+              </div>
+              <div style="float: right">
+                  <el-pagination @current-change="nextPage" layout="prev, pager, next" :total="pageTotal">
+                  </el-pagination>
+              </div>
+          </el-card>
+      </div>
+
+  </div>
+</template>
+<script>
+    import api from '../../api/index.js';
+  export default {
+    name: 'noticeCoope',
+      data() {
+          return {
+              nowDate: (new Date()).toISOString(),
+              sourceData: [],
+              pageIndex: '',
+              pageTotal: '',
+              currentPage: 1,
+              serviceStartDate: '',
+              serviceEndDate: ''
+          }
+      },
+      methods: {
+          getPageData(pageIndex,startTime,endTime) {
+              let params = {
+                  PageIndex: pageIndex,
+                  PageSize: 10,
+                  StartDate: startTime,
+                  EndDate: endTime
+              }
+              console.log('params');
+              console.log(params);
+              api.getServiceReviewData(params)
+                  .then(res => {
+                      this.pageTotal = res.data.Total;
+                      this.pageIndex = res.data.Index;
+                      this.sourceData = res.data.Records;
+                  })
+                  .catch(err => {
+
+                  })
+          },
+          nextPage(curPage) {
+              this.currentPage = curPage;
+              this.getPageData(this.currentPage,this.serviceStartDate,this.serviceEndDate);
+          },
+          getTimeRangeData() {
+              this.getPageData(1,this.serviceStartDate,this.serviceEndDate)
+          },
+          initData() {
+              this.serviceStartDate = '2017-01-01';
+              this.serviceEndDate = '2017-12-30';
+              this.getPageData(1,this.serviceStartDate,this.serviceEndDate);
+          }
+      },
+      created() {
+          this.initData();
+      }
+  };
+</script>
+<style scoped>
+    .contentWrap{
+        width: 1280px;
+        height: 626px;
+        position: absolute;
+        border: 1px solid #cccccc;
+    }
+
+    .center-content {
+        width: 100%;
+        height: 626px;
+        padding: 5px 20px;
+        border: 1px solid red;
+    }
+    .infores {
+        width: 100%;
+        height: 540px;
+        overflow-y: scroll;
+    }
+
+    .toolArea {
+        width: 100%;
+        height: 40px;
+        /*display: flex;*/
+        /*justify-content: flex-end;*/
+        margin-bottom: 5px;
+    }
+
+    .cardBox {
+        width: 100%;
+        height: 522px
+    }
+
+    .tableWrap {
+        width: 100%;
+        height: 480px;
+    }
+
+    .colorHeader {
+        border-top: 4px solid RGBA(49, 187, 252, 1.00)
+    }
+
+
+</style>

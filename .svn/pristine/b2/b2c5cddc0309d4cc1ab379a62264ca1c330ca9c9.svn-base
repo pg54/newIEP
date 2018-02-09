@@ -1,0 +1,31 @@
+<template>
+  <div id="sidebar">
+    <div class="sidelinks">
+      <ul slot="links">
+        <li><router-link class='link' to="/fileManage/usersTable"><span class="studentFile"></span>学生</router-link></li>
+        <li><router-link class='link' to="/fileManage/teacherFile"><span class="teacherFile"></span>老师</router-link></li>
+        <li><router-link class='link' to="/fileManage/agencyFile"><span class="agencyFile"></span>机构</router-link></li>
+      </ul>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: 'sidebar'
+  };
+</script>
+<style scoped>
+  #sidebar {position: absolute;left: 0;top: 94px;width: 100px;height: 100vh;background-color: RGBA(238, 239, 240, 1.00);}
+  .sidelinks {}
+  .link {display: block;width: 100px;height: 60px;font-size: 14px;color: #333333;padding-top: 20px}
+  .link span {display: inline-block;width: 20px;height: 20px;margin-right: 20px;}
+  .studentFile {background-image: url('../assets/images/fileManager/学生档案-默认.png')}
+  .teacherFile {background-image: url('../assets/images/fileManager/老师档案-默认.png')}
+  .agencyFile {background-image: url('../assets/images/fileManager/机构档案-默认.png')}
+
+  .router-link-active {background-color: RGBA(254, 255, 255, 1.00);color: RGBA(47, 189, 252, 1.00)}
+  .router-link-active .studentFile {background-image: url('../assets/images/fileManager/学生档案--选中.png')}
+  .router-link-active .teacherFile {background-image: url('../assets/images/fileManager/老师档案-选中.png')}
+  .router-link-active .agencyFile {background-image: url('../assets/images/fileManager/机构档案-选中.png')}
+</style>

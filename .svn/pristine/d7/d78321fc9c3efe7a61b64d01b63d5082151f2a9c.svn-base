@@ -1,0 +1,494 @@
+<template>
+    <div>
+        <div class="twoPage" v-show="!chosedFunction">
+            <!--<p style="text-align: center">一新康复-IEP</p>-->
+            <p>
+                <button class="fourFunction" @click="tofour">体验版</button>
+                <button class="eightFunction" @click="stillEight">专业版</button>
+            </p>
+        </div>
+        <div v-show="chosedFunction">
+            <el-form v-show="isLogin" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="left" label-width="0px" class="login-container">
+                <h3 class="title">系统登录</h3>
+                <el-form-item prop="account">
+                    <el-input type="text" v-model="ruleForm.account" auto-complete="off" placeholder="账号"></el-input>
+                </el-form-item>
+                <el-form-item prop="checkPass">
+                    <el-input type="password" v-model="ruleForm.checkPass" auto-complete="off" placeholder="密码"></el-input>
+                </el-form-item>
+                <el-checkbox v-model="checked" class="remember">记住密码</el-checkbox>
+                <el-form-item style="width:100%;">
+                    <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit" :loading="logining">登录</el-button>
+                </el-form-item>
+
+                <el-form-item style="width:100%;">
+                    <el-row type="flex" justify="space-between">
+                        <el-col :span="11">
+                            <el-button type="warning" style="width:100%;" @click.native="isLogin = false">注册</el-button>
+                        </el-col>
+                        <el-col :span="11">
+                            <el-button type="warning" style="width:100%;" @click.native="isLogin = false; forgetPassword = true">忘记密码</el-button>
+                        </el-col>
+                    </el-row>
+                </el-form-item>
+            </el-form>
+
+            <el-form v-show="!isLogin" :model="regRuleForm" :rules="regRules" ref="regRuleForm" label-position="left" label-width="0px"
+                class="login-container">
+                <h3 class="title">{{forgetPassword ? '忘记密码':'系统注册'}}</h3>
+                <el-form-item prop="tel">
+                    <el-input type="text" v-model="regRuleForm.tel" auto-complete="off" placeholder="手机号"></el-input>
+                </el-form-item>
+                <el-form-item prop="verificationCode">
+                    <el-row type="flex" justify="space-between">
+                        <el-col :span="11">
+                            <el-input type="text" v-model="regRuleForm.verificationCode" auto-complete="off" placeholder="验证码"></el-input>
+                        </el-col>
+                        <el-col :span="11">
+                            <el-button style="width: 100%" type="warning" @click.native="getVerificationCode">{{ timerCodeMsg }}</el-button>
+                        </el-col>
+                    </el-row>
+
+                </el-form-item>
+                <el-form-item prop="passWord">
+                    <el-input type="password" v-model="regRuleForm.passWord" auto-complete="off" placeholder="密码"></el-input>
+                </el-form-item>
+
+                <el-form-item style="width:100%;">
+                    <el-button type="warning" style="width:100%;" @click.native="changeSubmit" v-if="forgetPassword" :loading="logining">重置密码</el-button>
+                    <el-button type="warning" style="width:100%;" @click.native="registerSubmit" v-else :loading="logining">注册</el-button>
+
+                </el-form-item>
+
+                <el-form-item style="width:100%;">
+                    <el-button type="primary" style="width:100%;" @click.native="isLogin = true; forgetPassword = false">登录</el-button>
+                </el-form-item>
+
+            </el-form>
+
+        </div>
+
+
+    </div>
+</template>
+
+<script>
+    import {
+        setToken,
+        drProfile
+    } from '../api/api';
+    import MD5 from 'spark-md5';
+    import axios from 'axios';
+//    import base64 from '../util/base64'
+
+    export default {
+        name: 'login',
+        components: {},
+        data() {
+            return {
+                isLogin: true,
+                chosedFunction: false,
+                logining: false,
+                ruleForm: {
+                    account: '',
+                    checkPass: ''
+                },
+                rules: {
+                    account: [{
+                        required: true,
+                        message: '请输入账号',
+                        trigger: 'blur'
+                    }],
+                    checkPass: [{
+                        required: true,
+                        message: '请输入密码',
+                        trigger: 'blur'
+                    }]
+                },
+                checked: true,
+                regRuleForm: {
+                    tel: '',
+                    verificationCode: '',
+                    passWord: ''
+                },
+                regRules: {
+                    tel: [{
+                            required: true,
+                            message: '请输入电话号码',
+                            trigger: 'blur'
+                        },
+                        {
+                            min: 11,
+                            max: 11,
+                            message: '请输入正确的电话号码',
+                            trigger: 'blur'
+                        }
+                    ],
+                    verificationCode: [{
+                        required: true,
+                        message: '请输入验证码',
+                        trigger: 'blur'
+                    }],
+                    passWord: [{
+                        required: true,
+                        message: '请输入密码',
+                        trigger: 'blur'
+                    }]
+                },
+                timerCodeMsg: '获取验证码',
+                forgetPassword: false,
+                baseUrl: 'http://api.account.onenewcare.com',
+            //    baseUrl: 'http://devapi.account.onenewcare.com',
+//                baseUrl: 'http://192.168.0.173/OPEM.API.Account',
+            };
+        },
+
+        methods: {
+            encode (input) {
+                var _keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+                var output = "";
+                var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+                var i = 0;
+                input = this._utf8_encode(input);
+
+                while (i < input.length) {
+                    chr1 = input.charCodeAt(i++);
+                    chr2 = input.charCodeAt(i++);
+                    chr3 = input.charCodeAt(i++);
+                    enc1 = chr1 >> 2;
+                    enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+                    enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+                    enc4 = chr3 & 63;
+                    if (isNaN(chr2)) {
+                        enc3 = enc4 = 64;
+                    } else if (isNaN(chr3)) {
+                        enc4 = 64;
+                    }
+                    output = output +
+                        _keyStr.charAt(enc1) + _keyStr.charAt(enc2) +
+                        _keyStr.charAt(enc3) + _keyStr.charAt(enc4);
+                }
+                return output;
+            },
+            _utf8_encode (string) {
+                string = string.replace(/\r\n/g,"\n");
+                var utftext = "";
+                for (var n = 0; n < string.length; n++) {
+                    var c = string.charCodeAt(n);
+                    if (c < 128) {
+                        utftext += String.fromCharCode(c);
+                    } else if((c > 127) && (c < 2048)) {
+                        utftext += String.fromCharCode((c >> 6) | 192);
+                        utftext += String.fromCharCode((c & 63) | 128);
+                    } else {
+                        utftext += String.fromCharCode((c >> 12) | 224);
+                        utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+                        utftext += String.fromCharCode((c & 63) | 128);
+                    }
+
+                }
+                return utftext;
+            },
+    setCookie(name, value) {
+                var Days = 30;
+                var exp = new Date();
+                exp.setTime(exp.getTime() + Days * 24 * 60 * 60 * 1000);
+                document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+            },
+            getCookie(name) {
+                var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+                if (arr = document.cookie.match(reg))
+                    return unescape(arr[2]);
+                else
+                    return null;
+            },
+            tofour() {
+                this.$store.dispatch('setNotFullFuction', false);
+                var _this = this;
+                setTimeout(function () {
+                    _this.chosedFunction = true;
+                }, 500)
+            },
+            stillEight() {
+                this.$store.dispatch('setNotFullFuction', true);
+                var _this = this;
+                setTimeout(function () {
+                    _this.chosedFunction = true;
+                }, 500)
+            },
+            handleReset() {
+                this.$refs.ruleForm.resetFields();
+            },
+            getVerificationCode() {
+                window.clearTimeout();
+                let _this = this;
+                _this.regRuleForm.verificationCode = ''
+                let reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/
+                if (!reg.exec(this.regRuleForm.tel)) {
+                    this.$message({
+                        message: '请输入电话号码',
+                        type: 'warning'
+                    })
+                } else {
+
+                    let smsParams;
+                    if (_this.forgetPassword) {
+                        smsParams = {
+                            phone: _this.regRuleForm.tel,
+                            type: 2
+                        }
+                    } else {
+                        smsParams = {
+                            phone: _this.regRuleForm.tel,
+                            type: 1
+                        }
+                    }
+                    let baseUrl = _this.baseUrl;
+                    axios.post(`${baseUrl}/Account/SMS`, smsParams).then(res => {
+                        if (res.data.Code === 0) {
+                            let sec = 30;
+                            for (let i = 0; i <= 30; i++) {
+                                window.setTimeout(function () {
+                                    if (sec != 0) {
+                                        _this.timerCodeMsg = sec + "秒后重发验证";
+                                        sec--;
+                                    } else {
+                                        sec = 30; //如果倒计时结束就让  获取验证码显示出来
+                                        _this.timerCodeMsg = '获取验证码'
+                                    }
+                                }, i * 1000)
+                            }
+                        } else {
+                            _this.$message.error(res.Msg)
+                        }
+                    })
+                }
+            },
+            registerSubmit() {
+                this.$refs.regRuleForm.validate((valid) => {
+                    if (valid) {
+                        var _this = this;
+                        this.logining = true;
+
+                        var regParams = {
+                            'UserName': _this.regRuleForm.tel,
+                            'Password': _this.encode(_this.regRuleForm.passWord),
+                            'Code': _this.regRuleForm.verificationCode,
+                            'Type': 2
+                        };
+                        let baseUrl = _this.baseUrl;
+                        axios.post(`${baseUrl}/Account/Register`, regParams).then(res => {
+                            var data = res.data;
+                            this.logining = false;
+                            if (data.Code === 0) {
+                                console.log(res);
+                                // localStorage.removeItem('accessToken');
+                                // localStorage.setItem('accessToken', data.Message);
+                                // setToken();
+                                // var userInfo = {
+                                //     'UserName': this.ruleForm.account,
+                                //     'Password': "",
+                                //     'Checked': this.checked,
+                                // }
+                                // if (this.checked) {
+                                //     userInfo.Password = this.ruleForm.checkPass;
+                                // }
+                                // //                          sessionStorage.setItem('user', JSON.stringify(userInfo));
+                                // this.setCookie('name', this.ruleForm.account)
+                                // this.setCookie('password', this.ruleForm.checkPass)
+                                // this.$router.push({
+                                //     path: '/dynamicConsultation'
+                                // });
+                            } else {
+                                _this.$message({
+                                    message: data.Msg,
+                                    type: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            },
+            changeSubmit() {
+                let str = this.encode('123456');
+                console.log(str);
+                this.$refs.regRuleForm.validate((valid) => {
+                    if (valid) {
+                        var _this = this;
+                        this.logining = true;
+                        var regParams = {
+                            'UserName': _this.regRuleForm.tel,
+                            'Password': _this.encode(_this.regRuleForm.passWord),
+                            'Code': _this.regRuleForm.verificationCode,
+                            'Type': 2
+                        };
+                        let baseUrl = _this.baseUrl;
+                        axios.post(`${baseUrl}/Account/ChangePassword`, regParams).then(res => {
+                            var data = res.data;
+                            this.logining = false;
+                            if (data.Code === 0) {
+                                console.log(res);
+                                // localStorage.removeItem('accessToken');
+                                // localStorage.setItem('accessToken', data.Message);
+                                // setToken();
+                                // var userInfo = {
+                                //     'UserName': this.ruleForm.account,
+                                //     'Password': "",
+                                //     'Checked': this.checked,
+                                // }
+                                // if (this.checked) {
+                                //     userInfo.Password = this.ruleForm.checkPass;
+                                // }
+                                // //                          sessionStorage.setItem('user', JSON.stringify(userInfo));
+                                // this.setCookie('name', this.ruleForm.account)
+                                // this.setCookie('password', this.ruleForm.checkPass)
+                                // this.$router.push({
+                                //     path: '/dynamicConsultation'
+                                // });
+                            } else {
+                                _this.$message({
+                                    message: data.Msg,
+                                    type: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            },
+            handleSubmit(ev) {
+                var _this = this;
+                this.$refs.ruleForm.validate((valid) => {
+                    if (valid) {
+                        this.logining = true;
+                        var loginParams = {
+                            'UserName': this.ruleForm.account,
+                            'Password': MD5.hash(this.ruleForm.checkPass),
+                            'Type': 2
+                        };
+                        let baseUrl = _this.baseUrl;
+                        axios.post(`${baseUrl}/Account/Login`,loginParams).then(res => {
+                            var data = res.data;
+                            this.logining = false;
+                            if (data.Code === 0) {
+                                localStorage.removeItem('accessToken');
+                                localStorage.setItem('accessToken', data.Message);
+                                setToken();
+                                var userInfo = {
+                                    'UserName': this.ruleForm.account,
+                                    'Password': "",
+                                    'Checked': this.checked,
+                                }
+                                if (this.checked) {
+                                    userInfo.Password = this.ruleForm.checkPass;
+                                }
+                                this.setCookie('name', this.ruleForm.account)
+                                this.setCookie('password', this.ruleForm.checkPass)
+                                this.$router.push({
+                                    path: '/dynamicConsultation'
+                                });
+                            } else {
+                                _this.$message({
+                                    message: data.Message,
+                                    type: 'error'
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+
+        },
+        mounted() {
+            let name = this.getCookie('name');
+            if (name) {
+                this.checked = true;
+                this.ruleForm.account = name;
+                let password = this.getCookie('password');
+                this.ruleForm.checkPass = password;
+            }
+        }
+    };
+
+</script>
+<style scoped>
+    .login-container {
+        /*box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);*/
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        background-clip: padding-box;
+        margin: 180px auto;
+        width: 350px;
+        padding: 35px 35px 15px 35px;
+        background: #fff;
+        border: 1px solid #eaeaea;
+        box-shadow: 0 0 25px #cac6c6;
+    }
+
+    .login-container .title {
+        margin: 0px auto 40px auto;
+        text-align: center;
+        color: #505458;
+    }
+
+    .login-container .remember {
+        margin: 0px 0px 35px 0px;
+    }
+
+    .twoPage {
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        -moz-border-radius: 5px;
+        background-clip: padding-box;
+        margin: 280px auto;
+        width: 450px;
+        padding: 35px 35px 15px 35px;
+        background: #fff;
+        /*border: 1px solid #eaeaea;*/
+        /*box-shadow: 0 0 25px #cac6c6;*/
+    }
+
+    .twoPage button {
+        display: inline-block;
+        cursor: pointer;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        text-align: center;
+        white-space: nowrap;
+        text-decoration: none;
+        vertical-align: middle;
+        height: 3rem;
+        padding: 0 .5rem;
+        text-transform: uppercase;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 2.625rem;
+        -webkit-font-smoothing: antialiased;
+        border-radius: .25rem;
+        letter-spacing: .125rem;
+        transition: all .3s ease;
+        color: #fff;
+        background-color: rgba(32, 160, 255, 1);
+        border: .125rem solid transparent;
+        width: 7.75rem;
+        box-shadow: 8px 10px 20px 0 rgba(46, 61, 73, .15);
+    }
+
+    .twoPage button:hover {
+        box-shadow: 2px 4px 8px 0 rgba(46, 61, 73, .2);
+    }
+
+    .fourFunction {
+        float: left;
+    }
+
+    .eightFunction {
+        float: right;
+    }
+
+</style>

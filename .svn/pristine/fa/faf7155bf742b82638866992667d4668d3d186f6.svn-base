@@ -1,0 +1,456 @@
+<template>
+    <div class="main">
+        <div class="pageNavbar">
+            <span style="color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span @click="backroute">评测分析&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span v-if="testStatuses[1] ">开始评测</span>
+            <span v-if=" !testStatuses[0] && !testStatuses[1]" @click="gobackTestList">评估列表&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span v-show=" testStatuses[3] "><span style="color: rgba(49, 187, 252, 1)">{{ chosedPatient}}</span>的评估结果&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span v-show=" testStatuses[4] "><span style="color: rgba(49, 187, 252, 1)">{{ chosedPatient}}</span>的评估报告&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+        </div>
+        <div class="registerBox">
+            <div  class="center-content">
+                <div v-if="testStatuses[0]">
+                    <div class="toolBox">
+                        <el-button @click="addTestPaper">
+                            <Icon type="plus-round"></Icon>新建评估表
+                        </el-button>
+                    </div>
+                    <el-card class="cardBox colorHeader" :body-style="{ padding: '0px'}">
+                        <div class="tableWrap" style="height: 480px">
+                            <el-table :data="testPaperListData" style="width: 100%">
+                                <el-table-column type="index" width="70">
+                                </el-table-column>
+
+                                <el-table-column prop="Name" label="名称" width="160">
+                                </el-table-column>
+
+                                <el-table-column prop="PackageName" label="课程包名称">
+                                </el-table-column>
+
+                                <el-table-column prop="CreatedOn" label="创建时间">
+                                </el-table-column>
+
+
+                                <el-table-column label="操作">
+                                    <template scope="scope">
+                                        <el-button size="mini" :plain="true" type="info" @click="startTest(scope.$index, scope.row)">开始新评测</el-button>
+                                        <el-button size="mini" :plain="true" type="warning" @click="checkTestPaticent(scope.$index, scope.row)">已评测患者</el-button>
+                                        <el-button  size="mini" :plain="true" type="danger" @click="deleteExam(scope.$index, scope.row)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+
+                            </el-table>
+                        </div>
+                        <el-pagination layout="prev, pager, next" @current-change="testPaperListChange" :page-size="10" :total="testPaperTotal" style="float:right;"></el-pagination>
+                    </el-card>
+                </div>
+                <div v-if="testStatuses[1]" class="moveLeft">
+                    <!--<TestPaper :course_id="paperCourseID" :patiend_id="paperPatientID" :examID="paperExamID"></TestPaper>-->
+                    <TestResult :paticentID="resultPaticentID" :testID="resultTestID" :isComplete="completeTest"></TestResult>
+                </div>
+                <div v-if="testStatuses[2]" class="testStudent" style="z-index: 100">
+                    <el-card class="newCardBox colorHeader" :body-style="{ padding: '0px'}">
+                        <div class="tableWrap">
+                            <el-table :data="testedPatientListData" style="width: 100%">
+                                <el-table-column type="index" width="80">
+                                </el-table-column>
+
+                                <el-table-column prop="ExamName" label="评测名称">
+                                </el-table-column>
+
+                                <el-table-column prop="Name" label="姓名" >
+                                </el-table-column>
+
+                                <el-table-column label="操作" width="300">
+                                    <template scope="scope">
+                                        <el-button v-if="!scope.row.Status" size="mini" :plain="true" type="info" @click="checkPacientTestDetail(scope.$index, scope.row, false)">继续评测</el-button>
+                                        <el-button v-if="!scope.row.Status" size="mini" :plain="true" type="info" @click="toDeleteExamPatient(scope.$index, scope.row)">删除</el-button>
+                                        <el-button v-if="scope.row.Status" size="mini" :plain="true" type="info" @click="checkPacientTestDetail(scope.$index, scope.row, true)">分析表</el-button>
+                                        <el-button v-if="scope.row.Status" size="mini" :plain="true" type="info" @click="checkPacientTestReport(scope.$index, scope.row)">评估报告</el-button>
+                                    </template>
+                                </el-table-column>
+
+                            </el-table>
+                        </div>
+                        <el-pagination layout="prev, pager, next" @current-change="testedPatientListNextPage" :page-size="10" :total="testedPatientListTotal" style="float:right;"></el-pagination>
+                    </el-card>
+                </div>
+                <div v-if="testStatuses[3]" class="moveLeft">
+                    <TestResult :paticentID="resultPaticentID" :testID="resultTestID" :isComplete="completeTest"></TestResult>
+                </div>
+                <div v-if="testStatuses[4]" class="moveLeft">
+                    <TestReport :testID="reportID" :paticentID="reportPaticentID"></TestReport>
+                </div>
+            </div>
+        </div>
+
+        <el-dialog title="模板列表" v-model="addTestPaperVisible" :close-on-click-modal="false" @close="testPaperCancel">
+            <div class="addTestFormWrap">
+                <el-form ref="addTestform" :model="testFormData" label-width="80px">
+                    <el-form-item label="名称">
+                        <el-input v-model="testFormData.Name" type="mini" style="width: 474px"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课程包">
+                        <el-select v-model="testFormData.PaperPackageID" placeholder="请选择课程包" style="width: 474px">
+                            <el-option v-for="o in testPaperData" :label="o.Name" :value="o.ID" ></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div class="addTestsubmit">
+                <el-button @click.native="submitTestPaper">确认</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="选择患者" v-model="choseToTestVisible" :close-on-click-modal="false" @close="resetChosePatientTest" :show-close="false">
+
+            <el-select v-model="selectedPacientIDS" placeholder="请选择小组" @change="filterPacient">
+                <el-option v-for="(item, index) in selectedGroup" :key="item.groupName" :label=item.groupName :value=index>
+                </el-option>
+            </el-select>
+
+            <el-select v-model="choseToTestPatient" placeholder="请选择患者">
+                <el-option v-for="(item, index) in selectedGroupPacientes" :key="item.Name" :label=item.Name :value=item.ID>
+                </el-option>
+            </el-select>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="choseToTestVisible = false">返回</el-button>
+                <el-button type="primary" class="testPaper" @click="choseToTestSubmit('yy', false)">评测开始</el-button>
+            </div>
+        </el-dialog>
+
+
+    </div>
+</template>
+<script>
+    import api from '../../api/index';
+    import TestResult from '../../components/resultPaper.vue';
+    import TestReport from '../../components/reportPaper.vue';
+    export default {
+        name: 'iepAnalysis',
+        components: {
+            TestResult,
+            TestReport
+        },
+        data () {
+            return {
+                testStatuses: [true, false, false, false, false],
+                addTestPaperVisible: false,
+                testFormData: {
+                    Name: '',
+                    PaperPackageID: ''
+                },
+                testPaperData: [],
+                testPaperListData: [], // 评测管理
+                testPaperTotal: 1,
+                testPaperCurrentPage: 1,
+                choseToTestVisible: false,
+                choseToTestPatient: '',
+                selectedPacientIDS: '',
+                pacientsIDS: [],
+                selectedGroup: this.$store.state.mystudent.patientList, // 患者小组数组
+                selectedGroupPacientes: [], // 小组中患者数组
+                resultPaticentID: '', //试卷的props对象
+                resultTestID: '',
+                completeTest: false,
+                testedPatientListData: [],
+                examID: '',
+                examPatientID: '',
+                testedPatientListTotal: 1,
+                testedPatientCurrentPage: 1,
+                chosedPatient: ''
+            }
+        },
+        methods: {
+//            导航
+            backroute() {
+                this.getTestList(1);
+                this.testStatuses = [true,false,false,false,false];
+            },
+            gobackTestList() {
+//          this.testStatuses = [false,false,true,false,false];
+                this.requestTestPaticent();
+            },
+//            导航---end
+            addTestPaper() {
+                this.addTestPaperVisible = true;
+                api.requestCourseList().then(res => {
+                    this.testPaperData = res.List;
+                });
+            },
+            testPaperListChange(currentPage) {
+                this.testPaperCurrentPage = currentPage;
+                this.getTestList(this.testPaperCurrentPage);
+            },
+            getTestList(pageIndex) {
+                let params = {
+                    PageIndex: pageIndex,
+                    PageSize: 10
+                };
+                api.requestTestList(params).then(res => {
+                    this.testPaperListData = res.Records;
+                    this.testPaperTotal = res.Total;
+                });
+            },
+            deleteExam(index, row) {
+                this.examID = row.ID;
+                var params = {
+                    ID: this.examID
+                };
+                api.deleteExam(params).then(res => {
+                    if (res.Code === 3) {
+                        this.consfirmDeleteExamMsg = res.Msg;
+                        this.$confirm('关联数据会被删除, 是否继续?', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            this.confirmDeleteExam();
+                        });
+                    }
+                    else if (res.Code === 0) {
+                        this.$message.warning('删除成功');
+                        this.getTestList(this.testedPatientCurrentPage);
+                    }
+                    else if (res.Code === 1) {
+                        this.$message.warning('指定评估不存在');
+                    }
+                    else if (res.Code === 2) {
+                        this.$message.warning('指定评估不属于当前医生');
+                    }
+                });
+            },
+            confirmDeleteExam() {
+                let params = {
+                    ID: this.examID,
+                    key: this.consfirmDeleteExamMsg
+                };
+                api.deleteExam(params).then(res => {
+                    if (res.Code === 0) {
+                        this.requestInitData();
+                        this.$message.success('删除成功');
+                    }
+                    else if (res.Code === 1) {
+                        this.$message.warning('指定评估不存在');
+                    }
+                    else if (res.Code === 2) {
+                        this.$message.warning('指定评估不属于当前医生');
+                    }
+                });
+            },
+
+//            添加评测表
+            testPaperCancel() {
+                this.testFormData = {
+                    Name: '',
+                    PaperPackageID: ''
+                }
+            },
+            submitTestPaper() {
+                let params = this.testFormData;
+                api.addTestPaper(params).then(res => {
+                    if (res.Code === 0) {
+                        this.$message.success('成功');
+                        this.addTestPaperVisible = false;
+                        this.getTestList(this.testedPatientCurrentPage);
+                    } else {
+                        this.$message.err('失败');
+                    }
+                });
+            },
+//            end
+//            开始评测
+            startTest(index, row) {
+                this.paperPackageID = row.PaperPackageID;
+                this.testID = row.ID;
+                this.choseToTestVisible = true;
+            },
+            filterPacient(val) {
+                if (this.choseToTestVisible) {  //bug,两个选择病人的callback，我用choseToTestVisible区分
+                    this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+                    console.log(this.selectedGroupPacientes);
+                }
+                if (this.sendToPaticentVisible) {  //bug,两个选择病人的callback，我用choseToTestVisible区分
+                    console.log(this.selectedGroup);
+                    this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+                    console.log(this.selectedGroupPacientes);
+                }
+            },
+            choseToTestSubmit(title, isComplete) {
+                let params = {
+                    ExamID: this.testID,
+                    PatientAgentID: this.choseToTestPatient
+                };
+                api.chosePatientToTest(params).then(res => {
+                    if (res.Code === 0) {
+                        this.choseToTestVisible = false;
+                        this.testStatuses = [false,true,false,false,false];
+                        this.resultPaticentID = this.choseToTestPatient;
+                        this.resultTestID = res.Msg;
+                        this.completeTest = isComplete;
+                        this.chosedPatient = title;
+                    }
+                });
+            },
+            resetChosePatientTest() {
+                this.selectedPacientIDS = [];
+                this.choseToTestPatient = '';
+            },
+//            开始评测------end
+//            已评测的患者
+            checkTestPaticent(index, row) {
+                this.examID = row.ID;
+                this.requestTestPaticent(1);
+            },
+            requestTestPaticent(pageIndex) {
+                let params = {
+                    ExamID: this.examID,
+                    PageIndex: pageIndex,
+                    PageSize: 10
+                };
+                api.requestTestMembers(params).then(res => {
+                    this.testedPatientListData = res.Records;
+                    this.testedPatientListTotal = res.Total;
+                });
+                this.testStatuses = [false,false,true,false,false];
+            },
+            testedPatientListNextPage(currentPage) {
+                this.testedPatientCurrentPage = currentPage;
+                this.requestTestPaticent(this.testedPatientCurrentPage);
+            },
+            checkPacientTestDetail(index, row, isComplete) {
+                this.testStatuses = [false,false,false,true,false];
+                this.resultPaticentID = row.PatientAgentID;
+                this.resultTestID = row.ID;
+                this.completeTest = isComplete;
+                this.chosedPatient = row.Name;
+            },
+            checkPacientTestReport(index, row) {
+                this.reportID = row.ID;
+                this.reportPaticentID = row.PatientAgentID;
+                this.chosedPatient = row.Name;
+                this.testStatuses = [false,false,false,false,true];
+            },
+            toDeleteExamPatient(index, row) {
+                this.examPatientID = row.ID
+                let params = {
+                    ID: this.examPatientID
+                };
+                api.deleteExamPatient(params).then(res => {
+                    console.log(res);
+                    if (res.Code === 3) {
+                        this.consfirmDeleteExamMsg = res.Msg;
+                        this.$confirm('关联数据会被删除, 是否继续?', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            this.confirmDeleteExamPatient();
+                        });
+                    }
+                    else if (res.Code === 0) {
+                        this.$message.success('删除成功');
+                        this.requestTestPaticent(this.testedPatientCurrentPage);
+                    }
+                    else if (res.Code === 1) {
+                        this.$message.warning('指定评估不存在');
+                    }
+                    else if (res.Code === 2) {
+                        this.$message.warning('指定评估不属于当前医生');
+                    }
+                });
+            },
+            confirmDeleteExamPatient() {
+                let params = {
+                    ID: this.examPatientID,
+                    key: this.consfirmDeleteExamMsg
+                };
+                api.deleteExamPatient(params).then(res => {
+                    if (res.Code === 0) {
+                        this.requestTestPaticent(this.testedPatientCurrentPage);
+                        this.$message.success('删除成功');
+                    }
+                    else if (res.Code === 1) {
+                        this.$message.warning('指定评估不存在');
+                    }
+                    else if (res.Code === 2) {
+                        this.$message.warning('指定评估不属于当前医生');
+                    }
+                });
+            },
+//            已评测的患者--end
+            requestInitData() {
+                this.getTestList(1);    // 评测管理
+            },
+        },
+        created() {
+            this.requestInitData();
+        }
+    };
+</script>
+<style scoped>
+    .main {
+        width: 100%;
+        height: 626px;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    .pageNavbar {
+        position: absolute;
+        left: -94px;
+        top: 0;
+        width: 1280px;
+        height: 42px;
+        border-bottom: 1px solid #cccccc;
+    }
+    .registerBox {
+        width: 100%;
+        height: 583px;
+        position: absolute;
+        left: 0;
+        top: 42px;
+    }
+    .center-content {
+        width: 1125px;
+        height: 578px;
+        position: relative;
+        margin: 0 auto;
+    }
+    .colorHeader {
+        border-top: 4px solid RGBA(49, 187, 252, 1.00)
+    }
+    .cardBox {
+        width: 100%;
+        height: 520px
+    }
+    .tableWrap {
+        width: 100%;
+        height: 532px;
+    }
+    .pageNavbar span {
+        font-size: 16px;
+        cursor: pointer;
+        line-height: 42px;
+    }
+    .pageNavbar span:hover {
+        color: rgb(66, 171, 216);
+    }
+    .addTestsubmit {
+        width: 550px;
+        text-align: center;
+        margin: 0 auto
+    }
+    .toolBox {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    .moveLeft {
+        margin-left: -30px;
+    }
+
+</style>

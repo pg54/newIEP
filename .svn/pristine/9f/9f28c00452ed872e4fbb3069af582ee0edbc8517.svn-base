@@ -1,0 +1,18 @@
+.resultWrap {
+    width: 1185px;
+    height: 583px;
+    position: absolute;
+    left: 0;
+    top: 43px;
+}
+.center-content {
+    width: 1125px;
+    margin: 0 auto;
+}
+
+.testManager {
+    width: 1125px;
+    margin: 0 auto;
+}
+
+

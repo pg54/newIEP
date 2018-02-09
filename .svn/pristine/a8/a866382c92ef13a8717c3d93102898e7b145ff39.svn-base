@@ -1,0 +1,99 @@
+<template>
+    <div>
+        <div class="center-content" v-if=" 'cpep' === lastPath">
+            <el-card class="cardBox colorHeader" :body-style="{ padding: '0px'}" v-show="!serviceCPEPVisible">
+                <div class="tableWrap" style="height: 480px">
+                    <el-table :data="CPEPdata" style="width: 100%">
+
+                        <el-table-column prop="Name" label="名称">
+                        </el-table-column>
+
+                        <el-table-column prop="CreatedOn" label="创建时间">
+                        </el-table-column>
+
+
+                        <el-table-column label="操作">
+                            <template scope="scope">
+                                <el-button size="mini" :plain="true" type="info" @click="choseCPEPvisible = true">开始测试</el-button>
+                                <el-button size="mini" :plain="true" type="warning" @click="toCPEPMembers">已评测患者</el-button>
+                            </template>
+                        </el-table-column>
+
+                    </el-table>
+                </div>
+            </el-card>
+        </div>
+        <div v-else>
+            <router-view></router-view>
+        </div>
+        <el-dialog title="选择患者" v-model="choseCPEPvisible" :close-on-click-modal="false"  :modal-append-to-body="false" :show-close="false">
+
+            <el-select v-model="selectedPacientIDS" placeholder="请选择小组" @change="filterPacient">
+                <el-option v-for="(item, index) in selectedGroup" :key="item.groupName" :label=item.groupName :value=index>
+                </el-option>
+            </el-select>
+
+            <el-select v-model="choseToTestPatient" placeholder="请选择患者">
+                <el-option v-for="(item, index) in selectedGroupPacientes" :key="item.Name" :label=item.Name :value=item.ID>
+                </el-option>
+            </el-select>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="choseCPEPvisible = false">返回</el-button>
+                <el-button type="primary" class="testPaper" @click="choseToCPEP">开始评测</el-button>
+            </div>
+        </el-dialog>
+    </div>
+</template>
+
+<script>
+    import api  from '../../../api/index.js';
+    export default {
+        name: 'cpep',
+        computed: {
+            lastPath: function () {
+                let pathStr =  this.$route.path
+                let pathArr = pathStr.split('/')
+                pathArr.splice(0,1)
+                let len = pathArr.length
+                return pathArr[len - 1]
+            },
+            selectedGroup: function () {
+                return this.$store.state.mystudent.patientList
+            }
+        },
+        data() {
+            return {
+                CPEPdata: [{
+                    Name: '孤独症谱系及相关发育障碍儿童评估用心理教育量表中文修订三版',
+                    CreatedOn: '2017-08-31'
+                }],
+                choseCPEPvisible: false,
+                selectedGroupPacientes: [],
+                selectedPacientIDS: '',
+                pacientsIDS: ''
+            }
+        },
+        methods: {
+            filterPacient(val) {
+                if (this.choseCPEPvisible) {  //bug,两个选择病人的callback，我用choseToTestVisible区分
+                    this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+                }
+            },
+            choseToCPEP() {
+                this.$router.push({path: '/serviceTool/cpep/startCPEP'})
+            },
+            toCPEPMembers() {
+                this.$router.push({path: '/serviceTool/cpep/testedCPEP'})
+            }
+        }
+    }
+</script>
+
+<style scoped>
+    .center-content {
+        width: 1125px;
+        margin: 0 auto;
+    }
+
+</style>

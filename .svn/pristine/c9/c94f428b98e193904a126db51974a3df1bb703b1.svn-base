@@ -1,0 +1,49 @@
+<template>
+    <div class="wrap">
+        <div class="generalNews" v-show="this.$store.state.questionPaper.showGeneralNews">
+            <DynaInfo></DynaInfo>
+        </div>
+        <router-view></router-view>
+    </div>
+</template>
+<script>
+import DynaInfo from './child/DymaInfo.vue';
+//import { setToken, drProfile } from '../../api/api';
+export default {
+    name: 'dymaConsult',
+    components: {
+        DynaInfo
+    },
+    data() {
+        return {
+
+        }
+    },
+    methods: {
+        setBase() {
+
+        }
+    },
+    created() {
+        //setToken();
+        //this.setBase();
+        console.log('丢你螺母 动态咨询 ');
+    }
+};
+</script>
+<style>
+.wrap {
+    position: relative;
+    width: 100%;
+    height: 100%
+}
+
+.generalNews {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0
+}
+</style>
+

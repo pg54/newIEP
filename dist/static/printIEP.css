@@ -1,0 +1,27 @@
+.print-content {
+    /*box-sizing: border-box;*/
+}
+
+.paperform-title {
+    font-size: 22px;
+    text-align: center
+}
+
+.paperform-subTitle {
+    text-align: center;
+}
+
+.paperform-form {
+    width: 100%;
+}
+
+/*1080*1920 页面展示时设置padding:2px 10px   打印时的设置  padding:10px 18px*/
+.tg  {border-collapse:collapse;border-spacing:0;width: 100%}
+.tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg .tg-s6z2{text-align:center;vertical-align:center}
+.tg .tg-baqh{text-align:center;vertical-align:center}
+.tg .tg-yw4l{text-align:center;vertical-align:center}
+.tg .tg-textleft{text-align:left;vertical-align:top}
+
+

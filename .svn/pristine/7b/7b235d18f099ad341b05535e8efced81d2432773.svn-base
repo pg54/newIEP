@@ -1,0 +1,117 @@
+<template>
+    <div class="cpepTemplate">
+        <table class="tg">
+            <thead>
+            <tr>
+                <th class="tg-baqh" colspan="4">任务项目</th>
+                <th class="tg-baqh" colspan="3">材料</th>
+                <th class="tg-baqh" colspan="7">实施方法</th>
+                <th class="tg-baqh" colspan="3">领域</th>
+                <th class="tg-baqh" colspan="7">评分</th>
+            </tr>
+            </thead>
+
+            <tr v-if="setNowMaterialType(ele)" v-for="ele in cpepData">
+                <td class="tg-yw4l" colspan="4">{{ele.Name}}</td>
+                <td class="tg-yw4l" colspan="3">{{ ele.Material}}</td>
+                <td class="tg-yw4l" colspan="7">{{ ele.Description}}</td>
+                <td class="tg-yw4l" colspan="3">{{ ele.DomainInfo.Name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td class="tg-yw4l" colspan="7">
+                    <p v-for="item in difMaterialTypeEle.Options">
+                        <input type="radio" :value="item.Option" :name="item.QuestionID"
+                               :id="item.ID" v-model="selectedChoses" class="radioclass">
+                        <label :for="item.ID" class="simbleBox"></label>
+                        <label :for="item.ID" class="clickLabel">{{item.Option}}{{item.Description}}</label>
+                        <span>{{ selectedChoses }}</span>
+                    </p>
+                </td>
+            </tr>
+
+            <template v-else>
+                <tr>
+                    <td class="tg-yw4l leftAlign bondText" colspan="24">{{difMaterialTypeEle.MaterialType}}</td>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l" colspan="4">{{difMaterialTypeEle.Name}}</td>
+                    <td class="tg-yw4l" colspan="3">{{ difMaterialTypeEle.Material}}</td>
+                    <td class="tg-yw4l" colspan="7">{{ difMaterialTypeEle.Description}}</td>
+                    <td class="tg-yw4l" colspan="3">{{ difMaterialTypeEle.DomainInfo.Name}}</td>
+                    <td class="tg-yw4l" colspan="7">
+                        <p v-for="item in difMaterialTypeEle.Options">
+                            <input type="radio" :value="item.Option"
+                                   :id="item.ID" v-model="selectedChoses" class="radioclass">
+                            <label :for="item.ID" class="simbleBox"></label>
+                            <label :for="item.ID" class="clickLabel">{{item.Option}}{{item.Description}}</label>
+                            <span>{{ selectedChoses }}</span>
+                        </p>
+                    </td>
+                </tr>
+            </template>
+        </table>
+    </div>
+
+</template>
+
+<script>
+    export default {
+        name: 'serviceCPEP',
+        props: ['cpepData','pacientID'],
+        data() {
+            return {
+                frstMaterialType: '',
+                difMaterialTypeEle: '',
+                selectedChoses: []
+            }
+        },
+        methods: {
+            setNowMaterialType(param) {
+                if (param.MaterialType === this.frstMaterialType) {
+                    return true
+                } else {
+                    this.difMaterialTypeEle = param;
+                    this.frstMaterialType = param.MaterialType;
+                    return false;
+                }
+            }
+        }
+    }
+</script>
+<style scoped>
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-baqh{text-align:center;vertical-align:middle}
+    .tg .tg-yw4l{text-align: left;vertical-align: top}
+
+    .leftAlign {text-align: left}
+    .cpepTemplate {width: 90%;margin: 10px auto}
+
+    .bondText {font-weight: bold}
+
+    .radioclass {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+    .simbleBox {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+        cursor: pointer;
+        background-image: url("../assets/images/serviceToolImg/默认选框.png");
+    }
+    .clickLabel {
+        cursor: pointer;
+        margin-left: 30px;
+        /*display: inline-block;*/
+        /*width: calc(100% - 41px);*/
+    }
+    input[type=radio]:checked + label {
+        background-image: url("../assets/images/serviceToolImg/选中选框.png");
+    }
+</style>

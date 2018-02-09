@@ -1,0 +1,33 @@
+<template>
+  <div class="appWrap">
+    <Navbar></Navbar>
+    <div class="main">
+      <router-view></router-view>
+    </div>
+  </div>
+</template>
+<script>
+import Navbar from '../components/Navbar.vue';
+//import { getPlanDetail, drTeachingPlan, getIEPCourses, modifyPlan, getDoctorPatientList, getPlanItemDetail, getCourseDetails, editSubPlan } from '../api/api';
+export default {
+  name: 'home',
+  components: {
+    Navbar
+  },
+  methods: {
+  },
+  mounted() {
+    // this.$router.push({path: '/dynamicConsultation'});
+    this.$router.push({ path: this.$router.path });
+  }
+};
+</script>
+<style scoped>
+.main {
+  position: absolute;
+  left: 0;
+  top: 94px;
+  width: 1280px;
+  height: 626px;
+}
+</style>

@@ -1,0 +1,265 @@
+<template>
+    <div class="main">
+    
+        <div class="navigation">
+            <p>当前位置&nbsp;&nbsp;>&nbsp;&nbsp;
+                <span style="cursor:pointer;" @click="goBack()">动态资讯</span>&nbsp;&nbsp;>&nbsp;&nbsp;
+                <span style="color:#42ABD8">培训活动</span>
+            </p>
+        </div>
+    
+        <div class="tabs">
+            <div class="tabs-chose">
+                <li v-for="(tab, index) in tabs" :class="{active : currentTab === index }" @click="currentTab = index">{{tab}}
+                </li>
+            </div>
+        </div>
+    
+        <div class="tabs-content" style="margin-top:41px;" >
+    
+            <div v-show="currentTab === 0" class="tab-content"  >
+                <div style="padding-top:30px;width:1080px;padding-left:40px;padding-bottom:20px ">
+                    <span style="font-size: 18px;font-weight: bold">全部培训</span>
+                    <el-button style="float: right;" @click="goAddTrainingForm">
+                        <Icon type="plus-round"></Icon>
+                        新增
+                    </el-button>
+                </div>
+    
+                <div class="center-content" style="padding-left:20px" >
+                    <div class="newsList">
+                        <div v-for="o in allTrainingData" class="item hoverEle">
+                            <a target="_blank" :href="o.Path">
+                                <img :src="o.Logo" alt="logo">
+                                <p class="activityWrap">
+                                    <span class="activity">公益活动</span>
+                                </p>
+                                <p class="newsTitle">{{ shortTitle(o.Title) }}</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div style="width:1070px">
+                        <el-pagination style="float: right;"  @current-change="nextPage" layout="prev, pager, next" :total="pageTotal">
+                        </el-pagination>
+                    </div>
+                </div>
+
+                <addNewsForm :newsCategoryOptions="CategoryIndex"></addNewsForm>
+            </div>
+    
+            <div v-show="currentTab === 1" class="tab-content"  >
+    
+                <div style="margin-top:33px; margin-left:40px">
+                    <span style="font-size: 18px;font-weight: bold">我的培训</span>
+                    <div class="newsList">
+                        <div v-for="o in drDrTrainingData" class="item">
+                            <a target="_blank" :href="o.Path">
+                                <img :src="o.Logo" alt="logo">
+                                <p class="activityWrap">
+                                    <span class="activity">公益活动</span>
+                                </p>
+                                <p class="newsTitle">{{ o.Title }}</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+        </div>
+    
+    </div>
+</template>
+<script>
+import { requestArticle } from '../../../api/api';
+import addNewsForm from '../../../components/addNewsForm.vue';
+export default {
+    name: 'dymaArticle',
+    components: {
+        addNewsForm
+    },
+    computed: {},
+    data() {
+        return {
+            currentTab: 0,
+            tabs: ['全部培训', '我的培训'],
+            drDrTrainingData: '',
+            CategoryIndex: 3,
+            allTrainingData: [],
+            pageTotal: 1,
+            trainingCurrentPage: 1
+        }
+    },
+    methods: {
+        goBack() {
+            this.$router.push('/dynamicConsultation');
+        },
+        shortTitle(originStr) {
+            if (originStr.length > 26) {
+                let newStr = originStr.substr(0, 23) + '...';
+                return newStr;
+            } else {
+                return originStr;
+            }
+        },
+        requestTrainingData(pageIndex) {
+            var params = {
+                'CategoryType': 3,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 10
+            };
+            requestArticle(params).then(res => {
+                //console.log('培训活动全部');
+                //console.log(res);
+                this.allTrainingData = res.Records;
+                this.pageTotal = res.Total;
+            });
+        },
+        nextPage(currentPage) {
+            //console.log('当前页数');
+            //console.log(currentPage);
+            this.trainingCurrentPage = currentPage;
+            this.requestTrainingData(this.trainingCurrentPage);
+        },
+        goAddTrainingForm() {
+            this.$store.dispatch('addFormVisible');
+        },
+
+        requestTrainingData(pageIndex) {
+            var params = {
+                'CategoryType': 3,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 8
+            };
+            requestArticle(params).then(res => {
+                //console.log('培训活动全部');
+                //console.log(res);
+                this.allTrainingData = res.Records;
+                this.pageTotal = res.Total;
+            });
+        },
+        nextPage(currentPage) {
+            //console.log('当前页数');
+            //console.log(currentPage);
+            this.trainingCurrentPage = currentPage;
+            this.requestTrainingData(this.trainingCurrentPage);
+        },
+        goAddTrainingForm() {
+            this.$store.dispatch('addFormVisible');
+        }
+
+    },
+    mounted() {
+        this.requestTrainingData(1);
+    }
+};
+</script>
+<style scoped>
+.main {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+}
+
+.tabs {
+    width: 100%;
+    height: 626px
+}
+
+.tabs-chose {
+    position: absolute;
+    width: 94px;
+    height: 626px;
+    background-color: #EEEFF0
+}
+
+.tabs-content {
+    position: absolute;
+    left: 94px;
+    top: 0;
+    width: 1185px;
+    height: 626px;
+    border-left: 1px solid #EFEFEF;
+    overflow: scroll;
+}
+
+
+.tabs-chose li {
+    width: 94px;
+    height: 60px;
+    background-color: RGBA(238, 239, 240, 1.00);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabs-chose .active {
+    background-color: #ffffff;
+    color: RGBA(32, 160, 255, 1.00);
+    border-left: 6px solid #31BBFC;
+}
+
+.item {
+    display: inline-block;
+    width: 250px;
+    height: 220px;
+    margin: 10px 10px
+}
+
+.item a {
+    display: flex;
+    flex-direction: column;
+    /*justify-items: center;*/
+    align-items: center
+}
+
+.item img {
+    width: 230px;
+    height: 140px
+}
+
+.activityWrap {
+    width: 230px;
+    margin: 8px
+}
+
+.activity {
+    width: 50px;
+    display: inline-block;
+    background-color: rgba(255, 187, 0, 1);
+    line-height: 20px;
+    color: white;
+}
+
+.tabs-content .newsTitle {
+    width: 230px;
+    color: black;
+    font-size: 18px;
+    position: relative;
+    left: 0px;
+    line-height: 18px;
+}
+
+.hoverEle:hover {
+    box-shadow: 0 17px 50px 0 rgba(0, 0, 0, .19);
+    transform: translate3d(0, -2px, 0);
+    transition: all .3s cubic-bezier(.55, 0, .1, 1);
+}
+
+.navigation {
+    font-size: 16px;
+    padding-left: 18px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    padding-top: 10px;
+    border-bottom: 1px solid gray;
+}
+
+.navigation span:hover {
+    text-decoration: underline;
+    color: #42ABD8;
+}
+</style>

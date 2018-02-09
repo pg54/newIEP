@@ -1,0 +1,345 @@
+<template>
+    <div class="main">
+        <el-form ref="form" :model="form" label-width="80px" label-position="right">
+            <el-row :gutter="0">
+    
+                <!--个人信息-->
+                <el-col :span="14" class="content" style="width:49%;margin-left:10px">
+    
+                    <el-row>
+                        <div class="header">
+                            <i class="icon iconfont icon-ren"></i>
+                            <span>个人信息</span>
+                        </div>
+                    </el-row>
+    
+                    <el-col :span="17">
+    
+                        <el-row class="pgspace">
+                            <el-col :span="14">
+                                <el-form-item label="姓名:">
+                                    <el-input v-model="form.stuName"></el-input>
+                                </el-form-item>
+                            </el-col>
+    
+                            <el-col :span="10">
+                                <el-form-item label="性别:">
+                                    <el-select v-model="form.stuSex" placeholder="请选择性别">
+                                        <el-option label="男" value="男"></el-option>
+                                        <el-option label="女" value="女"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="出生日期:">
+                                    <el-date-picker v-model="form.stuDate" type="date" placeholder="选择日期" :picker-options="pickerOptions0" style="width:100%">
+                                    </el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+    
+                            <el-col :span="14">
+                                <el-form-item label="联系电话:">
+                                    <el-input v-model="form.stuName"></el-input>
+                                </el-form-item>
+                            </el-col>
+    
+                            <el-col :span="10">
+                                <el-form-item label="民族:">
+                                    <el-select v-model="form.stuNation" placeholder="">
+                                        <el-option label="汉族" value="汉族"></el-option>
+                                        <el-option label="壮族" value="壮族"></el-option>
+                                        <el-option label="苗族" value="苗族"></el-option>
+                                        <el-option label="土家族" value="土家族"></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="身份证号:">
+                                    <el-input v-model="form.stuID"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="家庭地址:">
+                                    <el-input v-model="form.stuDisabilityID"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="户籍地址:">
+                                    <el-input v-model="form.stuStuID"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="特长爱好:">
+                                    <el-input v-model="form.stuHobby"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="教育经历:">
+                                    <el-input v-model="form.stuHobby"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="工作经历:">
+                                    <el-input v-model="form.stuHobby"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="获得奖励:">
+                                    <el-input v-model="form.stuHobby"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+    
+                    </el-col>
+    
+                    <el-col :span="7" style="height:200px;padding-left:10px;padding-right:10px">
+                        <el-row style="">
+                            <el-col :span="24">
+    
+                                <div style="width:100%;height:200px;padding-top:90px;background:#EBEBEB;">
+                                    <span style="font-size:18px; text-align:center; display:block; ">点击上传</span>
+                                </div>
+    
+                            </el-col>
+                        </el-row>
+                    </el-col>
+    
+                </el-col>
+    
+                <!--职业信息-->
+                <el-col :span="10" class="content" style="width:49%;margin-left:10px">
+                    <div class="header">
+                        <i class="icon iconfont icon-5176"></i>
+                        <span>职业信息</span>
+                    </div>
+    
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="我的单位:">
+                                <el-input v-model="form.stuFatherCompany"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+    
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="入职时间:">
+                                <el-date-picker v-model="form.stuDate" type="date" placeholder="选择日期" :picker-options="pickerOptions0" style="width:100%">
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+    
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="状态:">
+                                <el-input v-model="form.stuIncome"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+    
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="职称:">
+                                <el-select v-model="form.stuNation" placeholder="请选择职称" style="width:100%">
+                                    <el-option label="评估师" value="评估师"></el-option>
+                                    <el-option label="评估师" value="汉族"></el-option>
+                                    <el-option label="评估师" value="苗族"></el-option>
+                                    <el-option label="评估师" value="土家族"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+    
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="行政职务:">
+                                <el-input v-model="form.stuIncome"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+    
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="工作年限:">
+                                <el-date-picker v-model="form.stuDate" type="date" placeholder="选择日期" :picker-options="pickerOptions0" style="width:47%">
+                                </el-date-picker>
+                                到
+                                <el-date-picker v-model="form.stuDate" type="date" placeholder="选择日期" :picker-options="pickerOptions0" style="width:47%">
+                                </el-date-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                                  <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="科室部门:">
+                                <el-select v-model="form.stuNation" placeholder="请选择科室部门" style="width:100%">
+                                    <el-option label="评估师" value="评估师"></el-option>
+                                    <el-option label="评估师" value="汉族"></el-option>
+                                    <el-option label="评估师" value="苗族"></el-option>
+                                    <el-option label="评估师" value="土家族"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                                        <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="研究领域:">
+                                <el-input v-model="form.stuIncome"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                                        <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="工作领域:">
+                                <el-input v-model="form.stuIncome"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+    
+                </el-col>
+    
+            </el-row>
+    
+            <el-row :gutter="20">
+                <el-col :span="24" style="margin-top:10px" >
+                    <el-form-item>
+                        <!--<el-button @click="goback">返回</el-button>-->
+                        <el-button type="primary"  style="float:right; margin-right:100px;width:100px" >保存</el-button>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+    
+        </el-form>
+    </div>
+</template>
+<script>
+import AddressPicker from '../../components/AddressPicker.vue';
+import Navbar from '../../components/Navbar.vue';
+export default {
+    name: 'archivesEditor',
+    components: {
+        AddressPicker,
+        Navbar
+    },
+    methods: {
+        goback: function () {
+            this.$router.go(-1);
+        }
+    },
+    data() {
+        return {
+            form: {
+                stuName: '',
+                stuSex: '',
+                stuDate: '',
+                stuNation: '',
+                stuID: '',
+                stuDisabilityID: '',
+                stuStuID: '',
+                stuHobby: '',
+                stuResult: '',
+                stuFatherName: '',
+                stuFatherAge: '',
+                stuFatherTel: '',
+                stuMotherName: '',
+                stuMotherAge: '',
+                stuMotherTel: '',
+                stuOtherName: '',
+                stuOtherAge: '',
+                stuOtherTel: '',
+                stuFatherEdu: '',
+                stuMatherEdu: '',
+                stuFatherCompany: '',
+                stuMatherCompany: '',
+                stuFamily: '',
+                stuIsOnly: '',
+                stuDistrict: '',
+                stuPutong: '',
+                stuRaiser: '',
+                stuTechMethod: '',
+                stuIncome: ''
+            }
+        };
+    },
+    methods:{
+        pickerOptions0(){
+
+        }
+    }
+};
+</script>
+<style scoped>
+.main {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 650px;
+    overflow: scroll;
+    padding-top: 18px;
+    font-size: 12px
+}
+
+.content {
+    border: 1px solid #C7D9EC;
+    height: 570px;
+}
+
+.el-row {
+    /*margin-bottom: 5px*/
+}
+.el-form-item {
+    margin-bottom: 15px;
+}
+.header {
+    height: 40px;
+    background-color: #EDF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start
+}
+
+.header>i {
+    font-size: 26px
+}
+
+.header>span {
+    font-size: 22px
+}
+
+.pgspace {
+    margin-bottom: 0;
+    margin-top: 0
+}
+</style>

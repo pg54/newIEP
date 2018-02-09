@@ -1,0 +1,457 @@
+<template>
+    <div class="printWrap">
+        <div class="print-sider">
+            <h2 class="print-sider-title">广东省智力残疾儿童康复档案</h2>
+            <div class="print-sider-paper">
+                <p class="print-sider-paperTitle">智力残疾儿童入学登记表</p>
+                <div class="print-sider-paperNav">
+                    <span class="print-sider-paperIndex">1</span>
+                    <span class="print-sider-paperIndex">2</span>
+                </div>
+            </div>
+            <div class="print-sider-paper">
+                <p class="print-sider-paperTitle">智力残疾儿童学习能力评估表</p>
+                <div class="print-sider-paperNav">
+                    <span class="print-sider-paperIndex">1</span>
+                    <span class="print-sider-paperIndex">2</span>
+                    <span class="print-sider-paperIndex">3</span>
+                    <span class="print-sider-paperIndex">4</span>
+                    <span class="print-sider-paperIndex">5</span>
+                    <span class="print-sider-paperIndex">6</span>
+                </div>
+            </div>
+            <div class="print-sider-paper">
+                <p class="print-sider-paperTitle">
+                    学习能力评估结果综合分析报告
+                </p>
+                <div class="print-sider-paperNav">
+                    <span class="print-sider-paperIndex">1</span>
+                    <span class="print-sider-paperIndex">2</span>
+                    <span class="print-sider-paperIndex">3</span>
+                    <span class="print-sider-paperIndex">4</span>
+                </div>
+            </div>
+            <div class="print-sider-paper">
+                <p class="print-sider-paperTitle">智力残疾康复个性化教育计划（IEP）</p>
+                <div class="print-sider-paperNav">
+                    <span class="print-sider-paperIndex">1</span>
+                    <span class="print-sider-paperIndex">2</span>
+                    <span class="print-sider-paperIndex">3</span>
+                </div>
+            </div>
+        </div>
+        <div class="print-content">
+            <div id="print-content-paper">
+                <div class="paperform-content">
+                    <p class="paperform-title">智力残疾儿童入学登记表</p>
+                    <p class="paperform-filecode">档案编号：________</p>
+                    <div class="paperform-form">
+
+                        <table class="tg">
+                            <tr>
+                                <th class="tg-s6z2" rowspan="5">儿<br>童<br>信<br>息</th>
+                                <th class="tg-s6z2" colspan="3">姓名</th>
+                                <th class="tg-031e" colspan="3"></th>
+                                <th class="tg-s6z2">性<br>别</th>
+                                <th class="tg-s6z2" colspan="3"></th>
+                                <th class="tg-s6z2" colspan="3">出生日期</th>
+                                <th class="tg-s6z2" colspan="5"></th>
+                                <th class="tg-s6z2" colspan="5" rowspan="4">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    贴照片
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                </th>
+                            </tr>
+
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">临床诊断</td>
+                                <td class="tg-031e" colspan="7"></td>
+                                <td class="tg-s6z2" colspan="3">诊断日期</td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">诊断机构</td>
+                                <td class="tg-031e" colspan="7"></td>
+                                <td class="tg-s6z2" colspan="3">入学时间</td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">户籍<br>所在地</td>
+                                <td class="tg-031e" colspan="15"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">现居住<br>地址</td>
+                                <td class="tg-031e" colspan="12"></td>
+                                <td class="tg-s6z2" colspan="3">家庭电话</td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" rowspan="8">家<br>庭<br>情<br>况</td>
+                                <td class="tg-s6z2" colspan="3">父亲姓名</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" rowspan="3">年<br>龄</td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" rowspan="3">文<br>化<br>程<br>度</td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" rowspan="3">工<br>作<br>单<br>位<br>及<br>职<br>务</td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" rowspan="3">联<br>系<br>电<br>话</td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">母亲姓名</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">其他成员</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">家庭模式</td>
+                                <td class="tg-031e" colspan="20">大家庭（）       核心家庭（）  单亲家庭（）   寄养家庭（）  </td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">居住社区</td>
+                                <td class="tg-031e" colspan="20">花园小区（）    独家居住（）  租住房（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">教养方式</td>
+                                <td class="tg-031e" colspan="20">教育型（）       娇惯型（）     放任自流型（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">语言环境</td>
+                                <td class="tg-031e" colspan="20">普通话（）       广州话（）     地方方言（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">抚养/<br>带教人</td>
+                                <td class="tg-031e" colspan="20">父母（）          爷爷奶奶（）  外公外婆（）   保姆（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" rowspan="8">儿<br>童<br>自<br>身<br>状<br>况<br>介<br>绍</td>
+                                <td class="tg-s6z2" colspan="3" rowspan="2">妊娠史</td>
+                                <td class="tg-031e" colspan="3">母妊娠年龄</td>
+                                <td class="tg-s6z2" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="3">胎教情况</td>
+                                <td class="tg-baqh" colspan="3"></td>
+                                <td class="tg-baqh" colspan="3">先兆流产</td>
+                                <td class="tg-baqh" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">心理状态</td>
+                                <td class="tg-s6z2" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="3">生理状况</td>
+                                <td class="tg-baqh" colspan="3"></td>
+                                <td class="tg-baqh" colspan="3">环境状况</td>
+                                <td class="tg-baqh" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3" rowspan="2">分娩史</td>
+                                <td class="tg-031e" colspan="3">足月</td>
+                                <td class="tg-s6z2" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="3">产程</td>
+                                <td class="tg-baqh" colspan="3"></td>
+                                <td class="tg-baqh" colspan="3">分娩方式</td>
+                                <td class="tg-baqh" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">早产或过期</td>
+                                <td class="tg-s6z2" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="3">窒息</td>
+                                <td class="tg-baqh" colspan="3"></td>
+                                <td class="tg-baqh" colspan="3">出生体重</td>
+                                <td class="tg-baqh" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3" rowspan="4">生长<br>发育史</td>
+                                <td class="tg-031e" colspan="3">母乳喂养</td>
+                                <td class="tg-s6z2" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="3">人工喂养</td>
+                                <td class="tg-baqh" colspan="3"></td>
+                                <td class="tg-baqh" colspan="3">高热抽搐</td>
+                                <td class="tg-baqh" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">会抬头时间</td>
+                                <td class="tg-s6z2" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="3">会翻身时间</td>
+                                <td class="tg-baqh" colspan="3"></td>
+                                <td class="tg-baqh" colspan="3">会爬行时间</td>
+                                <td class="tg-baqh" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">会笑时间</td>
+                                <td class="tg-s6z2" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="3">会坐时间</td>
+                                <td class="tg-baqh" colspan="3"></td>
+                                <td class="tg-baqh" colspan="3">会爬行时间</td>
+                                <td class="tg-baqh" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-yw4l" colspan="3">会发声时间</td>
+                                <td class="tg-yw4l" colspan="3"></td>
+                                <td class="tg-yw4l" colspan="3">说单词时间</td>
+                                <td class="tg-yw4l" colspan="3"></td>
+                                <td class="tg-yw4l" colspan="3">说词语时间</td>
+                                <td class="tg-yw4l" colspan="5">LAST</td>
+                            </tr>
+                        </table>
+                        <!--<el-row>-->
+                        <!--<el-col :span="1" class="paperform-normalBorder">-->
+                        <!--<div class="paperform-block-title">-->
+                        <!--儿童信息-->
+                        <!--</div>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="23" class="paperform-onebottomBorder">-->
+                        <!--<el-row>-->
+                        <!--<el-col :span="20">-->
+                        <!--<el-row class="paperform-normalBorder">-->
+                        <!--<el-col :span="2" class="paperform-oneBorder">姓名</el-col>-->
+                        <!--<el-col :span="4" class="paperform-oneBorder">{{reg_name}}</el-col>-->
+                        <!--<el-col :span="2" class="paperform-oneBorder">性别</el-col>-->
+                        <!--<el-col :span="4" class="paperform-oneBorder">{{reg_sex}}</el-col>-->
+                        <!--<el-col :span="3" class="paperform-oneBorder">出生日期</el-col>-->
+                        <!--<el-col :span="9">{{reg_birthDate}}年{{reg_birthDate}}月{{reg_birthDate}}日</el-col>-->
+                        <!--</el-row>-->
+                        <!--<el-row class="paperform-normalBorder">-->
+                        <!--<el-col :span="3" class="paperform-oneBorder">临床诊断</el-col>-->
+                        <!--<el-col :span="9" class="paperform-oneBorder">aa{{reg_docJudge}}</el-col>-->
+                        <!--<el-col :span="3" class="paperform-oneBorder">诊断时间</el-col>-->
+                        <!--<el-col :span="9">{{reg_docJudgeDate}}年{{reg_docJudgeDate}}月{{reg_docJudgeDate}}日</el-col>-->
+                        <!--</el-row>-->
+                        <!--<el-row class="paperform-normalBorder">-->
+                        <!--<el-col :span="3" class="paperform-oneBorder">诊断机构</el-col>-->
+                        <!--<el-col :span="9" class="paperform-oneBorder">aa{{reg_docAgency}}</el-col>-->
+                        <!--<el-col :span="3" class="paperform-oneBorder">入学时间</el-col>-->
+                        <!--<el-col :span="9">{{reg_enterTime}}年{{reg_enterTime}}月{{reg_enterTime}}日</el-col>-->
+                        <!--</el-row>-->
+                        <!--<el-row class="paperform-normalBorder">-->
+                        <!--<el-col :span="3" class="paperform-oneBorder">户籍所</el-col>-->
+                        <!--<el-col :span="21" class="paperform-oneBorder">{{reg_homeTown}}</el-col>-->
+                        <!--</el-row>-->
+                        <!--</el-col>-->
+                        <!--<el-col :span="4" class="paperform-photo">-->
+                        <!--贴照片-->
+                        <!--</el-col>-->
+                        <!--</el-row>-->
+                        <!--<el-row >-->
+                        <!--<el-col :span="3" class="paperform-oneBorder">现居住</el-col>-->
+                        <!--<el-col :span="9" class="paperform-oneBorder">啊啊啊{{reg_address}}</el-col>-->
+                        <!--<el-col :span="3" class="paperform-oneBorder">家庭电话</el-col>-->
+                        <!--<el-col :span="9">{{reg_familyTel}}年{{reg_familyTel}}月{{reg_familyTel}}日</el-col>-->
+                        <!--</el-row>-->
+                        <!--</el-col>-->
+                        <!--</el-row>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="print-tool" @click="printSth">打印</div>
+        <div class="print-back" @click="goback">返回</div>
+    </div>
+</template>
+<script>
+    export default {
+        name: 'print',
+        data() {
+            return {
+                //            入学登记
+                reg_name: ' ',
+                reg_sex: ' ',
+                reg_birthDate: ' ',
+                reg_docJudge: ' ',
+                reg_docJudgeDate: ' ',
+                reg_docAgency: ' ',
+                reg_enterTime: ' ',
+                reg_homeTown: ' ',
+                reg_address: ' ',
+                reg_familyTel: ' '
+            }
+        },
+        methods: {
+            printSth() {
+                console.log('printSth');
+
+                var printpage = document.getElementById('print-content-paper')
+                var newstr = printpage.innerHTML;
+                var oldstr = document.body.innerHTML;
+                document.body.innerHTML =newstr;
+                window.print();
+                document.body.innerHTML=oldstr;
+                return true;
+
+
+//                let printWrap = document.getElementsByClassName('printWrap')[0]
+//                let print_content_paper = document.getElementById('print-content-paper')
+//                printWrap.style.visibility = 'hidden'
+//                print_content_paper.style.visibility = 'visible'
+//                window.print()
+//                printWrap.style.visibility = 'visible'
+
+
+//                let newWindow = window.open("_blank");   //打开新窗口
+//                let codestr = document.getElementById("print-content-paper").innerHTML;   //获取需要生成pdf页面的div代码
+//                newWindow.document.write(codestr);   //向文档写入HTML表达式或者JavaScript代码
+//                newWindow.document.close();     //关闭document的输出流, 显示选定的数据
+//                newWindow.print();   //打印当前窗口
+//                return true;
+            },
+            goback() {
+                console.log('goback');
+                this.$router.go(-1);
+            }
+        }
+    }
+</script>
+<style scoped>
+    .printWrap {
+        position: relative;
+        width: 100%;
+        height: 720px;
+        border: 1px solid #cccccc
+    }
+
+    .print-sider {
+        float: left;
+        width: 320px;
+        box-sizing: border-box;
+        height: 100%;
+        border-right: 1px solid #cccccc;
+        padding: 10px;
+    }
+
+    .print-sider-title {
+        margin-bottom: 40px;
+    }
+
+    .print-sider-paper {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .print-sider-paperNav {
+
+    }
+
+    .print-sider-paperIndex {
+        display: inline-block;
+        margin-right: 5px;
+        width: 18px;
+        height: 18px;
+        text-align: center;
+        line-height: 18px;
+        border-radius: 50%;
+        color: white;
+        background-color: black;
+    }
+
+    .print-content {
+        position: relative;
+        margin-left: 320px;
+        width: 860px;
+        height: 100%;
+        padding: 5px 0;
+    }
+
+    #print-content-paper {
+        width: 595px;
+        height: 842px;
+        margin: 0 auto;
+        box-sizing: border-box;
+        box-shadow: 0 0 0 3px #edf7ff
+    }
+
+    .print-content {
+        /*box-sizing: border-box;*/
+    }
+
+    .print-content .el-col {
+        margin: 0;
+    }
+
+    .paperform-title {
+        font-size: 22px;
+        text-align: center
+    }
+
+    .paperform-filecode {
+        text-align: right
+    }
+
+    .paperform-form {
+        width: 100%;
+        border: 1px solid black
+    }
+
+    .paperform-block-title {
+        writing-mode: vertical-rl;
+        direction: rtl;
+        vertical-align: center;
+        height: 112px;
+    }
+
+    .paperform-normalBorder {
+        border-bottom: 1px solid black;
+        border-right: 1px solid black
+    }
+
+    .paperform-oneBorder {
+        border-right: 1px solid black
+    }
+
+    .paperform-onebottomBorder {
+        border-bottom: 1px solid black
+    }
+
+    .paperform-photo {
+        height: 94px;
+        border-bottom: 1px solid black
+    }
+
+    .print-tool {
+        position: absolute;
+        top: 100px;
+        right: 100px;
+        width: 100px;
+        height: 40px;
+        color: #252729;
+        background-color: #FFCF71;
+        border-color: #FFCF71;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    .print-back {
+        position: absolute;
+        top: 160px;
+        right: 100px;
+        width: 100px;
+        height: 40px;
+        color: #252729;
+        background-color: #FFCF71;
+        border-color: #FFCF71;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    /*1080*1920 页面展示时设置padding:2px 10px   打印时的设置  padding:10px 18px*/
+
+
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:12px;padding:2px 10px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:2px 10px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center}
+    .tg .tg-baqh{text-align:center;vertical-align:top}
+    .tg .tg-yw4l{vertical-align:top}
+</style>

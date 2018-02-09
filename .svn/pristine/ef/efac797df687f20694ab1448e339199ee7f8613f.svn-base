@@ -1,0 +1,251 @@
+/**
+ * Created by pangang on 2017/4/7.
+ */
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import AuthManage from '../pages/AuthManage/AuthManage.vue';
+import CoopGroup from '../pages/CoopGroup/CoopGroup.vue';
+import DataAnalysis from '../pages/DataAnalysis/DataAnalysis.vue';
+import Home from '../pages/Home.vue';
+import IEP from '../pages/IEP/IEP.vue';
+import IEPBasicInfo from '../pages/IEP/IEP-BasicInfo.vue';
+import IEPaAnalysis from '../pages/IEP/IEP-Analysis.vue';
+import IEPPlan from '../pages/IEP/IEP-Plan.vue';
+import IEPSchedule from '../pages/IEP/IEP-Schedule.vue';
+import IEPlibrary from '../pages/IEP/IEP-library.vue';
+import IEPStudy from '../pages/IEP/IEP-study.vue';
+import IEPSummary from '../pages/IEP/IEP-Summary.vue';
+import IEPRecord from '../pages/IEP/IEP-Record.vue';
+import IEPFeedback from '../pages/IEP/IEP-Feedback.vue';
+import IEPPlanDetail from '../pages/IEP/IEP-Plan/child/IEP-Plan-detail.vue';
+import PlanItemDetail from '../pages/IEP/IEP-Plan/child/IEP-PALNITEM-details.vue';
+import IEPCourse from '../pages/IEP/IEP-Plan/child/IEP-Course.vue';
+import InformCoope from '../pages/informCooperation/NoticeCoope.vue';
+import Login from '../pages/Login.vue';
+import MyService from '../pages/myService/MyService.vue';
+import ServiceTool from '../pages/serviceArrangement/ServiceTool.vue';
+import DynamicTracking from '../pages/informCooperation/DymamicTracking.vue';
+import NoticeReminder from '../pages/informCooperation/NoticeReminder.vue';
+import ServiceManage from '../pages/myService/child/MyServiceManage.vue';
+import studentFile from '../pages/rehabilitationFile/MyStudentFile.vue';
+import studentTrack from '../pages/MyStudentTrack/MyStudentTrack.vue';
+import ServiceFile from '../pages/myService/MyServiceFile.vue';
+import ServiceAgency from '../pages/myService/MyServiceAgency.vue';
+import MyArchives from '../pages/myService/MyArchives.vue';
+import DynamicConsultation from '../pages/DymamicConsultation/DymamicConsultation.vue';
+import DymaEdu from '../pages/DymamicConsultation/child/DymaEdu.vue';
+import DymaNews from '../pages/DymamicConsultation/child/DymaNews.vue';
+import DymaArticle from '../pages/DymamicConsultation/child/DymaArticle.vue';
+import DymaTraining from '../pages/DymamicConsultation/child/DymaTraining.vue';
+import FileEditor from '../components/FileEditor.vue';
+import RehabilitationFile from '../pages/rehabilitationFile/rehabilitationFile.vue';
+import RFAnalysis from '../pages/rehabilitationFile/RF-Analysis.vue';
+import RFAssessment from '../pages/rehabilitationFile/RF-Assessment.vue';
+import RFRegister from '../pages/rehabilitationFile/RF-Register.vue';
+import RFPlan from '../pages/rehabilitationFile/RF-Plan.vue';
+import RFRecord from '../pages/rehabilitationFile/RF-Record.vue';
+import RFTrack from '../pages/rehabilitationFile/RF-Track.vue';
+import RFAttachment from '../pages/rehabilitationFile/RF-Attachment.vue';
+import TestPaper from '../pages/serviceArrangement/child/testPaper.vue';
+import TestSult from '../pages/serviceArrangement/child/testResult.vue';
+import testReport from '../pages/serviceArrangement/child/testReport.vue';
+Vue.use(VueRouter);
+
+export default new VueRouter({
+  routes: [
+    {
+      path: '/login',
+      name: 'login',
+      component: Login
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: 'dynamicConsultation',
+          component: DynamicConsultation,
+          name: 'dynamicConsultation',
+          children: [
+            { path: 'dymaNews', component: DymaNews, name: 'dymaNews' },
+            { path: 'dymaEdu', component: DymaEdu, name: 'dymaEdu' },
+            { path: 'dymaArticle', component: DymaArticle, name: 'dymaArticle' },
+            { path: 'dymaTraining', component: DymaTraining, name: 'dymaTraining' }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: 'informCoope',
+          component: InformCoope,
+          name: 'informCoope',
+          children: [
+            { path: 'dynamicTracking', component: DynamicTracking, name: 'dynamicTracking' },
+            { path: 'noticeReminder', component: NoticeReminder, name: 'noticeReminder' }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: 'studentTrack',
+          component: studentTrack,
+          name: 'studentTrack'
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: 'iep',
+          component: IEP,
+          name: 'iep',
+          children: [
+            { path: 'iepBasicInfo', component: IEPBasicInfo, name: 'iepBasicInfo' },
+            { path: 'iepAnalysis', component: IEPaAnalysis, name: 'iepAnalysis' },
+            { path: 'iepPlan', component: IEPPlan, name: 'iepPlan' },
+            // {
+            //   path: 'iepPlan',
+            //   component: IEPPlan,
+            //   name: 'iepPlan',
+            //   children: [
+            //     { path: 'iepPlanDetail', component: IEPPlanDetail, name: 'iepPlanDeatail' },
+            //     { path: 'planItemDetail', component: PlanItemDetail, name: 'planItemDetail' },
+            //     { path: 'iepCourse', component: IEPCourse, name: 'iepCourse' }
+            //   ]
+            // },
+            { path: 'iepSchedule', component: IEPSchedule, name: 'iepSchedule' },
+            { path: 'ieplibrary', component: IEPlibrary, name: 'ieplibrary' },
+            { path: 'iepStudy', component: IEPStudy, name: 'iepStudy' },
+            { path: 'iepSummary', component: IEPSummary, name: 'iepSummary' },
+            { path: 'iepRecord', component: IEPRecord, name: 'iepRecord' },
+            { path: 'iepFeedback', component: IEPFeedback, name: 'iepFeedback' }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: 'myService',
+          component: MyService,
+          name: 'myService',
+          children: [
+            { path: 'serviceManage', component: ServiceManage, name: 'serviceManage' },
+            { path: 'serviceFile', component: ServiceFile, name: 'serviceFile' },
+            { path: 'serviceAgency', component: ServiceAgency, name: 'serviceAgency' },
+            { path: 'serviceArchives', component: MyArchives, name: 'serviceArchives' }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: 'studentFile',
+          component: studentFile,
+          name: 'studentFile',
+          children: [
+            {
+              path: 'rehabilitationFile',
+              component: RehabilitationFile,
+              name: 'rehabilitationFile',
+              children: [
+                { path: 'rFAnalysis', component: RFAnalysis, name: 'rFAnalysis' },
+                { path: 'rFAssessment', component: RFAssessment, name: 'rFAssessment' },
+                { path: 'rFRegister', component: RFRegister, name: 'rFRegister' },
+                { path: 'rFPlan', component: RFPlan, name: 'rFPlan' },
+                { path: 'rFRecord', component: RFRecord, name: 'rFRecord' },
+                { path: 'rFTrack', component: RFTrack, name: 'rFTrack' },
+                { path: 'rFAttachment', component: RFAttachment, name: 'rFAttachment' },
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        {
+          path: 'serviceTool',
+          component: ServiceTool,
+          name: 'serviceTool',
+          children: [
+            { path: 'testPaper/:id/course/:course_id/patientID/:patiend_id', component: TestPaper, name: 'testPaper' },
+            { path: 'testResult/:testID/patientID/:patiend_id', component: TestSult, name: 'testSult' },
+            { path: 'testReport/:id/patientID/:patiend_id', component: testReport, name: 'testReport' }
+          ]
+        }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        { path: 'coopGroup', component: CoopGroup, name: 'coopGroup' }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        { path: 'dataAnalysis', component: DataAnalysis, name: 'dataAnalysis' }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        { path: 'authManage', component: AuthManage, name: 'authManage' }
+      ]
+    },
+    {
+      path: '/',
+      name: 'home',
+      component: Home,
+      children: [
+        { path: 'fileEditor', component: FileEditor, name: 'fileEditor' }
+      ]
+    }
+    // {
+    //   path: '/',
+    //   name: 'home',
+    //   component: Home,
+    //   children: [
+    //     { path: 'questionPaper', component: QuestionPaper, name: 'questionPaper'}
+    //   ]
+    // }
+  ]
+});

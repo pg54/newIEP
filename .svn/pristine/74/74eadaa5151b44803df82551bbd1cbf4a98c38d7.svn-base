@@ -1,0 +1,207 @@
+<template>
+  <div class="consultManage">
+    <div class="consultItem">
+      <el-form :inline="true" class="demo-form-inline">
+
+        <img src="../assets/images/图文.png" alt="logo" class="leftImg">
+        <span class="title">图文咨询</span>
+        <el-form-item label="设置价格(元/次)" class="setPrice" :class="{inputHidden: !service1.Valid}">
+          <el-input v-model="service1.Price" placeholder="￥30/次" ></el-input>
+        </el-form-item>
+  
+        <el-form-item class="serviceSwitch">
+          <el-switch v-model="service1.Valid" on-text="" off-text="" >
+          </el-switch>
+        </el-form-item>
+      </el-form>
+
+    </div>
+  
+    <div class="consultItem">
+      <el-form :inline="true" class="demo-form-inline">
+        <img src="../assets/images/视频.png" alt="logo">
+        <span class="title">视频咨询</span>
+  
+        <el-form-item label="设置价格(元/次)" class="setPrice" :class="{inputHidden: !service2.Valid}">
+          <el-input v-model="service2.Price" placeholder="￥30/次" ></el-input>
+        </el-form-item>
+  
+        <el-form-item class="serviceSwitch">
+          <el-switch v-model="service2.Valid" on-text="" off-text="">
+          </el-switch>
+        </el-form-item>
+  
+      </el-form>
+    </div>
+  
+    <div class="consultItem">
+      <el-form :inline="true" class="demo-form-inline">
+        <img src="../assets/images/康复管家.png" alt="">
+        <span class="title">康教管家</span>
+  
+        <el-form-item label="设置价格(元/次)" class="setPrice" :class="{inputHidden: !service3.Valid}">
+          <el-input v-model="service3.Price" placeholder="￥30/次" ></el-input>
+        </el-form-item>
+  
+        <el-form-item class="serviceSwitch">
+          <el-switch v-model="service3.Valid" on-text="" off-text="" >
+          </el-switch>
+        </el-form-item>
+
+  
+      </el-form>
+    </div>
+      <el-button style="margin-left: 740px;margin-top: 5px" size="large" @click="submitServices">保存</el-button>
+
+
+  </div>
+</template>
+<script>
+import api from '../api/index.js';
+
+export default {
+  name: 'consultManage',
+  computed: {
+  },
+  data() {
+    return {
+      service1: {Price: '',Valid: false},
+      service2: {Price: '',Valid: false},
+      service3: {Price: '',Valid: false}
+    }
+  },
+  methods: {
+      submitServices() {
+          this.manageSwith(1, this.service1.Valid, this.service1.Price);
+          this.manageSwith(3, this.service2.Valid, this.service1.Price);
+          this.manageSwith(4, this.service3.Valid, this.service1.Price);
+          this.$message({message: '保存成功',type: 'success'})
+      },
+//    normalswithChange(open) {
+//      console.log(this.service1.Price);
+//      this.manageSwith(1, open, this.service1.Price);
+//    },
+//    VideoSwithChange(open) {
+//      console.log(this.service2.Price);
+//      this.manageSwith(3, open, this.service3.Price);
+//    },
+//    managerSwithChange(open) {
+//      console.log(this.service3.Price);
+//      this.manageSwith(4, open, this.service2.Price);
+//    },
+    manageSwith: function (value, swith, price) {
+      //var priceNumber = Number(price);
+      var params = {
+        'Value': String(value),
+        'Price': String(price)
+      };
+      if (swith === true) {
+        api.DrServiceOpen(params).then(res => {
+//          if (res.Code === 0) {
+//            this.$message({
+//              message: '开通成功',
+//              type: 'success'
+//            });
+//          } else {
+//            this.$message({
+//              message: '开通失败',
+//              type: 'error'
+//            });
+//          }
+        });
+      } else {
+        var par = {'id':params.Value}
+        api.DrServiceClose(par).then(res => {
+//          if (res.Code === 0) {
+//            this.$message({
+//              message: '关闭成功',
+//              type: 'success'
+//            });
+//          } else {
+//            this.$message({
+//              message: '关闭失败',
+//              type: 'error'
+//            });
+//          }
+        });
+      }
+    },
+    //获取用户资料
+    getUserProfile: function () {
+      api.drProfile().then(res => {
+          console.log('用户资料');
+          console.log(res);
+
+          if (res.data.Services) {
+              if (res.data.Services[0].Valid) {
+                  this.service1.Valid = res.data.Services[0].Valid;
+                  this.service1.Price = res.data.Services[0].Price;
+
+              } else {
+                  this.service1.Valid = res.data.Services[0].Valid;
+                  this.service1.Price = '';  //即使是valid为false,price还是有值得
+              }
+
+              if (!res.data.Services[1].Valid) {
+                  this.service2.Valid = res.data.Services[1].Valid;
+                  this.service2.Price = '';  //即使是valid为false,price还是有值得
+              } else {
+                  this.service2.Valid = res.data.Services[1].Valid;
+                  this.service2.Price = res.data.Services[1].Price;
+              }
+
+              if (!res.data.Services[2].Valid) {
+                  this.service3.Valid = res.data.Services[2].Valid;
+                  this.service3.Price = '';  //即使是valid为false,price还是有值得
+              } else {
+                  this.service3.Valid = res.data.Services[2].Valid;
+                  this.service3.Price = res.data.Services[2].Price;
+              }
+
+          }
+      });
+    }
+  },
+  created: function () {
+    this.getUserProfile();
+  },
+ 
+};
+</script>
+<style scoped>
+.consultManage {
+  width: 1080px;
+  height: 240px
+}
+
+.consultItem {
+  margin-left: 20px;
+  height: 74px;
+  border-bottom: 1px solid RGBA(239, 239, 239, 1.00);
+  vertical-align: middle
+}
+
+.demo-form-inline {
+  margin-top: 20px
+}
+
+.demo-form-inline>span {
+  margin-right: 146px
+}
+
+.setPrice {
+  display: inline-block;
+  margin-right: 146px
+}
+
+.serviceSwitch {
+  margin-left: 172px
+}
+
+.title {
+  margin-left: 10px
+}
+  .inputHidden {
+    visibility: hidden;
+  }
+</style>

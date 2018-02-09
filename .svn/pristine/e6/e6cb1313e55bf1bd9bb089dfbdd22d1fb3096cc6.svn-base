@@ -1,0 +1,1195 @@
+<template>
+    <div class="main">
+        <div class="pageNavbar">
+            <span style="color: black">当前位置 > </span>
+            <span @click="goBack">
+                <i style="font-size: 16px;font-weight: bold">{{ chosedPatientName}} </i>的康复档案 > </span>
+            <span>入学登记 > </span>
+        </div>
+        <div class="registerBox">
+            <el-form ref="form" :model="userInfo" label-width="130px" label-position="right" style="width:100%;">
+                <!--个人信息-->
+                <el-row :gutter="24">
+                    <el-col :span="24">
+                        <el-row>
+                            <p class="data-header">1、儿童信息</p>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="12">
+                                <el-form-item label="照片:">
+                                    <el-upload class="avatar-uploader" :action="getuploadURL()" :headers="getAuth()" :show-file-list="false" :on-success="handleAvatarScucess" :before-upload="beforeAvatarUpload">
+                                        <img v-if="imageUrl" :src="imageUrl" class="avatar" style="width: 84px;height: 84px">
+                                        <i v-else class="icon iconfont icon-upload" style="font-size: 50px"></i>
+                                    </el-upload>
+                                </el-form-item>
+
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="姓名:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Name"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="性别:">
+
+                                    <el-select placeholder="请选择" style="width:100%" v-model="userInfo.Sex">
+                                        <el-option v-for="(item, index) in sexsArrary" :key="item.Key" :label=item.Value :value=item.Key>
+                                        </el-option>
+                                    </el-select>
+
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="出生日期:">
+                                    <el-date-picker type="date" placeholder="请选择" style="width:100%" v-model="userInfo.BirthDate"></el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="身份证号码:">
+                                    <el-input placeholder="请输入" v-model="userInfo.IDCard"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+
+                            <el-col :span="6">
+                                <el-form-item label="诊断科室:">
+
+                                    <el-select placeholder="请选择" style="width:100%" @change="deptOnChange" v-model="currentDiaDeptId">
+                                        <el-option v-for="(item, index) in diagnosisesDept" :key="item.ID" :label=item.Name :value=item.ID>
+                                        </el-option>
+
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="临床诊断:">
+                                    <el-select placeholder="请选择" style="width:100%" v-model="userInfo.DiagnosisID">
+                                        <el-option v-for="(item, index) in diagnosises" :key="item.ID" :label=item.Name :value=item.ID>
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="诊断时间:">
+                                    <el-date-picker type="date" placeholder="请选择" style="width:100%" v-model="userInfo.DiagnosisDate"></el-date-picker>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="临床表现:">
+                                    <el-input placeholder="请输入临床表现" v-model="userInfo.Comments"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <!--<el-row>-->
+                        <!--<el-col :span="5">-->
+                        <!--<el-form-item label="入学时间:">-->
+                        <!--<el-date-picker type="date" placeholder="请选择" style="width:100%"-->
+                        <!--v-model="userInfo.InDate"></el-date-picker>-->
+                        <!--</el-form-item>-->
+                        <!---->
+                        <!--</el-col>-->
+                        <!---->
+                        <!--</el-row>-->
+
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="现居住地址:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Address2"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                    </el-col>
+                </el-row>
+
+                <!--家庭情况-->
+                <el-row :gutter="24">
+                    <el-col :span="24" style="">
+                        <el-row>
+                            <p class="data-header">2、家庭情况</p>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="父亲姓名:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member1.Name"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="父亲年龄:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member1.Age"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="文化程度:">
+
+                                    <el-select v-model="userInfo.Member1.Degree" placeholder="请选择学历">
+                                        <el-option label="博士后" value="博士后"></el-option>
+                                        <el-option label="博士" value="博士"></el-option>
+                                        <el-option label="研究生" value="研究生"></el-option>
+                                        <el-option label="本科" value="本科"></el-option>
+                                        <el-option label="专科" value="专科"></el-option>
+                                        <el-option label="高中" value="高中"></el-option>
+                                        <el-option label="初中" value="初中"></el-option>
+                                        <el-option label="小学" value="小学"></el-option>
+                                        <el-option label="文盲" value="文盲"></el-option>
+                                    </el-select>
+                                    <!--<el-input placeholder="请输入" v-model="userInfo.Member1.Degree"></el-input>-->
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="工作单位:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member1.WorkUnit"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="联系电话:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member1.Mobile"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="母亲姓名:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member2.Name"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="母亲年龄:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member2.Age"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="文化程度:">
+
+                                    <el-select v-model="userInfo.Member2.Degree" placeholder="请选择学历">
+                                        <el-option label="博士后" value="博士后"></el-option>
+                                        <el-option label="博士" value="博士"></el-option>
+                                        <el-option label="研究生" value="研究生"></el-option>
+                                        <el-option label="本科" value="本科"></el-option>
+                                        <el-option label="专科" value="专科"></el-option>
+                                        <el-option label="高中" value="高中"></el-option>
+                                        <el-option label="初中" value="初中"></el-option>
+                                        <el-option label="小学" value="小学"></el-option>
+                                        <el-option label="文盲" value="文盲"></el-option>
+                                    </el-select>
+
+                                    <!--<el-input placeholder="请输入" v-model="userInfo.Member2.Degree"></el-input>-->
+
+                                </el-form-item>
+
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="工作单位:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member2.WorkUnit"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="联系电话:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member2.Mobile"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="其他成员:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member3.Name"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="年龄:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member3.Age"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="文化程度:">
+
+                                    <el-select v-model="userInfo.Member3.Degree" placeholder="请选择学历">
+                                        <el-option label="博士后" value="博士后"></el-option>
+                                        <el-option label="博士" value="博士"></el-option>
+                                        <el-option label="研究生" value="研究生"></el-option>
+                                        <el-option label="本科" value="本科"></el-option>
+                                        <el-option label="专科" value="专科"></el-option>
+                                        <el-option label="高中" value="高中"></el-option>
+                                        <el-option label="初中" value="初中"></el-option>
+                                        <el-option label="小学" value="小学"></el-option>
+                                        <el-option label="文盲" value="文盲"></el-option>
+                                    </el-select>
+
+                                    <!--<el-input placeholder="请输入" v-model="userInfo.Member3.Degree"></el-input>-->
+
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="工作单位:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member3.WorkUnit"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="联系电话:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Member3.Mobile"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="家庭模式:">
+                                    <div style="position:relative;">
+                                        <!--<span style="margin-left:110px;width:20px;overflow:hidden;">-->
+                                            <el-select style="width:59px;margin-left:100px;display: inline-block"  :onchange="change5" v-model="userInfo.FamilyModel">
+                                                <el-option v-for="(item, index) in familyModels" :key="item.Name" :label=item.Name :value=item.Name>
+                                                </el-option>
+                                            </el-select>
+                                        <!--</span>-->
+                                        <el-input name="box" v-model="userInfo.FamilyModel" style="width:130px;position:absolute;left:0px;"></el-input>
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="居住社区:">
+                                    <div style="position:relative;">
+                                        <span style="margin-left:100px;width:18px;overflow:hidden;">
+                                            <el-select style="width:58px;margin-left:-10px" :onchange="change4" v-model="userInfo.Community">
+                                                <el-option v-for="(item, index) in communities" :key="item.Name" :label=item.Name :value=item.Name>
+                                                </el-option>
+                                            </el-select>
+                                        </span>
+                                        <el-input name="box" v-model="userInfo.Community" style="width:120px;position:absolute;left:0px;"></el-input>
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="教养方式:">
+                                    <div style="position:relative;">
+                                        <span style="margin-left:100px;width:18px;overflow:hidden;">
+                                            <el-select style="width:58px;margin-left:-10px" :onchange="change3" v-model="userInfo.EducationStyle">
+                                                <el-option v-for="(item, index) in educationStyles" :key="item.Name" :label=item.Name :value=item.Name>
+                                                </el-option>
+                                            </el-select>
+                                        </span>
+                                        <el-input name="box" v-model="userInfo.EducationStyle" style="width:120px;position:absolute;left:0px;"></el-input>
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="抚养/带教人:">
+                                    <div style="position:relative;">
+                                        <span style="margin-left:100px;width:18px;overflow:hidden;">
+                                            <el-select style="width:58px;margin-left:-10px" :onchange="change1" v-model="userInfo.Dependents">
+                                                <el-option v-for="(item, index) in dependents" :key="item.Name" :label=item.Name :value=item.Name>
+                                                </el-option>
+                                            </el-select>
+                                        </span>
+                                        <el-input name="box" v-model="userInfo.Dependents" style="width:120px;position:absolute;left:0px;"></el-input>
+                                    </div>
+
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+                        <el-row>
+
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="语言环境:">
+                                    <div style="position:relative;">
+                                        <span style="margin-left:100px;width:18px;overflow:hidden;">
+                                            <el-select style="width:58px;margin-left:-10px" :onchange="change2" v-model="userInfo.Language">
+                                                <el-option v-for="(item, index) in languages" :key="item.Name" :label=item.Name :value=item.Name>
+                                                </el-option>
+                                            </el-select>
+                                        </span>
+                                        <el-input name="box" v-model="userInfo.Language" style="width:120px;position:absolute;left:0px;"></el-input>
+                                    </div>
+
+                                </el-form-item>
+
+                            </el-col>
+                        </el-row>
+                    </el-col>
+                </el-row>
+
+                <!--儿童自身状况介绍-->
+                <el-row :gutter="24" style="">
+                    <el-col :span="24" style="">
+                        <el-row>
+                            <p class="data-header">3、儿童自身状况</p>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="母妊娠年龄:">
+                                    <el-input placeholder="请输入" v-model="userInfo.MotherGestationalAge"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="胎教情况:">
+                                    <el-input placeholder="请输入" v-model="userInfo.PrenatalEducation"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="心理状态:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Mentation"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="生理状态:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Physiological"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="环境情况:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Environmental"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="产程:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Labor"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="先兆流产:">
+                                    <el-select v-model="abortionStatus" placeholder="请选择">
+                                        <el-option label="有" value=true></el-option>
+                                        <el-option label="无" value=false></el-option>
+                                    </el-select>
+
+                                    <div v-if="abortionStatus === 'true'? true: false" style="display: inline-block">
+                                        <el-select  v-model="userInfo.ThreatenedAbortion" style="width:80%">
+                                            <el-option label="1" value="1"></el-option>
+                                            <el-option label="2" value="2"></el-option>
+                                            <el-option label="3" value="3"></el-option>
+                                            <el-option label="3" value="4"></el-option>
+                                            <el-option label="5" value="5"></el-option>
+                                            <el-option label="6" value="6"></el-option>
+                                        </el-select>
+                                        &nbsp;&nbsp;&nbsp;次
+                                    </div>
+
+                                </el-form-item>
+
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="足月:">
+                                    <el-select v-model="matureStatus" placeholder="请选择">
+                                        <el-option label="是" value=false></el-option>
+                                        <el-option label="否" value=true></el-option>
+                                    </el-select>
+                                    <div label="" v-if="matureStatus === 'true'?true:false">
+                                        <el-input placeholder="请输入" v-model="userInfo.Mature" style="width:80%"></el-input>&nbsp;&nbsp;&nbsp;周
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="早产或过期:">
+                                    <el-select v-model="prematureOrExpiredText">
+                                        <el-option label="早产" value='早产'></el-option>
+                                        <el-option label="过期" value='过期'></el-option>
+                                    </el-select>
+                                    <div>
+                                        <el-form-item label="">
+                                            <el-input placeholder="请输入" style="width:80%" v-model="prematureOrExpiredTime"></el-input>&nbsp;&nbsp;&nbsp;周
+                                        </el-form-item>
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="分娩方式:">
+                                    <el-select v-model="userInfo.Parturition">
+                                        <el-option label="顺产" value='顺产'></el-option>
+                                        <el-option label="剖腹产" value='剖腹产'></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="窒息:">
+                                    <el-select v-model="userInfo.Suffocate">
+                                        <el-option label="有" value='有'></el-option>
+                                        <el-option label="无" value='无'></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="出生体重:">
+                                    <el-input placeholder="请输入" v-model="userInfo.BirthWeight" style="width:80%"></el-input>
+                                    &nbsp;&nbsp;&nbsp;g
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="母乳喂养:">
+                                    <el-select v-model="userInfo.Breastfeeding">
+                                        <el-option label="是" value='是'></el-option>
+                                        <el-option label="否" value='否'></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="人工喂养:">
+                                    <el-select v-model="userInfo.ArtificialFeeding">
+                                        <el-option label="是" value='是'></el-option>
+                                        <el-option label="否" value='否'></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="高热抽搐:">
+                                    <el-select v-model="userInfo.HighFeverTwitching">
+                                        <el-option label="有" value='有'></el-option>
+                                        <el-option label="无" value='无'></el-option>
+                                    </el-select>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="会抬头时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.LookedUpTime" style="width:80%"></el-input>
+                                    &nbsp;&nbsp;&nbsp;周
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="会翻身时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.TurnOverTime"></el-input>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="会爬行时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.CrawlingTime"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="会笑时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.LaughTime"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="会坐时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.SitTime"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="会走路时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.WalkTime"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="会发声时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.PronouncedTime"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="说单词时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.SayWordTime"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="说词语时间:">
+                                    <el-input placeholder="请输入" v-model="userInfo.SpeakTime"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="既往病史:">
+                                    <el-select v-model="illnessHistoryStatus" placeholder="请选择">
+                                        <el-option label="有" value=true></el-option>
+                                        <el-option label="无" value=false></el-option>
+                                    </el-select>
+
+                                    <div v-if="illnessHistoryStatus === 'true'?true:false">
+                                        <el-form-item label="">
+                                            <el-input placeholder="请输入" v-model="userInfo.IllnessHistory"></el-input>
+                                        </el-form-item>
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="过敏史:">
+                                    <el-select v-model="allergyHistoryStatus" placeholder="请选择">
+                                        <el-option label="有" value=true></el-option>
+                                        <el-option label="无" value=false></el-option>
+                                    </el-select>
+
+                                    <div v-if="allergyHistoryStatus === 'true'?true:false">
+                                        <el-form-item label="" >
+                                            <el-input placeholder="请输入" v-model="userInfo.AllergyHistory"></el-input>
+                                        </el-form-item>
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="特殊饮食习惯:">
+                                    <el-select v-model="SpecialEatingHabitsStatus" placeholder="请选择">
+                                        <el-option label="有" value=true></el-option>
+                                        <el-option label="无" value=false></el-option>
+                                    </el-select>
+
+                                    <div v-if="SpecialEatingHabitsStatus === 'true'?true:false">
+                                        <el-form-item label="">
+                                            <el-input placeholder="请输入" v-model="userInfo.SpecialEatingHabits"></el-input>
+                                        </el-form-item>
+                                    </div>
+
+
+                                </el-form-item>
+                            </el-col>
+
+                            <el-col :span="6">
+                                <el-form-item label="特殊睡眠时间:">
+                                    <el-select v-model="SpecialSleepingTimeStatus" placeholder="请选择">
+                                        <el-option label="有" value=true></el-option>
+                                        <el-option label="无" value=false></el-option>
+                                    </el-select>
+                                    <div v-if="SpecialSleepingTimeStatus === 'true'?true:false">
+                                        <el-form-item label="">
+                                            <el-input placeholder="请输入" v-model="userInfo.SpecialSleepingTime"></el-input>
+                                        </el-form-item>
+                                    </div>
+                                </el-form-item>
+                            </el-col>
+
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="喜欢的室内活动:">
+                                    <el-input placeholder="请输入" v-model="userInfo.FavouriteActivityIn"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="喜欢的室外活动:">
+                                    <el-input placeholder="请输入" v-model="userInfo.FavouriteActivityOut"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="爱看电视节目:">
+                                    <el-input placeholder="请输入" v-model="userInfo.FavouriteTV"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="常玩的玩具:">
+                                    <el-input placeholder="请输入" v-model="userInfo.FavouriteToy"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="独处时常做事情:">
+                                    <el-input placeholder="请输入" v-model="userInfo.AloneThing"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="经常一起的玩伴:">
+                                    <el-input placeholder="请输入" v-model="userInfo.FavouritePlaymate"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="语言表达能力:">
+                                    <el-input placeholder="请输入" v-model="userInfo.LanguageExpressionAbility"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="认知/认字能力:">
+                                    <el-input placeholder="请输入" v-model="userInfo.CognitiveAbility"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="数数:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Counting"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="穿衣服:">
+                                    <el-input placeholder="请输入" v-model="userInfo.WearClothes"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="吃饭:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Eat"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="大小便:">
+                                    <el-input placeholder="请输入" v-model="userInfo.Toilet"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item label="伤害自己/他人:">
+                                    <el-input placeholder="请输入" v-model="userInfo.HurtSelfOrOthers"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="逃跑:">
+                                    <el-input placeholder="请输入" v-model="userInfo.RunAway"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="其它:">
+                                    <el-input placeholder="请输入" v-model="userInfo.OtherBehavior"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item label="智障成因:">
+                                    <el-input placeholder="请输入" v-model="userInfo.MentalRetardationReason"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="目前主要障碍情况:">
+                                    <el-input placeholder="请输入" v-model="userInfo.ObstacleState"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                        <el-row>
+                            <el-col :span="24">
+                                <el-form-item label="既往康复教育情况:" >
+                                    <el-input placeholder="请输入" v-model="userInfo.RecoveryHistory"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+
+                    </el-col>
+                </el-row>
+            </el-form>
+            <div class="submitBox" v-bind:class="{narrowSubmitBox : narrow}">
+                <el-button type="primary" @click="updateUserinfo()">保存</el-button>
+                <el-button type="primary" @click="printPreview()">打印预览</el-button>
+            </div>
+        </div>
+    </div>
+</template>
+
+
+<script>
+import api from '../../../api/index.js';
+export default {
+    name: 'rFRegister',
+    components: {},
+    computed: {
+        chosedPatientName: function () {
+            return this.$store.state.mystudent.currentPatientId.Name;
+        }
+    },
+    data() {
+        return {
+            imageUrl: '',//头像地址
+            userInfo: {
+                PatientAgentID: "",//患者ID
+                InDate: "",//入学时间
+                Address1: "",//户籍地址
+                Address2: null,//现在住址
+                FamilyModel: null,//家庭模式，这是个列表，获取方面下面描述
+                Community: null,//居住小区，这是个列表，获取方面下面描述
+                EducationStyle: null,//教育方式，这是个列表，获取方面下面描述
+                Language: '',//语言环境，这是个列表，获取方面下面描述
+                Dependents: null,//抚养/带教人，这是个列表，获取方面下面描述
+                MotherGestationalAge: null,//母妊娠年龄
+                PrenatalEducation: null,//胎教情况
+                ThreatenedAbortion: null,//先兆流产
+                Mentation: null,//心理状态
+                Physiological: null,//生理状况
+                Environmental: null,//环境状况
+                Mature: null,//足 月
+                Labor: null,//产 程
+                Logo: '',
+                Parturition: null,//分娩方式
+                PrematureOrExpired: null,//早产或过期
+                Suffocate: null,//窒 息
+                BirthWeight: null,//出生体重
+                Breastfeeding: null,//母乳喂养
+                ArtificialFeeding: null,//人工喂养
+                HighFeverTwitching: null,//高热抽搐
+                LookedUpTime: null,//会抬头时间
+                TurnOverTime: null,//会翻身时间
+                CrawlingTime: null,//会爬行时间
+                LaughTime: null,//会笑时间
+                SitTime: null,//会坐时间
+                WalkTime: null,//会走时间
+                PronouncedTime: null,//会发音时间
+                SayWordTime: null,//说单词时间
+                SpeakTime: null,//说词语时间
+                IllnessHistory: null,//既往病史
+                AllergyHistory: null,//过　敏　史
+                SpecialEatingHabits: null,//特殊的饮食习惯
+                SpecialSleepingTime: null,//特殊的睡眠时间
+                FavouriteActivityIn: null,//最喜欢的活动，内
+                FavouriteActivityOut: null,//最喜欢的活动，外
+                FavouriteTV: null,//最爱看的电视节目
+                FavouriteToy: null,//最常玩的玩具
+                AloneThing: null,//独处时常做事情
+                FavouritePlaymate: null,//经常一起的玩伴
+                LanguageExpressionAbility: null,//语言表达能力
+                CognitiveAbility: null,//认知/认字能力
+                Counting: null,//数　　　　数
+                WearClothes: null,//穿　衣　服
+                Eat: null,//穿　衣　服
+                Toilet: null,//大　小　便
+                HurtSelfOrOthers: null,//伤害自己/他人
+                RunAway: null,//伤害自己/他人
+                OtherBehavior: null,//其　　　　他
+                MentalRetardationReason: null,//智障成因
+                ObstacleState: null,//目前主要障碍情况
+                RecoveryHistory: null,//既往康复教育情况
+                DiagnosisID: '',//病种ID
+                Sex: 1,
+                BirthDate: '',
+                IDCard: '',
+                DiagnosisDate: '',//诊断时间
+                Comments: '',//诊断结果
+                Mobile: '',
+                Member1: {//家庭成员信息，顺序 是父亲，母亲，其它成员
+                    ID: "",
+                    Name: "",
+                    Age: '',
+                    Degree: '',
+                    WorkUnit: '',
+                    Title: '',
+                    Mobile: ''
+                },
+                Member2: {
+                    ID: "",
+                    Name: "",
+                    Age: '',
+                    Degree: '',
+                    WorkUnit: '',
+                    Title: '',
+                    Mobile: ''
+                },
+                Member3: {
+                    ID: "",
+                    Name: "",
+                    Age: '',
+                    Degree: '',
+                    WorkUnit: '',
+                    Title: '',
+                    Mobile: ''
+                },
+            },
+            sexsArrary: [{ "Key": 1, "Value": "男" }, { "Key": 2, "Value": "女" }],
+            familyModels: [],//家庭模式
+            communities: [],//居住社区
+            educationStyles: [],//教育方式
+            languages: [],//语言环境
+            dependents: [],//抚养、带教人
+            diagnosisesDept: [],//病种数据,数据格式： 包含科室->对应多个病种
+            currentDiaDeptId: '',//当前选中科室ID
+            diagnosises: [],//病种,
+            narrow: false,
+            abortionStatus: '',  //先兆流产
+            matureStatus: '',  //足月
+            illnessHistoryStatus: '',  //有无病史
+            allergyHistoryStatus: '',  //有无过敏史
+            SpecialEatingHabitsStatus: '',  //特殊饮食
+            SpecialSleepingTimeStatus: '',   //特殊睡眠
+            prematureOrExpiredText: '',  //早产或过期 文字部分
+            prematureOrExpiredTime: '' //早产或过期 周数
+        };
+    },
+    methods: {
+        goBack() {
+            this.$store.dispatch('setShowPacientList', true);
+            this.$router.push({ path: '/studentFile' });
+        },
+        init() {
+            //获取患者详细信息
+            let _this = this;
+            let patientId = _this.$store.state.mystudent.currentPatientId.ID;
+
+            api.getPatientAgentDetails(patientId).then(res => {
+                _this.userInfo = res.data;
+                _this.imageUrl = res.data.Logo;
+                if (_this.userInfo.Member1 == null) {
+                    _this.userInfo.Member1 = {
+                        ID: "",
+                        Name: "",
+                        Age: '',
+                        Degree: '',
+                        WorkUnit: '',
+                        Title: '',
+                        Mobile: ''
+                    };
+                }
+
+                if (_this.userInfo.Member2 == null) {
+                    _this.userInfo.Member2 = {
+                        ID: "",
+                        Name: "",
+                        Age: '',
+                        Degree: '',
+                        WorkUnit: '',
+                        Title: '',
+                        Mobile: ''
+                    };
+                }
+
+                if (_this.userInfo.Member3 == null) {
+                    _this.userInfo.Member3 = {
+                        ID: "",
+                        Name: "",
+                        Age: '',
+                        Degree: '',
+                        WorkUnit: '',
+                        Title: '',
+                        Mobile: ''
+                    };
+                }
+
+                //早产或过期分成2个字段
+                let length = _this.userInfo.PrematureOrExpired == null ? 0 : _this.userInfo.PrematureOrExpired.length;
+
+                if (length > 0) {
+                    _this.prematureOrExpiredText = _this.userInfo.PrematureOrExpired.substr(0, 2);
+                    _this.prematureOrExpiredTime = _this.userInfo.PrematureOrExpired.substr(2, length);
+                }
+                if (_this.userInfo.ThreatenedAbortion) {
+                    _this.abortionStatus = 'true';
+                }
+                if (_this.userInfo.Mature) {
+                    _this.matureStatus = 'true';
+                }
+                if (_this.userInfo.IllnessHistory) {
+                    _this.illnessHistoryStatus = 'true';
+                }
+                if (_this.userInfo.AllergyHistory) {
+                    _this.allergyHistoryStatus = 'true';
+                }
+                if (_this.userInfo.SpecialEatingHabits) {
+                    _this.SpecialEatingHabitsStatus = 'true';
+                }
+                if (_this.userInfo.SpecialSleepingTime) {
+                    _this.SpecialSleepingTimeStatus = 'true';
+                }
+                _this.requestDiagnosises();
+            }).catch(err => {
+                _this.$message.error('获取患者信息失败！');
+            });
+
+            //获取家庭模式(FAMILYMODEL)、居住社区(COMMUNITY)、教养方式(EDUCATIONSTYLE)、语言环境(LANGUAGE)、抚养带教人(DEPENDENTS)
+
+            api.getDictionaryData('FAMILYMODEL').then(res => {
+                _this.familyModels = res.data.List;
+            }).catch(err => {
+
+            });
+
+            api.getDictionaryData('COMMUNITY').then(res => {
+                _this.communities = res.data.List;
+            }).catch(err => {
+
+            });
+
+            api.getDictionaryData('EDUCATIONSTYLE').then(res => {
+                _this.educationStyles = res.data.List;
+            }).catch(err => {
+
+            });
+
+            api.getDictionaryData('LANGUAGE').then(res => {
+                _this.languages = res.data.List;
+            }).catch(err => {
+
+            });
+
+            api.getDictionaryData('DEPENDENTS').then(res => {
+                _this.dependents = res.data.List;
+            }).catch(err => {
+
+            });
+
+        },
+        //请求病种数据
+        requestDiagnosises() {
+            let _this = this;
+            api.requestDept().then(res => {
+                _this.diagnosisesDept = res.data.List;
+                let flag = false;
+                for (let i = 0; i < _this.diagnosisesDept.length; i++) {
+                    for (let j = 0; j < _this.diagnosisesDept[i].Diagnosises.length; j++) {
+                        if (_this.diagnosisesDept[i].Diagnosises[j].ID == _this.userInfo.DiagnosisID) {
+                            _this.currentDiaDeptId = _this.diagnosisesDept[i].ID;
+                            _this.diagnosises = _this.diagnosisesDept[i].Diagnosises
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag)
+                        true;
+                }
+            }).catch(err => {
+                _this.$message.error('病种数据请求失败,请稍后再试');
+            });
+        },
+
+        //科室发生变化时，病种下拉列表刷新
+        deptOnChange(id) {
+            let _this = this;
+            _this.diagnosises = [];
+            for (let i = 0; i < _this.diagnosisesDept.length; i++) {
+                if (_this.diagnosisesDept[i].ID === id) {
+                    _this.diagnosises = _this.diagnosisesDept[i].Diagnosises;
+                    if (_this.diagnosises.length > 0) {
+                        _this.userInfo.DiagnosisID = _this.diagnosises[0].ID;
+                    } else {
+                        _this.userInfo.DiagnosisID = '';
+                    }
+                    break;
+                }
+            }
+        },
+        //更新患者信息
+        updateUserinfo() {
+            let _this = this;
+            console.log(_this.userInfo);
+            let params = _this.handleSpecialFields(_this.userInfo);
+            api.postPatientAgentDetails(params).then(res => {
+                if (res.data.Code === 0) {
+                    _this.$message.success('保存成功！');
+                    _this.refreshPatientInfo();
+                }
+            }).catch(err => {
+                _this.$message.error('保存失败,请稍后再试！');
+            });
+        },
+        printPreview() {
+//            this.showPrint = true;
+            this.$router.push({ path: '/print' });
+        },
+        handleSpecialFields(userInfo) {
+            if (this.abortionStatus === 'false') {
+                this.userInfo.ThreatenedAbortion = '' //先兆流产
+            }
+            if (this.matureStatus === 'true') {  //足月
+                this.userInfo.Mature = ''
+            }
+            if (this.illnessHistoryStatus === 'false') { //有无病史
+                this.userInfo.IllnessHistory = ''
+            }
+            if (this.allergyHistoryStatus === 'false') {  //过敏史
+                this.userInfo.AllergyHistory = ''
+            }
+            if (this.SpecialSleepingTimeStatus === 'false') { //特殊睡眠
+                this.userInfo.SpecialSleepingTime = ''
+            }
+            if (this.SpecialEatingHabitsStatus === 'false') { //特殊饮食
+                this.userInfo.SpecialEatingHabits = ''
+            }
+            this.userInfo.PrematureOrExpired = this.prematureOrExpiredText + this.prematureOrExpiredTime
+            return this.userInfo;
+        },
+        refreshPatientInfo() {
+            api.getDoctorPatientList().then(res => {
+                let arr = [];
+                var groupInfo = res.data.List;
+                for (var i = 0, j = groupInfo.length; i < j; i++) {
+                    var obj = {
+                        'groupName': groupInfo[i].Name,
+                        'groupID': groupInfo[i].ID,
+                        'groupPatients': groupInfo[i].Agents
+                    };
+                    arr.push(obj);
+                }
+                this.$store.dispatch('addPatientList', arr);
+            })
+        },
+        getAuth() {
+            return { 'authorization': sessionStorage.getItem('accessToken') };
+        },
+        getuploadURL() {
+            return api.uploadIMGURL;
+        },
+        handleAvatarScucess(res, file) {
+            if (res.Code === 0) {
+                this.imageUrl = res.Path;
+                this.userInfo.Logo = res.Msg;
+            } else {
+                this.$message.error('上传照片失败，请重试');
+            }
+        },
+        beforeAvatarUpload() {
+        },
+        changetags(currentValue) {
+            console.log('现在的值');
+            console.log(currentValue);
+        },
+        change1(text) {
+            this.userInfo.Dependents = text;
+        },
+        change2(text) {
+            this.userInfo.Language = text;
+        },
+        change3(text) {
+            this.userInfo.EducationStyle = text;
+        },
+        change4(text) {
+            this.userInfo.Community = text;
+        },
+        change5(text) {
+            this.userInfo.FamilyModel = text;
+        }
+    },
+    created() {
+        if (window.innerHeight < 768) {
+            this.narrow = true;
+        } else {
+            this.narrow = false;
+        }
+        this.init();
+    },
+    mounted() {
+        window.onresize = () => {
+            return (() => {
+                if (window.innerHeight < 768) {
+                    this.narrow = true;
+                } else {
+                    this.narrow = false;
+                }
+            })()
+        }
+    }
+};
+</script>
+
+
+<style scoped>
+.main {
+    width: 100%;
+    height: 626px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.pageNavbar {
+    position: absolute;
+    left: -94px;
+    top: 0;
+    width: 1280px;
+    height: 42px;
+    border-bottom: 1px solid #cccccc;
+    line-height: 42px;
+    font-size: 16px;
+}
+
+.registerBox {
+    width: 100%;
+    height: 580px;
+    position: absolute;
+    left: 0;
+    top: 43px;
+    padding: 10px 0 0 10px;
+    overflow-y: scroll;
+}
+
+.data-header {
+    margin-bottom: 15px;
+    font-size: 18px;
+    margin-left: 10px;
+    font-weight: bold
+}
+
+/*.el-col {*/
+    /*margin-left: 15px;*/
+/*}*/
+
+.submitBox {
+    width: 100px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 20px;
+    position: fixed;
+    top: 685px;
+    left: calc(50% + 440px);
+}
+
+.narrowSubmitBox {
+    top: 90%;
+}
+.printWrap {
+    width: 595px;
+    height: 820px;
+    margin: 0 auto;
+    left: 0;
+    top: 0;
+    position: fixed;
+    z-index: 3000;
+    background-color: rgba(0,0,0,0.3);
+    background-color: white;
+    color: black;
+}
+.printWrap p{
+    height: 100px;
+}
+
+
+</style>

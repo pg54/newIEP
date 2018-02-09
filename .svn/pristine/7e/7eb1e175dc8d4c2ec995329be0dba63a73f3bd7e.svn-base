@@ -1,0 +1,62 @@
+<template>
+  <div class="tabs">
+
+    <div class="tabs-chose">
+      <li v-for="(tab, index) in tabs"
+          :class="{active : currentTab === index }"
+          @click="currentTab = index">{{tab}}
+      </li>
+    </div>
+
+    <div class="tabs-content">
+      <div v-for="(tab,index) in tabs" class="tab-content" v-show="currentTab === index">
+        <div v-if="index === 0">
+          <DymaConsult :serviceCategory="index" :dymaConsultStatus="dymaStatus"></DymaConsult>
+        </div>
+        <div v-if="index === 1">
+          <DymaConsult :serviceCategory="index" :dymaConsultStatus="dymaStatus"></DymaConsult>
+        </div>
+        <div v-if="index === 2">
+          <DymaConsult :serviceCategory="index" :dymaConsultStatus="dymaStatus"></DymaConsult>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import DymaConsult from '../components/DymaConsult.vue';
+
+  export default {
+    name: 'tabs',
+    props: ['tabs', 'dymaStatus'],
+    components: {
+      DymaConsult
+    },
+    data() {
+      return {
+        currentTab: 0,
+        consultData: []
+      };
+    },
+    mounted() {
+    }
+  };
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+  .tabs-chose {width: 106px;height: 100%;border-right: 1px solid #EFEFEF;position: absolute;left: 0;top: 0}
+  .tabs-content {width: 1079px;height: 100%;position: absolute;left: 107px;top: 0;padding-top: 20px}
+  .tabs-chose li{
+    width: 106px;
+    height: 70px;
+    text-align: center;
+    line-height: 70px;
+    cursor: pointer;
+  }
+  .tabs-chose .active {
+    color: #48C4FC;
+  }
+</style>

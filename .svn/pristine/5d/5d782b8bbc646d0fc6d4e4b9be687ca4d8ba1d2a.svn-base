@@ -1,0 +1,221 @@
+<template>
+    <div class="testPaper">
+        <div class="formBox">
+            <div class="tabs">
+                <div class="tabs-chose">
+                    <li v-for="(paper, index) in testPaperContentData.Papers"
+                        :class="{active : currentTab === index }"
+                        @click="currentTab = index">
+                        <p>{{paper.Name}}</p>
+                    </li>
+                </div>
+                <div class="tab-content" v-show="paperIndex === currentTab" v-for="(paper, paperIndex) in testPaperContentData.Papers">
+                    <div class="secondLevel">
+                        <div v-for="(section, sectionIndex) in paper.Sections">
+                            <li class="chaptTitle"
+                                :class="{secondActive : secondTab === sectionIndex }"
+                                @click="secondTab = sectionIndex">
+                                {{section.Name}}
+                                <span v-show="section.Status" class="sectionhasAnswered"></span>
+                            </li>
+                            <div v-show="secondTab === sectionIndex" class="questionsBox">
+                                <div v-for="(question, questionIndex) in section.Questions" class="questiones">
+                                    <p class="questionDescrib">题{{questionIndex+1}}:  {{ question.Description}}</p>
+                                    <div v-for="(option, optionIndex) in question.Options">
+                                        <input  class="radioclass " type="radio" :value="option.Code" :id="option.ID"
+                                                :name="question.ID" @change="questionOptionChecked(question.ID, testPaperFormData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result)"
+                                                v-model="testPaperFormData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result">
+                                        <label :for="option.ID" class="simbleBox"></label>
+                                        <label :for="option.ID">{{ option.Name }}</label>
+                                    </div>
+
+
+
+                                    <br>
+                                </div>
+                                <div class="submitBox" v-show="!isComplete">
+                                    <el-button type="primary" @click="submitTestContent(section)">完成</el-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</template>
+<script>
+    import { getTestPaperContent, sendTestPaper, getPacientTestDetails } from '../../../../api/api';
+    export default {
+        name: 'reslutPaper',
+        props: ['paticentID', 'testID', 'isComplete'],
+        data() {
+            return {
+                questionAnswers: [],
+                testPaperContentData: [],
+                testPaperFormData: [],
+                updateData: [],
+                currentTab: 0,
+                secondTab: 0,
+                selectedGroup: this.$store.state.mystudent.patientList,
+                selectedPacientIDS: '',
+                selectedGroupPacientes: [],
+                patientAgents: [],
+                sexOptions: [
+                    {label: '男', value: '1'},
+                    {label: '女', value: '0'}
+                ],
+                form : {
+                    patient: '',
+                    sex: '',
+                    date1: '',
+                    date2: ''
+                },
+                notChosed: false,
+                showPacientInfo: false
+            };
+        },
+        methods: {
+            submitTestContent(obj) {
+                let qustionAnswers = [];
+                let originData = this.testPaperFormData.Papers;
+                for(let i=0;i<originData.length;i++) {   //试卷
+                    for (let j = 0; j < originData[i].Sections.length; j++) {  //章节
+                        if (obj === originData[i].Sections[j]) {
+                            for (let k = 0; k < originData[i].Sections[j].Questions.length; k++) {  //问题
+
+                                if (originData[i].Sections[j].Questions[k].Result) {
+                                    let unitForm = {
+                                        QuestionID: originData[i].Sections[j].Questions[k].ID,
+                                        Result: originData[i].Sections[j].Questions[k].Result
+                                    };
+                                    qustionAnswers.push(unitForm);
+                                }
+                            }
+                        }
+                    }
+                }
+                console.log(qustionAnswers);
+                sendTestPaper(this.testID, qustionAnswers).then(res => {
+                    if(res.Code === 0) {
+                        this.$message.success('正常');
+                        this.requesTestPaperData();
+                    } else if(res.Code === 1){
+                        this.$message.wraning('指定的评估不存在');
+                    } else if(res.Code === 2) {
+                        this.$message.wraning('指定的评估不属于当前用户');
+                    } else if(res.Code === 3) {
+                        this.$message.wraning('请指定患者');
+                    } else if (res.Code === 4) {
+                        this.$message.wraning('指定的患者不属于当前医生');
+                    } else {
+                        this.$message.error(res.Msg);
+                    }
+                });
+            },
+            questionOptionChecked(id, result) {
+                console.log('触发checkbox方法');
+                console.log(id);
+                console.log(result);
+                console.log(event.returnValue);
+                this.notChosed = event.returnValue;
+            },
+            requesTestPaperData() {
+                console.log('输出paticentID');
+                console.log(this.paticentID);
+                console.log('输出testID');
+                console.log(this.testID);
+                getPacientTestDetails(this.testID).then(res => {
+                    this.form.testDate = res.CreatedOn;
+                    this.testPaperFormData = Object.assign({},res);
+                    this.testPaperContentData = res;
+                });
+            },
+            filterPacient(val) {
+                this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+            }
+        },
+        created() {
+            this.requesTestPaperData();
+        }
+    };
+</script>
+<style scoped>
+    .testPaper {position: relative;width: 1185px;top: 0;left: 0;height: 583px;z-index: 10;margin-left: -30px}
+    .formBox {width: 1125px;height: 580px;position: absolute;left: 0;top: 0;}
+    .blockItem {display: inline-flex;height: 60px;margin-right: 5px;justify-content: center;align-items: center}
+    .tabs {position: absolute;width: 1180px;height: 580px;top: 0;left: 0;border-radius: 6px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);}
+    .tabs-chose {position: absolute;width: 94px;height: 580px;border-right: 1px solid #EFEFEF;}
+    .secondLevel {position: absolute;width: 106px;height: 580px;left: 94px;top: 0}
+    .questionsBox {position: absolute;width: 980px;height: 580px;left: 106px;top: 0;overflow-y: scroll;border-left: 1px solid #EFEFEF}
+    .toolBox {width: 100%;margin: 0 auto;height: 66px;position: relative;top: 0;left: 0;background-color: rgba(238, 239, 240,1)}
+    .questiones {padding-left: 68px;}
+    .tab-content {
+        width: 1000px;
+        margin: 30px auto;
+    }
+    .tabs-chose li{
+        width: 94px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .tabs-chose .active {
+        color: RGBA(32, 160, 255, 1.00);
+    }
+    .chaptTitle {
+        width: 106px;
+        height: 40px;
+        font-size: 14px;
+        padding-left: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .secondActive {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+    }
+    .optionsSpace {width: 100%;height: 20px}
+    .testWrap {width: 100px}
+    .questionDescrib {font-size: 16px;margin-top: 24px;margin-bottom: 12px}
+
+    .sectionhasAnswered {
+        width: 18px;
+        height: 18px;
+        background-image: url("../../../../assets/images/iep/选中选框.png");
+        background-repeat: no-repeat;
+    }
+    .radioclass {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+    .simbleBox {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        background-image: url("../../../../assets/images/serviceToolImg/默认选框.png");
+    }
+    input[type=radio]:checked + label {
+        background-image: url("../../../../assets/images/serviceToolImg/选中选框.png");
+    }
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s
+    }
+    .fade-enter, .fade-leave-active {
+        opacity: 0
+    }
+    .submitBox{width: 100px;height: 60px;display: flex;align-items: center;justify-content: flex-end;padding-right: 20px;
+        position: fixed;
+        top: 660px;
+        left: calc(50% + 500px);
+    }
+</style>

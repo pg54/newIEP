@@ -1,0 +1,474 @@
+<template>
+    <div class="main">
+        <div class="pageNavbar">
+            <span style="color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span @click="goBack"><i style="font-size: 16px;font-weight: bold">{{ chosedPatientName}}&nbsp;</i>的康复档案&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span>后续跟踪&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+        </div>
+        <div class="track-content" v-show="!showDetailsFlag">
+            <div class="track-list">
+                <div class="toolBox">
+                    <div class="addWrap">
+                        <el-button @click="addTrack">新增后续跟踪</el-button>
+                    </div>
+                </div>
+
+                <div class="center-content">
+                    <el-card class="cardBox colorHeader " :body-style="{ padding: '0px'}">
+                        <div class="tableWrap ">
+                            <el-table :data="trackList" style="width: 100%">
+                                <el-table-column type="index" width="160" style="">
+                                </el-table-column>
+
+                                <el-table-column prop="Name" label="后续教育跟踪标题" width="600">
+                                </el-table-column>
+
+                                <el-table-column label="操作">
+                                    <template scope="scope">
+                                        <!--<el-button size="small" type="danger" @click="assessmentDetail(scope.$index, scope.row)">评估结果</el-button>-->
+                                        <el-button size="small" :plain="true" type="info" @click="viewTrackDetails(scope.$index,scope.row)">查看详情</el-button>
+                                        <el-button size="small" :plain="true" type="danger" @click="removeTrack(scope.$index, scope.row)">删除</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                        <el-pagination layout="prev, pager, next" @current-change="pageChange" :page-size="pageSize" :total="recordsCount" style="float:right;"></el-pagination>
+                    </el-card>
+                </div>
+            </div>
+        </div>
+
+        <div class="track-content" v-show="showDetailsFlag">
+            <div class="center-content">
+                <div class="toolBox" style="float:left;line-height:36px;">
+                    <p style="font-size: 18px;font-weight: bold">新增患者后续教育跟踪</p>
+                </div>
+
+                <el-card class="cardBox colorHeader " :body-style="{ padding: '0px'}">
+                    <div class="tableWrap">
+                        <el-form label-width="100px" :model="trackDetails" style=" padding:10px;height:485px;overflow-y:scroll;width:1080px">
+                            <el-row :gutter="24">
+                                <el-col :span="24" class="content">
+                                    <el-form-item label="标题:">
+                                        <el-input v-model="trackDetails.Name" placeholder="请填写标题"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="毕业机构:">
+                                        <el-input v-model="trackDetails.GraduationInstitution" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="毕业时间:">
+                                        <el-date-picker type="date" placeholder="选择日期" v-model="trackDetails.GraduationDate" style="width:100%"></el-date-picker>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="转介幼儿园:">
+                                        <el-input v-model="trackDetails.ReferralKindergartenName" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="转介幼儿园时间:">
+                                        <el-date-picker type="date" placeholder="选择日期" v-model="trackDetails.ReferralKindergartenDate" style="width:100%"></el-date-picker>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="转介特殊学校:">
+                                        <el-input v-model="trackDetails.ReferralSpecialSchoolName" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="转介特殊学校时间:">
+                                        <el-date-picker type="date" placeholder="选择日期" v-model="trackDetails.ReferralSpecialSchoolDate" style="width:100%"></el-date-picker>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="转介普通小学:">
+                                        <el-input v-model="trackDetails.ReferralPrimarySchoolName" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="转介普通小学时间:">
+                                        <el-date-picker type="date" placeholder="选择日期" v-model="trackDetails.ReferralPrimarySchoolDate" style="width:100%"></el-date-picker>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="被访问人:">
+                                        <el-input v-model="trackDetails.Interviewee" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="康复程度:">
+                                        <el-input v-model="trackDetails.RecoveryLevel" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="访问人:">
+                                        <el-input v-model="trackDetails.Visitor" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="联系电话:">
+                                        <el-input v-model="trackDetails.Phone" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="访问地点:">
+                                        <el-input v-model="trackDetails.VisitLocation" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="访问方式:">
+                                        <el-input v-model="trackDetails.VisitType" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="上课表现:">
+                                        <el-input v-model="trackDetails.ClassPerformance" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="作业情况:">
+                                        <el-input v-model="trackDetails.HomeWorkCompletion" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="行为表现:">
+                                        <el-input v-model="trackDetails.BehaviorPerformance" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="其它表现:">
+                                        <el-input v-model="trackDetails.OtherPerformance" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="目前存在的问题:">
+                                        <el-input v-model="trackDetails.Problem" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="教师同学提供的帮助:">
+                                        <el-input v-model="trackDetails.ProvideHelp" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="看法建议:">
+                                        <el-input v-model="trackDetails.Suggestion" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="访问时间:">
+                                        <el-date-picker type="date" placeholder="选择日期" v-model="trackDetails.VisitDate" style="width:100%"></el-date-picker>
+                                    </el-form-item>
+                                </el-col>
+
+                            </el-row>
+
+                            <el-row :gutter="24">
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="辅导方法:">
+                                        <el-input v-model="trackDetails.CoachMethod" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="12" class="content">
+                                    <el-form-item label="活动表现:">
+                                        <el-input v-model="trackDetails.ActivityPerformance" placeholder="请填写"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                        </el-form>
+                    </div>
+                    <div style="float:right;margin-right:10px;">
+                        <el-button @click="cancel">返回</el-button>
+                        <el-button type="primary" @click="saveTrack">确认</el-button>
+                    </div>
+                </el-card>
+
+            </div>
+
+        </div>
+
+    </div>
+</template>
+<script>
+import api from '../../../api/index.js';
+export default {
+    name: 'RFTrack',
+    computed: {
+        chosedPatientName: function () {
+            return this.$store.state.mystudent.currentPatientId.Name;
+        }
+    },
+    data() {
+        return {
+            showDetailsFlag: false,
+            studentId: '',
+            trackList: [],
+            pageIndex: 1,
+            recordsCount: 1,
+            pageSize: 10,
+            visitTypes: [{ ID: 1, Name: '面谈' }, { ID: 2, Name: '电话' }, { ID: 3, Name: '问卷' }, { ID: 4, Name: '家访' }],
+            trackDetails: {
+                GraduationInstitution: '',
+                GraduationDate: '',
+                RecoveryLevel: '',
+                ReferralKindergartenName: '',
+                ReferralKindergartenDate: '',
+                ReferralSpecialSchoolName: '',
+                ReferralSpecialSchoolDate: '',
+                ReferralPrimarySchoolName: '',
+                ReferralPrimarySchoolDate: '',
+                Visitor: '',
+                Phone: '',
+                VisitLocation: '',
+                VisitType: 1,
+                ClassPerformance: '',
+                HomeWorkCompletion: '',
+                BehaviorPerformance: '',
+                OtherPerformance: '',
+                Problem: '',
+                ProvideHelp: '',
+                Suggestion: '',
+                VisitDate: '',
+                Interviewee: '',
+                CoachMethod: '',
+                StudentID: '',
+                ActivityPerformance: '',
+                Name: '',
+                ID: ''
+            },
+            trackDialogTitle: '新增患者后续教育跟踪',
+        }
+    },
+
+    methods: {
+        goBack() {
+            this.$store.dispatch('setShowPacientList', true);
+            this.$router.push({ path: '/studentFile' });
+        },
+
+        initData() {
+            this.trackDetails = {
+                GraduationInstitution: '',
+                GraduationDate: '',
+                RecoveryLevel: '',
+                ReferralKindergartenName: '',
+                ReferralKindergartenDate: '',
+                ReferralSpecialSchoolName: '',
+                ReferralSpecialSchoolDate: '',
+                ReferralPrimarySchoolName: '',
+                ReferralPrimarySchoolDate: '',
+                Visitor: '',
+                Phone: '',
+                VisitLocation: '',
+                VisitType: 1,
+                ClassPerformance: '',
+                HomeWorkCompletion: '',
+                BehaviorPerformance: '',
+                OtherPerformance: '',
+                Problem: '',
+                ProvideHelp: '',
+                Suggestion: '',
+                VisitDate: '',
+                Interviewee: '',
+                CoachMethod: '',
+                StudentID: '',
+                ActivityPerformance: '',
+                Name: '',
+                ID: ''
+            };
+            this.trackDetails.VisitDate = new Date();
+            this.trackDetails.GraduationDate = new Date();
+            this.trackDetails.ReferralKindergartenDate = new Date();
+            this.trackDetails.ReferralSpecialSchoolDate = new Date();
+            this.trackDetails.ReferralPrimarySchoolDate = new Date();
+        },
+
+        pageChange(nextPage) {
+            this.pageIndex = nextPage;
+        },
+
+        addTrack() {
+            this.initData();
+            this.showDetailsFlag = true;
+        },
+
+        cancel() {
+            this.showDetailsFlag = false;
+        },
+
+        saveTrack() {
+            let _this = this;
+            if (_this.trackDetails.Name === "") {
+                _this.$message.warning('请填写患者后续跟踪标题！');
+                return;
+            }
+            if (_this.studentId === "") {
+                _this.studentId = _this.$store.state.mystudent.currentPatientId;
+            }
+            _this.trackDetails.StudentID = _this.studentId;
+            api.savePatientTrack(_this.trackDetails).then(res => {
+                if (res.Status) {
+                    _this.showDetailsFlag = false;
+                    _this.requestTracks();
+                    _this.$message.success('保存成功！');
+                }
+            }).catch(err => {
+                _this.$message.error('保存失败,请稍候再试！');
+            });
+        },
+
+        requestTracks() {
+            let _this = this;
+            let params = { pageIndex: _this.pageIndex, pageSize: _this.pageSize, studentId: _this.studentId };
+            api.getPatientTrackList(params).then(res => {
+                _this.trackList = res.Records;
+                _this.recordsCount = res.Total;
+            }).catch(err => {
+                _this.$message.error('获取患者后续教育信息列表失败');
+            });
+        },
+
+        viewTrackDetails(index, row) {
+            this.initData();
+            this.showDetailsFlag = true;
+            this.trackDetails = this.trackList[index];
+        },
+
+        removeTrack(index, row) {
+            let _this = this;
+            _this.$confirm('确认删除该后续教育跟踪吗, 是否继续?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                let params = { id: _this.trackList[index].ID };
+                api.removePatientTrack(params).then(res => {
+                    if (res.Status) {
+                        _this.$message({
+                            type: 'success',
+                            message: '删除成功!'
+                        });
+                    }
+                    _this.requestTracks();
+                }).catch(err => {
+                    _this.$message({
+                        type: 'error',
+                        message: '删除失败,请稍候再试!'
+                    });
+                });
+            }).catch(() => {
+            });
+        }
+    },
+    created() {
+        this.studentId = this.$store.state.mystudent.currentPatientId;
+        this.requestTracks();
+    }
+};
+</script>
+<style scoped>
+.main {
+    width: 100%;
+    height: 626px;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.track-content {
+    width: 100%;
+    height: 583px;
+    position: absolute;
+    left: 0;
+    top: 43px;
+    overflow-y: scroll;
+}
+
+.center-content {
+    width: 1125px;
+    height: 571px;
+    margin: 0 auto;
+}
+
+.colorHeader {
+    border-top: 4px solid RGBA(49, 187, 252, 1.00);
+    height: 525px;
+}
+
+.cardBox {
+    width: 100%;
+    height: 525px;
+}
+
+.tableWrap {
+    width: 100%;
+    height: 480px;
+}
+
+.toolBox {
+    float: right;
+    margin-right: 55px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+
+
+
+
+.pageNavbar span {
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 42px;
+}
+
+.pageNavbar span:hover {
+    color: rgb(66, 171, 216);
+}
+
+.pageNavbar {
+    position: absolute;
+    left: -94px;
+    top: 0;
+    width: 1280px;
+    height: 42px;
+    border-bottom: 1px solid #cccccc;
+}
+</style>

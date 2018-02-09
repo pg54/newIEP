@@ -1,0 +1,38 @@
+#print-content-paper {
+    width: 100%;
+    box-sizing: border-box;
+}
+.print-content {
+    box-sizing: border-box;
+}
+
+.print-content .el-col {
+    margin: 0;
+}
+
+.paperHeader {
+    font-size: 16px;
+    text-align: center;
+}
+
+
+.paperform-title {font-size: 22px; text-align: center}
+.paperform-filecode {
+    text-align: right
+}
+.paperform-form {
+    width: 100%;
+}
+
+@media print {
+    .nextPage {page-break-after: always;width: 100%}
+}
+
+
+.tg{border-collapse:collapse;border-spacing:0;}
+.tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+.tg .tg-s6z2{text-align:center;vertical-align:center}
+.tg .tg-baqh{text-align:center;vertical-align:center}
+.tg .tg-yw4l{text-align:center;vertical-align:center}
+.tg .tg-textleft{text-align:left;vertical-align:top}

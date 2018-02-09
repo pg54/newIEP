@@ -1,0 +1,395 @@
+<template>
+    <div class="paperform-form">
+        <table class="tg" v-if="false"></table>
+
+
+
+        <table class="tg">
+            <thead>
+            <tr>
+                <th class="tg-yw4l tranThreeBorders" colspan="11" rowspan="4"></th>
+                <th class="tg-s6z2" rowspan="4">情<br>感</th>
+                <th class="tg-031e" rowspan="4">人<br>际<br>关<br>系</th>
+                <th class="tg-031e" rowspan="4">物<br>品<br>喜<br>好</th>
+                <th class="tg-031e" rowspan="4">感<br>觉<br>模<br>式</th>
+                <th class="tg-031e" rowspan="4">语<br>言</th>
+                <th class="tg-031e" rowspan="4">
+                    &nbsp;&nbsp;&nbsp;
+                </th>
+                <th class="tg-031e" rowspan="4">模<br>仿</th>
+                <th class="tg-031e" rowspan="4">知<br>觉</th>
+                <th class="tg-031e" rowspan="4">精<br>细<br>动<br>作</th>
+                <th class="tg-031e" rowspan="4">粗<br>大<br>动<br>作</th>
+                <th class="tg-031e" rowspan="4">手<br>眼<br>协<br>调</th>
+                <th class="tg-031e" rowspan="4">认<br>知<br>表<br>现</th>
+                <th class="tg-031e" rowspan="4">口<br>语<br>认<br>知</th>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+            </tr>
+            <tr>
+            </tr>
+            </thead>
+
+
+            <tr>
+                <td class="tg-yw4l leftAlign tranFourBorders" colspan="11">
+                    四件式图形拼图
+                </td>
+                <td class="tg-yw4l" colspan="13" style="border-right: transparent;border-left: transparent"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l leftAlign tranThreeBorders" colspan="11">
+                    9 拼出拼图
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l leftAlign tranThreeBorders" colspan="11">
+                    10 不跨过中线（无/轻/重）
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                </td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+                <td class="tg-yw4l"></td>
+            </tr>
+            <tr>
+                <td class="tg-yw4l tranFourBorders" colspan="24"></td>
+            </tr>
+
+
+
+            <tfoot>
+                <tr></tr>
+                <tr>
+                    <td class="tg-yw4l tranThreeBorders" colspan="11" rowspan="3"></td>
+                    <th class="tg-031e" rowspan="2">
+                        情<br>感
+                    </th>
+                    <td class="tg-031e" rowspan="2">关<br>系</td>
+                    <td class="tg-031e" rowspan="2">喜<br>好</td>
+                    <td class="tg-031e" rowspan="2">感<br>觉</td>
+                    <td class="tg-031e" rowspan="2">语<br>言</td>
+                    <td class="tg-031e onlySides" rowspan="2"></td>
+                    <td class="tg-031e" rowspan="2">模<br>仿</td>
+                    <td class="tg-031e" rowspan="2">知<br>觉</td>
+                    <td class="tg-031e" rowspan="2">细<br>动</td>
+                    <td class="tg-031e" rowspan="2">粗<br>动</td>
+                    <td class="tg-031e" rowspan="2">协<br>调</td>
+                    <td class="tg-031e" rowspan="2">认<br>知</td>
+                    <td class="tg-031e" rowspan="2">口<br>语</td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l">0</td>
+                    <td class="tg-yw4l">0</td>
+                    <td class="tg-yw4l">0</td>
+                    <td class="tg-yw4l">2</td>
+                    <td class="tg-yw4l">0</td>
+                    <td class="tg-yw4l onlySides"></td>
+                    <td class="tg-yw4l">2</td>
+                    <td class="tg-yw4l">5</td>
+                    <td class="tg-yw4l">0</td>
+                    <td class="tg-yw4l">0</td>
+                    <td class="tg-yw4l">3</td>
+                    <td class="tg-yw4l">5</td>
+                    <td class="tg-yw4l">5</td>
+                </tr>
+                <tr>
+                    <td class="tg-lqy6 rightAlign tranThreeBorders" colspan="11">A</td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l onlySides">P</td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                </tr>
+                <tr>
+                    <td class="tg-lqy6 rightAlign tranThreeBorders" colspan="11">M</td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l onlySides">E</td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                </tr>
+                <tr>
+                    <td class="tg-lqy6 rightAlign tranThreeBorders" colspan="11">S</td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l onlySides">F</td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                    <td class="tg-yw4l"></td>
+                </tr>
+            </tfoot>
+
+        </table>
+        <div>
+            <div id="canvasArea" style="width: 100%;height: 1200px;border: 1px solid black"></div>
+        </div>
+        <div id="developChartWrap">
+            <div style="float:left;width:600px">
+                <canvas id="c" width=600 height=640 style="border:1px solid grey"></canvas>
+            </div>
+            <div>
+                <button @click="drawDevelopChart()">加载图表</button>
+            </div>
+        </div>
+    </div>
+
+</template>
+
+<script>
+    export default {
+        name: 'printCECP',
+        props: ['urlData'],
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+
+
+        },
+        methods: {
+            drawRound() {
+                CanvasRenderingContext2D.prototype.sector = function (x, y, radius, sAngle, eAngle, counterclockwise, total, store) {
+                    let distance = radius / total
+                    for (let i = total - 1; i >= 0; i--) {
+                        this.save()
+                        this.beginPath()
+                        this.translate(x, y);
+                        this.arc(0, 0, distance + distance * i, sAngle, eAngle, counterclockwise)
+                        this.save();
+                        this.rotate(eAngle);
+                        this.moveTo(distance + distance * i, 0)
+                        this.lineTo(0, 0)
+                        this.restore()
+                        this.rotate(sAngle)
+                        this.lineTo(distance + distance * i, 0)
+
+                        this.strokeStyle = '#000'
+                        this.stroke()
+
+                        if (store !== 0 && i <= store) {
+                            this.fillStyle = '#cccccc'
+                            this.fill()
+                        }
+                        this.restore()
+                    }
+                    return this;
+                };
+                let canvasWrap = document.getElementById('canvasArea')
+                var canvas = document.createElement("canvas");
+                canvas.width = 300;
+                canvas.height = 300
+                canvasWrap.appendChild(canvas);
+                let ctx = canvas.getContext('2d');
+                let deg = Math.PI / 180;
+                ctx.sector(200, 200, 100, 324 * deg, 36 * deg, false, 4, 2)
+                ctx.sector(200, 200, 100, 36 * deg, 108 * deg, false, 6, 3)
+                ctx.sector(200, 200, 100, 108 * deg, 180 * deg, false, 5, 0);
+                ctx.sector(200, 200, 100, 180 * deg, 252 * deg, false, 5, 0);
+                ctx.sector(200, 200, 100, 252 * deg, 324 * deg, false, 6, 0);
+                this.convertCanvasToImage(canvas)
+                canvasWrap.removeChild(canvasWrap.childNodes[0])
+            },
+            convertCanvasToImage(canvas) {
+                let image = new Image();
+                image.src = canvas.toDataURL("image/png");
+                document.getElementById('canvasArea').appendChild(image)
+            },
+            drawDevelopChart() {
+                var myCanvas = document.getElementById("c");
+                var c = myCanvas.getContext("2d");
+                var w = 600;
+                var h = 600;
+                var head = 40;
+                var count = 80;
+                var categories = ['年龄（岁）', '模仿', '知觉', '精细动作', '粗大动作', '手眼协调', '认知表现', '口语认知', '总评分', '年龄（岁）']
+                draw()
+                this.convertCanvasToImage(myCanvas)
+                let developChartWrap = document.getElementById('developChartWrap');
+                developChartWrap.removeChild(developChartWrap.childNodes[0])
+                developChartWrap.removeChild(developChartWrap.childNodes[1])
+
+                function draw() {
+                    drawCategory()
+                    c.beginPath()
+                    c.moveTo(60, head);
+                    c.lineTo(60, head + h);
+                    c.strokeStyle = '#000'
+                    c.stroke()
+
+                    drawBaseLine()
+                    drawGrap()
+                    drawData()
+                }
+                function drawCategory() {
+                    let tickSize = 60
+                    let tickCnt = 10
+                    for (var i = 0; i < tickCnt; i++) {
+                        c.beginPath()
+                        c.rect(tickSize * i, 0, 60, 40)
+                        c.strokeStyle = '#000'
+                        c.font = "10px serif";
+                        c.textAlign = 'center';
+                        c.fillText(categories[i], 30 + tickSize * i, 20);
+                        c.stroke()
+                    }
+                }
+
+                function drawGrap() {
+                    let tickSize = 60
+                    let tickCnt = 10
+                    for (var i = 0; i < tickCnt; i++) {
+                        if (1 < i < tickCnt) {
+                            console.log('drawGrap')
+                            c.beginPath()
+                            c.moveTo(tickSize * i, head);
+                            c.lineTo(tickSize * i, head + h);
+                            c.strokeStyle = '#000'
+                            c.stroke()
+                        }
+                    }
+                }
+
+                function drawBaseLine() {
+                    c.clearRect(0, 40, w, h);
+                    var tickSize = h / count
+                    c.moveTo(0, head);
+                    c.lineTo(0, head + h);
+                    for (var i = 1; i < count; i++) {
+                        c.beginPath()
+                        c.moveTo(0, 40 + tickSize * i);
+                        c.lineTo(w, 40 + tickSize * i);
+                        c.strokeStyle = '#efefef'
+                        c.stroke();
+                    }
+                }
+
+                function drawData() {
+                    //年龄（岁）
+                    let tickSize = 60
+                    for (var i = 1; i < 7; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 0 + 0, 40 + (count - 12 * i) / count * h);
+                        c.lineTo(tickSize * 0 + 15, 40 + (count - 12 * i) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, 20, 45 + (count - 12 * i) / count * h);
+                        c.stroke();
+                    }
+
+                    //模仿
+                    var arr2 = [19, 21, 24, , 26, 29, 31, 33, 36, 38, 52]
+                    for (var i = 0; i < 11; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 1 + 0, 40 + (count - arr2[i]) / count * h);
+                        c.lineTo(tickSize * 1 + 15, 40 + (count - arr2[i]) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, 60 + 20, 45 + (count - arr2[i]) / count * h);
+                        c.stroke();
+                    }
+                }
+            },
+        },
+        mounted() {
+            this.drawRound()
+        }
+    }
+</script>
+<style scoped>
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-baqh{text-align:center;vertical-align:top}
+    .tg .tg-nrw8{font-size:14px}
+    .tg .tg-yw4l{vertical-align:top}
+
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center}
+    .tg .tg-yw4l{vertical-align:top}
+
+    .leftAlign {
+        text-align: left;
+    }
+    .rightAlign {
+        text-align: right;
+    }
+
+    .tranFourBorders {
+        border: transparent;
+    }
+    .tranThreeBorders {
+        border-top: transparent;
+        border-bottom: transparent;
+        border-left: transparent;
+    }
+    .onlyBottom {
+        border-top: transparent;
+        border-right: transparent;
+        border-left: transparent;
+    }
+    .onlySides {
+        border-top: transparent;
+        border-bottom: transparent;
+    }
+
+    .fourBorder {
+        display: block;
+        border: 1px solid #000000;
+    }
+
+</style>

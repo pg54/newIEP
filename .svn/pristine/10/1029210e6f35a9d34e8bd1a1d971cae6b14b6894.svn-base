@@ -1,0 +1,187 @@
+<template>
+    <div>
+        <div id="paperform-form1">
+            <DIV style="LINE-HEIGHT: 30px;font-size: 22px" class=size16 align=center><STRONG><font color="#20a0ff">评测表结果</font></STRONG></DIV>
+            <TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+                <TBODY>
+                <TR>
+                    <TD width="43%"><font color="#20a0ff">姓名：<SPAN
+                        id=rpt_Pro_Order_List_ctl00_lbl_eShop_Name><b>{{ patientName }}</b></SPAN></font></TD>
+                    <TD width="33%"><font color="#20a0ff">性别：<SPAN >{{ (patientSex === 1)? '男':'女' }}</SPAN></font></TD>
+                </TR>
+                <TR>
+                    <TD><font color="#20a0ff">出 生 年 月：<SPAN >{{ patientBirthday }}</SPAN></font></TD>
+                    <TD><font color="#20a0ff">档案编号：<SPAN></SPAN></font></TD>
+                </TR>
+                </TBODY></TABLE>
+        </div>
+        <div id="paperform-form2">
+            <table class="tg">
+                <tr>
+                    <th class="tg-031e" colspan="2" rowspan="2">领域</th>
+                    <th class="tg-s6z2" colspan="9" rowspan="2">教学目标</th>
+                    <th class="tg-s6z2" colspan="9" rowspan="2">教学内容</th>
+                    <th class="tg-031e" colspan="4">末次评测详情</th>
+                </tr>
+                <tr>
+                    <td class="tg-031e">3</td>
+                    <td class="tg-yw4l">2</td>
+                    <td class="tg-yw4l">0</td>
+                    <td class="tg-031e">1</td>
+                </tr>
+
+
+                <template v-for="(paper, paperIndex) in paperResultData.Papers">
+                    <!--<tr>{{Name.Name}}</tr>-->
+                    <template v-for="(section, sectionIndex) in paper.Sections">
+                        <tr>
+                            {{ section.Name}}
+                        </tr>
+                        <template v-for="(question, questionIndex) in section.Questions">
+                            <tr>{{ question.Description}}</tr>
+                        </template>
+
+                    </template>
+
+                    <tr>
+                        <p>本领域合计分：</p>
+                    </tr>
+
+
+                </template>
+
+                <!--<tr v-for="ele in iepMothInfo">-->
+                    <!--<td class="tg-031e" colspan="2">{{ ele.Name }}</td>-->
+                    <!--<td class="tg-031e" colspan="9">{{ ele.TeachTarget}}</td>-->
+                    <!--<td class="tg-031e" colspan="9">{{ ele.TeachContent }}</td>-->
+                    <!--<td class="tg-031e" v-for="item in ele.History">-->
+                        <!--{{item.Count}}-->
+                    <!--</td>-->
+                <!--</tr>-->
+
+            </table>
+            <div class="tab-content" v-for="(paper, paperIndex) in paperResultData.Papers">
+                <div v-for="(section, sectionIndex) in paper.Sections">
+                    <div class="questionsBox">
+                        <p class="testSubTitle">{{section.Name}}</p>
+                        <div class="questionContent">
+                            <div v-for="(question, questionIndex) in section.Questions" class="questiones">
+                                <p class="questionDescrib">题{{questionIndex+1}}:  {{ question.Description}}({{paperResultData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result}})</p>
+                                <div v-for="(option, optionIndex) in question.Options" class="questionChoses">
+                                    <input  class="radioclass " type="radio" :disabled="true" :value="option.Code" :id="option.ID"
+                                            :name="question.ID" v-model="paperResultData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result">
+                                    <label :for="option.ID" class="simbleBox"></label>
+                                    <label :for="option.ID" class="testLabel">{{ option.Code }}&nbsp;{{ option.Name }}</label>
+                                </div>
+                                <br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</template>
+
+<script>
+    export default {
+        name: 'testResultPaper',
+        props: ['paperResultData'],
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+            patientName: function () {
+                return this.$store.state.mystudent.patientDeptObj.Name;
+            },
+            patientSex: function () {
+                return this.$store.state.mystudent.patientDeptObj.Sex;
+            },
+            patientBirthday: function () {
+                return this.$store.state.mystudent.patientDeptObj.BirthDate;
+            }
+        },
+        methods: {
+
+        },
+        created() {
+
+        },
+        beforeMount() {
+
+        },
+        mounted() {
+
+        }
+    }
+
+</script>
+
+<style scoped>
+    .tab-content {
+        width: 100%;
+        margin: 30px auto;
+    }
+    .testTitle {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        margin: 5px 0 30px;
+    }
+
+    .testSubTitle {
+        margin-left: 20px;
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: bold
+    }
+    .questionContent {
+        left: 68px;
+        top: 50px;
+    }
+
+
+
+    .questionDescrib {
+        margin-left: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .questionChoses {
+        display: flex;
+        align-items: center;
+        height: 28px;
+        margin: 5px 0;
+        cursor: pointer;
+    }
+
+    .radioclass {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+
+    .simbleBox {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+        cursor: pointer;
+        background-image: url("../assets/images/serviceToolImg/默认选框.png");
+    }
+    .testLabel {
+        cursor: pointer;
+        display: inline-block;
+        width: calc(100% - 41px);
+    }
+    input[type=radio]:checked + label {
+        background-image: url("../assets/images/serviceToolImg/black-nike.png");
+    }
+</style>

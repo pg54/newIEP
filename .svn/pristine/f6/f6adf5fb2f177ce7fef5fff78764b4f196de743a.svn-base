@@ -1,0 +1,526 @@
+<template>
+  <div>
+    <div class="toolBox">
+      <!--<span class="selectTitle">城市</span>-->
+  
+      <!--<el-select v-model="value" placeholder="请选择" class="cityOptions">-->
+      <!--<el-option-->
+      <!--v-for="item in cityOptions"-->
+      <!--:label="item.label"-->
+      <!--:value="item.value">-->
+      <!--</el-option>-->
+      <!--</el-select>-->
+  
+      <!--<sapn class="selectTitle">诊断</sapn>-->
+  
+      <!--<el-select v-model="value" placeholder="请选择" class="diseasesOptions">-->
+      <!--<el-option-->
+      <!--v-for="item in diseasesOptions"-->
+      <!--:label="item.label"-->
+      <!--:value="item.value">-->
+      <!--</el-option>-->
+      <!--</el-select>-->
+      <el-button @click="modifyGroupNameForm">
+        <Icon type="edit"></Icon>&nbsp;修改组名
+      </el-button>
+      <el-button @click="dialogFormVisible = true">
+        <Icon type="plus-round"></Icon>&nbsp;新增分组
+      </el-button>
+      <el-button @click="deleteGroup()">
+        <Icon type="trash-a"></Icon>&nbsp;删除分组</el-button>
+      <el-button @click="addUser()">
+        <Icon type="person-add"></Icon>&nbsp;新增患者</el-button>
+      <el-button @click="benchDelete()">
+        <Icon type="trash-a"></Icon>&nbsp;批量删除</el-button>
+    </div>
+  
+    <el-dialog title="修改分组名称" v-model="dialogModifyVisible">
+      <el-form :model="form">
+        <el-form-item label="新组名">
+          <el-input v-model="newGroupName" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogModifyVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modifyGroupName()">确 定</el-button>
+      </div>
+    </el-dialog>
+  
+    <el-dialog title="新增分组" v-model="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="请输入新的小组名称">
+          <el-input v-model="form.name" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addNewGroup()">确 定</el-button>
+      </div>
+    </el-dialog>
+  
+    <el-dialog title="移动学生" v-model="dialogMoveTableVisible">
+  
+      <el-select v-model="selectedPacient" filterable placeholder="请选择患者">
+        <el-option v-for="item in groupData" :key="item.ID" :label=item.Name :value=item.ID>
+        </el-option>
+      </el-select>
+  
+      <span class="newGroup">新的小组</span>
+      <el-select v-model="selectedGroup" filterable placeholder="请选择要移动的小组">
+        <el-option v-for="item in parentData" :key="item.groupID" :label=item.groupName :value=item.groupID>
+        </el-option>
+      </el-select>
+  
+      <el-button type="primary" class="transBtn" @click="movetoGroup()">确认</el-button>
+  
+    </el-dialog>
+  
+    <div>
+      <ul class="studentList" rel="studentList" v-bind:class="{ showScroll: groupData.length > 6 }">
+  
+        <li v-for="(item, index) in groupData" class="studentBox">
+  
+          <div class="studentInfo">
+  
+            <div class="baseInfo">
+              <div class="patientLogo">
+                <img :src="item.PatientLogo" v-show="item.PatientLogo?true:false" alt="logo">
+                <img src="../../assets/images/student/头像.png" v-show="item.PatientLogo?false:true" alt="logo">
+              </div>
+              <div class="nameLevel">
+                <span> {{ item.Name }}</span>
+              </div>
+              <div>
+                <span>{{ (item.Sex===1)?'男':'女' }}</span>
+                <span>{{ calculationAge(item.BirthDate) }}岁</span>
+              </div>
+            </div>
+  
+            <div class="skills">
+              <p>身份证号:</p>
+              <p>
+                <span></span>
+                <span>{{ item.IDCard }}</span>
+              </p>
+              <p>
+                <span>诊断状态:</span>
+                <span>{{item.Comments}}</span>
+              </p>
+              <p>
+                <span>诊断结果:</span>
+                <span>{{item.DiagnosisName}}</span>
+              </p>
+            </div>
+  
+          </div>
+  
+          <div class="stuOperate">
+            <el-button @click="modifyItem(index)">
+              <Icon type="edit"></Icon>&nbsp;查看</el-button>
+            <el-button @click="deleteItem(index)" style="background:#24BAFE;color:white">
+              <Icon type="ios-trash"></Icon>&nbsp;删除</el-button>
+            <el-button @click="movePatient()">
+              <Icon type="arrow-move"></Icon>&nbsp;移动</el-button>
+          </div>
+  
+        </li>
+  
+      </ul>
+    </div>
+  
+    <el-dialog title="新增患者" v-model="isShowAddUserDialogFlag">
+  
+      <el-form label-width="80px" :model="userInfo" style="border:1px solid gray">
+        <div style="border-bottom:1px solid gray;padding:10px 10px">
+          <span>基本信息</span>
+        </div>
+  
+        <div style="padding:10px 10px">
+  
+          <el-form-item label="姓名:" style="margin-top:10px">
+            <el-input v-model="userInfo.Name"></el-input>
+          </el-form-item>
+  
+          <el-form-item label="性别">
+            <el-select v-model="userInfo.Sex" placeholder="请选择性别" style="width:100%">
+              <el-option label="男" value=1></el-option>
+              <el-option label="女" value=2></el-option>
+            </el-select>
+          </el-form-item>
+  
+          <el-form-item label="出生日期">
+            <el-date-picker type="date" placeholder="选择日期" v-model="userInfo.BirthDate" style="width:100%"></el-date-picker>
+          </el-form-item>
+  
+          <el-form-item label="身份证号:">
+            <el-input v-model="userInfo.IDCard"></el-input>
+          </el-form-item>
+  
+          <el-form-item label="症状描述:">
+            <el-input v-model="userInfo.Comments"></el-input>
+          </el-form-item>
+  
+          <!--<el-form-item label="临床诊断:">
+                      <el-input v-model="userInfo.DiagnosisID"></el-input>
+                    </el-form-item>
+            
+                    <el-form-item label="诊断时间:">
+                      <el-input v-model="userInfo.DiagnosisDate"></el-input>
+                    </el-form-item>-->
+  
+          <!--<el-form-item label="户籍:">
+                      <el-input v-model="userInfo.Comments"></el-input>
+                    </el-form-item>-->
+  
+          <el-form-item label="省份城市:">
+            <el-input v-model="userInfo.Area"></el-input>
+          </el-form-item>
+  
+          <el-form-item label="联系电话:">
+            <el-input v-model="userInfo.Mobile"></el-input>
+          </el-form-item>
+  
+          <!--<el-form-item label="入学时间:">
+                      <el-input v-model="userInfo.Comments"></el-input>
+                    </el-form-item>-->
+  
+          <!--<el-form-item label="照片:">
+                      <el-input v-model="userInfo.Comments"></el-input>
+                    </el-form-item>-->
+        </div>
+  
+      </el-form>
+  
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cacel()">返回</el-button>
+        <el-button type="primary" @click="submitUserInfo()">提交</el-button>
+      </div>
+  
+    </el-dialog>
+  
+  </div>
+</template>
+<script>
+import api from '../../api/index.js';
+export default {
+  name: 'studentGroupList',
+  components: {
+  },
+  props: ['groupData', 'groupID', 'groupName'],
+  computed: {
+    parentData: function () {
+      var data = this.$store.state.mystudent.patientList;
+      // console.log('学生数据源');
+      // console.log(data);
+      return data;
+    }
+  },
+  data() {
+    return {
+      form: {
+        name: ''
+      },
+      isShowAddUserDialogFlag: false,
+      dialogFormVisible: false,
+      dialogMoveTableVisible: false,
+      dialogModifyVisible: false,
+      selectedGroup: '',
+      selectedPacient: '',
+      newGroupName: this.groupName,
+      userInfo: {
+        ID: '',
+        PatientName: '',
+        IDCard: '',
+        Name: '',
+        Sex: 1,
+        BirthDate: '',
+        Relation: '',
+        Area: '',
+        Comments: '',
+        Contacts: '',
+        Mobile: '',
+        DiagnosisID: '',
+        DiagnosisDate: '',
+        GroupID: ''
+      }
+    };
+  },
+  methods: {
+    calculationAge(ageStr) {
+      var year = ageStr.split('-')[0];
+      var d = new Date();
+      var nowYear = d.getFullYear();
+      return nowYear - year;
+    },
+    modifyGroupNameForm() {
+      this.dialogModifyVisible = true;
+    },
+    modifyGroupName() {
+      this.dialogModifyVisible = false;
+      var params = {
+        'Name': this.newGroupName,
+        'ID': this.groupID
+      };
+      api.createAndModifyPatientGroups(params).then(res => {
+        this.showOperationalFeedback(res.Code);
+        this.$store.dispatch('addPatientList');
+      });
+    },
+    movePatient() {
+      this.dialogMoveTableVisible = true;
+    },
+    movetoGroup() {
+      var params = {
+        'PatientAgentID': this.selectedPacient,
+        'GroupID': this.selectedGroup
+      };
+      api.moveToGroup(params).then(res => {
+        this.dialogMoveTableVisible = false;
+        this.$store.dispatch('addPatientList');
+        this.showOperationalFeedback(res.Code);
+      });
+    },
+    addNewGroup() {
+      this.dialogFormVisible = false;
+      var obj = {
+        'Name': this.form.name,
+        'ID': ''
+      };
+      api.createAndModifyPatientGroups(obj).then(res => {
+        this.showOperationalFeedback(res.Code);
+        this.$store.dispatch('addPatientList');
+      });
+    },
+    addUser() {
+      this.isShowAddUserDialogFlag = true;
+    },
+    submitUserInfo() {
+      let _this = this;
+      _this.userInfo.GroupID = _this.groupID;
+
+      api.addPatient(_this.userInfo).then(res => {
+
+        if (res.Code == 0) {
+          _this.$message.success('添加成功！');
+          _this.$store.dispatch('addPatientList');
+          _this.isShowAddUserDialogFlag = false;
+        }
+        else {
+          _this.$message.error('添加失败！');
+        }
+      }).catch(err => {
+
+        _this.$message.error('添加失败！');
+      });
+
+    },
+    cacel() {
+      this.isShowAddUserDialogFlag = false;
+    },
+    deleteGroup() {
+      this.$confirm('确认删除该分组吗?', '提示', {
+        type: 'warning'
+      }).then(() => {
+        api.deletePatientGroup(this.groupID).then(res => {
+          console.log(res);
+          this.showOperationalFeedback(res.Code);
+          this.$store.dispatch('addPatientList');
+        });
+      });
+    },
+    benchDelete() {
+      this.$message.warning('暂无接口');
+    },
+    deleteItem(index) {
+      this.$message.warning('暂无接口');
+    },
+    modifyItem(index) {
+      this.$router.push({ path: '/studentFile/rehabilitationFile' });
+      this.$store.dispatch('setShowPacientList', false);
+    },
+    showOperationalFeedback(params) {
+      if (params === 0) {
+        this.$message({
+          message: '正常',
+          type: 'success'
+        });
+      } else if (params === 1) {
+        this.$message({
+          message: '正在使用',
+          type: 'warning'
+        });
+      } else if (params === 2) {
+        this.$message({
+          message: '系统拒绝',
+          type: 'warning'
+        });
+      }
+    }
+  }
+};
+</script>
+<style scoped>
+.clearfix {
+  clear: both;
+  content: '';
+  width: 0;
+  display: block;
+  visibility: hidden
+}
+
+.studentList {
+  width: 1080px;
+}
+
+.studentList li {
+  float: left;
+  width: 300px;
+  height: 200px;
+  -webkit-box-shadow: 0 0 6px rgba(0, 0, 0, 0.14);
+  -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.14);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.14);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  margin-right: 25px;
+  margin-left: 30px;
+  margin-bottom: 30px;
+  font-size: 16px;
+  color: #333333;
+}
+
+.studentInfo {
+  width: 100%;
+  height: 130px;
+  position: relative;
+}
+
+.studentInfo>div {
+  display: inline-block
+}
+
+.baseInfo {
+  width: 118px;
+  display: flex;
+  align-content: center
+}
+
+.baseInfo>div {
+  text-align: center
+}
+
+.studentInfo .skills {
+  width: 140px
+}
+
+.stuOperate {
+  width: 100%;
+  height: 70px;
+  padding-top: 25px;
+  padding-left: 20px
+}
+
+.stuOperate button {
+  display: inline-block;
+  height: 30px;
+  padding: 0px 15px;
+}
+
+.patientLogo {
+  /*width: 54px;
+  height: 54px;*/
+  /*margin-left: 22px;*/
+  /*margin-top: 13px;*/
+  align-content: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.patientLogo img {
+  display: inline-block;
+  width: 54px;
+  height: 54px;
+  -webkit-border-radius: 27px;
+  -moz-border-radius: 27px;
+  border: 2px solid #57CAFB;
+}
+
+.toolBox {
+  display: flex;
+  height: 80px;
+  align-items: center;
+  margin-left: 30px;
+}
+
+.selectTitle {
+  display: inline-block;
+  font-size: 18px;
+  margin-right: 15px
+}
+
+.selectTitle:nth-child(2) {
+  margin-left: 15px;
+  margin-right: 0
+}
+
+.toolBox>span {
+  display: inline-block;
+  width: 96px;
+  height: 38px
+}
+
+.skillLeft {
+  display: inline-block;
+  width: 50px;
+}
+
+.skilllist .skillLeft {
+  vertical-align: top
+}
+
+.skillRight {
+  display: inline-block;
+  width: 40px;
+}
+
+.skillRight>span {
+  display: inline-block;
+  width: 40px
+}
+
+.longLength {
+  width: 80px
+}
+
+.stuHubby .skillLeft {
+  vertical-align: top
+}
+
+.transEnd {
+  width: 100px;
+  display: inline-block;
+  vertical-align: top
+}
+
+.transStart {
+  width: 300px;
+  display: inline-block;
+  vertical-align: top
+}
+
+.transBtn {
+  display: block;
+  float: right;
+}
+
+.newGroup {
+  font-size: 16px;
+  margin-left: 15px;
+  margin-right: 10px
+}
+
+.selecedBox {
+  display: block;
+  margin-left: 275px
+}
+</style>

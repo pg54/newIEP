@@ -1,0 +1,247 @@
+<template>
+    <div class="main">
+    
+        <div class="tabs">
+            <div class="tabs-chose">
+                <li v-for="(tab, index) in tabs" :class="{active : currentTab === index }" @click="currentTab = index">{{tab}}
+                </li>
+            </div>
+        </div>
+    
+        <div class="tabs-content">
+            <div v-show="currentTab === 0" class="tab-content">
+                <addNewsForm :newsCategoryOptions="CategoryIndex"></addNewsForm>
+                <div class="toolBox center-content">
+                    <span style="font-size: 18px;font-weight: bold">全部文章</span>
+                    <el-button style="float: right" @click="goAddEduForm">
+                        <Icon type="plus-round"></Icon>
+                        新增
+                    </el-button>
+                </div>
+                <div class="center-content">
+                    <div class="newsList">
+                        <div v-for="(o, index) in allEduData" class="item ">
+                            <div class="linkBox">
+                                <img :src="o.Logo" alt="logo" class="linkImg">
+                                <div class="linkContent">
+                                    <a :href="o.Path" target="_blank" class="newsLink">
+                                        <p>
+                                            <span class="newsTitle">{{ o.Title }}</span>
+                                            <span class="hot" v-show="index < 3">hot</span>
+                                        </p>
+                                    </a>
+                                    <p class="icons" style="visibility:hidden" >
+                                        <span>
+                                            <Icon type="eye" size="20"></Icon>1200</span>
+                                        <span>
+                                            <Icon type="chatbox-working" size="20"></Icon>1200</span>
+                                        <span>
+                                            <Icon type="ios-star" size="20"></Icon>1200</span>
+                                    </p>
+                                    <p class="toolBtns">
+                                        <el-button @click="modifyItem(o)">修改</el-button>
+                                        <el-button @click="deleteALLEduItem(o.ID)">删除</el-button>
+                                    </p>
+                                </div>
+                                <div class="newsTime">
+                                    <Icon type="clock" size="20"></Icon>
+                                    <span>{{ o.CreatedOn }}</span>
+                                </div>
+    
+                            </div>
+                        </div>
+                    </div>
+                    <div style="float: right">
+                        <el-pagination @current-change="nextPageEdu" layout="prev, pager, next" :total="eduPageTotal">
+                        </el-pagination>
+                    </div>
+    
+                </div>
+            </div>
+    
+            <div v-show="currentTab === 1" class="tab-content">
+    
+                <div class="center-content">
+                    <span style="font-size: 18px;font-weight: bold">我的文章</span>
+                </div>
+            </div>
+    
+        </div>
+    
+    </div>
+</template>
+<script>
+import addNewsForm from '../../../components/addNewsForm.vue';
+import { getArticleDetail, deleteArticle, requestArticle } from '../../../api/api';
+export default {
+    name: 'dymaEdu',
+    components: {
+        addNewsForm
+    },
+    computed: {
+    },
+    methods: {
+        nextPageEdu(currentPage) {
+            this.allEduCurrentPage = currentPage
+            this.requestEduNews(this.allEduCurrentPage);
+        },
+        goAddEduForm() {
+            this.$store.dispatch('addFormVisible');
+        },
+        modifyItem(o) {
+            var obj = Object.assign({}, o);
+            getArticleDetail(o.ID).then(res => {
+                this.$store.dispatch('setFormContent', res.data);
+            });
+            this.$store.dispatch('isModify');
+            this.$store.dispatch('addFormVisible');
+        },
+        deleteALLEduItem(id) {
+            deleteArticle(id).then(res => {
+                if (res.Code === 0) {
+                    this.$message.success('删除成功');
+                    this.allArticle = true;
+                    this.requestEduNews(this.allEduCurrentPage);
+                    this.allArticle = false;
+                }
+            });
+        },
+        requestEduNews(pageIndex) {
+            var params = {
+                'CategoryType': 1,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 10
+            };
+            requestArticle(params).then(res => {
+                this.allEduData = res.Records;
+                this.eduPageTotal = res.Total;
+            });
+        }
+    },
+    data() {
+        return {
+            currentTab: 0,
+            tabs: ['全部文章', '我的文章'],
+            CategoryIndex: 1,
+            allEduCurrentPage: 1,
+            allEduData: [],
+            eduPageTotal: 1
+        }
+    },
+    mounted() {
+        this.requestEduNews(1);
+    }
+};
+</script>
+<style scoped>
+.main {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.tabs {
+    width: 100%;
+    height: 626px
+}
+
+.tabs-chose {
+    position: absolute;
+    width: 94px;
+    height: 626px;
+    background-color: #EEEFF0
+}
+
+.tabs-content {
+    position: absolute;
+    left: 94px;
+    top: 0;
+    width: 1185px;
+    height: 626px;
+    border-left: 1px solid #EFEFEF;
+    overflow: scroll;
+}
+
+.tabs-chose li {
+    width: 94px;
+    height: 60px;
+    background-color: RGBA(238, 239, 240, 1.00);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabs-chose .active {
+    background-color: #ffffff;
+    color: RGBA(32, 160, 255, 1.00);
+    border-left: 6px solid #31BBFC;
+}
+
+.center-content {
+    width: 1080px;
+    margin: 20px;
+}
+
+.item {
+    padding: 14px 0;
+    border-bottom: 1px solid #EFF0F1
+}
+
+.linkBox {
+    display: block;
+    width: 100%;
+    height: 80px;
+    position: relative
+}
+
+.linkImg {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 126px;
+    height: 80px
+}
+
+.linkContent {
+    margin-left: 130px;
+    font-size: 16px;
+}
+
+.tabs-content .newsTitle {
+    position: relative;
+    left: 5px;
+    line-height: 0px
+}
+
+.tabs-content .newsTime {
+    position: absolute;
+    top: 0;
+    right: 0;
+    line-height: 80px;
+}
+
+.tabs-content .hot {
+    display: inline-block;
+    width: 35px;
+    height: 20px;
+    margin-left: 5px;
+    text-align: center;
+    line-height: 20px;
+    background-color: #FBBB2C;
+    color: #FEF8ED;
+}
+
+.tabs-content .toolBtns {
+    margin-top: 8px;
+}
+
+.tabs-content .toolBtns button {
+    height: 25px;
+    padding: 0px 15px;
+}
+
+.formOne {
+    z-index: 2005
+}
+</style>

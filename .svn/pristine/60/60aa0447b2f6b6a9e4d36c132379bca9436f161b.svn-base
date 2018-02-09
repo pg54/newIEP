@@ -1,0 +1,122 @@
+<template>
+    <div class="planItem-content" v-show="showPlanItemContent">
+        <div class="toolBox">
+            <el-button @click="requestCourseDetails()">编辑课程</el-button>
+        </div>
+        <div class="contentBox">
+            <div v-for="(item, index) in sourceData" class="item">
+                <div class="titleBox">
+                    <p>{{ item.Name}}</p>
+                </div>
+                <div class="planBox">
+                    <p>教学内容： {{ item.TeachContent }}</p>
+                    <p>教学目标： {{ item.TeachTarget }}</p>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+import iepCourse from './IEP-Course.vue';
+import { editPlan } from '../../../../api/api';
+export default {
+    name: 'planItemDetails',
+    components: {
+        iepCourse
+    },
+    computed: {
+        sourceData: function () {
+            return this.$store.state.questionPaper.planItemDetails.List;
+        },
+        showPlanItemContent: function () {
+            return this.$store.state.questionPaper.showPlanItemContent;
+        }
+    },
+    data() {
+        return {
+        }
+    },
+    methods: {
+        requestCourseDetails: function (id) {
+            let newID = this.$store.state.questionPaper.lineID;
+            console.log(newID);
+            this.$store.dispatch('getCourseDetails', newID);
+            this.$store.dispatch('setIepPlanCourseStatus', false);
+            this.$store.dispatch('setIepPlanChaptStatus', true);
+            this.$router.push({ path: '/iep/iepPlan/iepCourse' });
+        }
+    }
+};
+</script>
+<style scoped>
+.planItem-content {
+    position: absolute;
+    ;
+    width: 1080px;
+    height: 626px;
+    top: 0;
+    left: 106px;
+    z-index: 20;
+    overflow-y: scroll;
+}
+
+.item {
+    position: relative;
+    width: 1020px;
+    height: 104px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.titleBox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 32px;
+    background-color: #3BBDF9;
+}
+
+.toolBox {
+    margin-bottom: 10px;
+    margin-top: 10px
+}
+
+.planBox {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    width: 100%;
+    height: 72px;
+    background-color: #E9F8FF;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center
+}
+
+.planBoxLeft {
+    position: absolute;
+    border-right: 1px dotted #30BCFC;
+    width: 252px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
+}
+
+.planBoxRight {
+    position: absolute;
+    top: 0;
+    left: 510px;
+    width: 510px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+</style>

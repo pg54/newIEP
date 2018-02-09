@@ -1,0 +1,197 @@
+import axios from 'axios';
+
+let token = null;
+let vAjax;
+
+//当前页面下，只会进入一次。刷新页面后会再次进入
+(function () {
+  token = sessionStorage.getItem('accessToken');
+  console.log('加载 api.js 设置 vajax ');
+  if (!token) {
+    console.log('token不存在');
+  } else {
+    vAjax = axios.create({
+      headers: { 'authorization': token }
+    });
+  }
+})()
+
+export const setToken = function () {
+  console.log('设置token信息')
+  token = sessionStorage.getItem('accessToken');
+  vAjax = axios.create({
+    headers: { 'authorization': token }
+  });
+};
+
+// let base = 'http://localhost/OPEM.API.App';
+let base = 'http://devapi.app.onenewcare.com';
+
+// 4-1 医生的病人列表,已分组
+export const getDoctorPatientList = params => { return vAjax.get(`${base}/Dr/PatientAgent/List`, { params: params }); };
+
+// 4-2 增加或修改分组
+export const createAndModifyPatientGroups = params => { return vAjax.post(`${base}/Dr/PatientAgent/Group`, params).then(res => res.data); };
+
+// 4-3 删除分组
+export const deletePatientGroup = params => { return vAjax.post(`${base}/Dr/PatientAgent/DeleteGroup`, params).then(res => res.data); };
+
+// 4-4 将病人移动到其它的分组
+export const moveToGroup = params => { return vAjax.post(`${base}/Dr/PatientAgent/MoveToGroup`, params).then(res => res.data); };
+
+// 4-5 根据名称、症状搜索患者
+export const filteraPaticents = params => { return vAjax.post(`${base}/Dr/PatientAgent/List`, params).then(res => res.data); };
+
+// 4-6 新增患者
+export const addPatient = params => { return vAjax.post(`${base}/Dr/PatientAgent/Info`, params).then(res => res.data) };
+
+export const DrServiceOpen = params => { return vAjax.post(`${base}/Dr/Service/Open`, params).then(res => res.data); };
+
+export const DrServiceClose = params => { return vAjax.post(`${base}/Dr/Service/Close`, params).then(res => res.data); };
+
+// 5-0 医生订单动态
+export const orderSearch = params => { return vAjax.post(`${base}/Dr/Order/Search`, params).then(res => res.data); };
+
+// 未添加 http://devapi.app.onenewcare.com/Dr/Order/Search?ServiceValue=0&pageIndex=1&pageSize=10
+
+// 5-1 获取医生增加的所有服务
+export const getDrServiceList = (paramsIndex, paramsSize) => { return vAjax.get(`${base}/Dr/Service/List?pageIndex=${paramsIndex}&pageSize=${paramsSize}`); };
+
+// 5-2 每个服务的订单
+export const serviceOrders = (serviceID, paramsIndex, paramsSize) => { return vAjax.get(`${base}/Dr/My/Orders/${serviceID}?pageIndex=${paramsIndex}&pageSize=${paramsSize}}`); };
+
+// 5-3 医生增加服务
+export const addDrService = params => { return vAjax.post(`${base}/Dr/Service/Info/`, params).then(res => res.data); };
+
+// 5-4 增加服务-上传头像图片
+export const uploadIMGURL = `${base}/File/Temp/`;
+
+//上传头像(用于医生修改个人资料时上传图片，直接修改，不需要保存就生效)
+export const uploadLogo = `${base}/File/Logo`;
+
+// 5-4-1 获取病种信息
+export const getDiagnosises = params => { return vAjax.get(`${base}/Setting/Diagnosises`, params).then(res => res.data); };
+
+// 5-5 删除服务
+export const deleteService = params => { return vAjax.post(`${base}//Dr/Service/Delete/${params}`).then(res => res.data); };
+
+// 5-6 获取我的档案
+export const drProfile = params => { return vAjax.get(`${base}/Dr/My/Profile`); };
+
+// 5-7 修改我的档案
+export const modifydrProfile = params => { return vAjax.post(`${base}/Dr/My/Profile/`, params); };
+
+// 5-7 机构信息
+export const institutionInfo = params => { return vAjax.get(`${base}/Institution/Details/${params}`); };
+
+// 6-1 服务工具-各种问卷列表获取
+export const getDrPaperSummary = params => { return vAjax.get(`${base}/Dr/Paper/Summary/${params}`); };
+
+// 6-2 根据表格类型（类型可增加）获取模版库中的表格列表（字段：表格名字）
+export const filterPaperTmeplate = (paramsType, paramsDep, paramsDiagnosis) => { return vAjax.get(`${base}/Dr/Paper/Template/${paramsType}?deptID=${paramsDep}&diagnosisID=${paramsDiagnosis}`); };
+
+// 6-3 从模版库中添加表格到医生的表格列表  表格ID
+export const addPapertoDr = params => { return vAjax.post(`${base}//Dr/Paper/Add/${params}`).then(res => res.data); };
+
+// 根据表格ID 获取表格结果ID
+// export const getResultID = params => { return vAjax.get(`${base}/Dr/Paper/List/${params}`); };
+
+// 用表格结果ID获取已经填的表格内容
+export const getPaperResult = params => { return vAjax.get(`${base}/Dr/Paper/Result/${params}`); };
+
+// 6-4 查看模板列表的内容
+export const paperDetails = params => { return vAjax.get(`${base}/Dr/Paper/Details/${params}`); };
+
+// 6-5 发送表格
+export const sendPaperToPatient = params => { return vAjax.post(`${base}/Dr/Paper/Send/`, params).then(res => res.data); };
+
+// 6-6 获取已发送的表格
+export const getDrPaperSendOut = (paramsID, pageIndex, pageSize) => { return vAjax.get(`${base}/Dr/Paper/List/${paramsID}?pageIndex=${pageIndex}&pageSize=${pageSize}`); };
+
+// 7-1 获取病人的咨询详情
+export const patientRecoveryHistory = (patientID, pageIndex, pageSize, type) => { return vAjax.get(`${base}/Patient/RecoveryHistory/${patientID}?PageIndex=${pageIndex}&PageSize=${pageSize}&type=${type}`); };
+
+// GET /Patient/RecoveryHistory/9cebafd1970e4db781b8827ddf402964?PageIndex=1&PageSize=20&type=1 HTTP/1.1
+// setting
+export const requestDept = params => { return vAjax.get(`${base}/Setting/Diagnosises/`); };
+
+export const requestTitle = params => { return vAjax.get(`${base}/Setting/Title/`); };
+
+export const requestPosition = params => { return vAjax.get(`${base}/Setting/Position/`); };
+
+// 文章接口  http://devapi.app.onenewcare.com/Article/Search?IsRecommend=0&CategoryType=1
+export const requestArticle = params => { return vAjax.post(`${base}/Article/Search`, params).then(res => res.data); };
+
+// 医生的文章接口
+export const requestDrArticle = (pageIndex, pageSize) => { return vAjax.get(`${base}/Dr/Article/List?PageIndex=${pageIndex}&PageSize=${pageSize}`); };
+
+// 文章类型借口
+export const requestArticleCate = params => { return vAjax.get(`${base}/Article/Category/`, { params: params }); };
+
+// 查看温航详情
+export const getArticleDetail = params => { return vAjax.get(`${base}/Dr/Article/Details/${params}`); };
+
+//提交新的文章
+export const addNewArticle = params => { return vAjax.post(`${base}/Dr/Article/Details/`, params).then(res => res.data); };
+
+// 删除医生文章
+export const deleteArticle = params => { return vAjax.post(`${base}/Dr/Article/Delete/${params}`).then(res => res.data); };
+
+// IEP 获取当前医生所有的教学计划
+export const drTeachingPlan = params => { return vAjax.get(`${base}/Dr/TeachingPlan/Plans`, { params: params }); };
+
+// 获取IEP所开的课程
+export const getIEPCourses = params => { return vAjax.get(`${base}/Dr/TeachingPlan/Courses/${params}`); };
+
+// 整个计划的详情
+export const getPlanDetail = params => { return vAjax.get(`${base}/Dr/TeachingPlan/PlanDetails/${params}`).then(res => res.data); };
+
+// 单元计划的详情
+export const getPlanItemDetail = params => { return vAjax.get(`${base}/Dr/TeachingPlan/PlanSubDetails/${params}`).then(res => res.data); };
+
+// 增加修改计划
+export const modifyPlan = params => { return vAjax.post(`${base}/Dr/TeachingPlan/Plan`, params).then(res => res.data); };
+
+//课程的详情   http://devapi.app.onenewcare.com/Dr/TeachingPlan/Subjects?lineID
+export const getCourseDetails = params => { return vAjax.get(`${base}/Dr/TeachingPlan/Subjects`, { params: params }).then(res => res.data); };
+
+// 编辑月计划,周计划
+export const editSubPlan = params => { return vAjax.post(`${base}/Dr/TeachingPlan/PlanLineItem`, params).then(res => res.data); };
+
+// 获取学期计划中的月计划   月计划中的周计划
+export const getSelectCourse = params => { return vAjax.get(`${base}/Dr/TeachingPlan/SelectedCourses/${params}`).then(res => res.data); };
+
+
+// 课程包列表
+export const requestCourseList = params => { return vAjax.get(`${base}/Dr/PaperPackage/List`).then(res => res.data); };
+
+// 将课程包添加到评测表
+export const addTestPaper = params => { return vAjax.post(`${base}/Dr/Exam/Info`, params).then(res => res.data); };
+
+// 获取已新建的评测表
+export const requestTestList = params => { return vAjax.post(`${base}/Dr/Exam/Search`, params).then(res => res.data); };
+
+// 获取已评测表内容
+export const getTestPaperContent = params => { return vAjax.get(`${base}/Dr/PaperPackage/Details/${params}`).then(res => res.data); };
+
+// 选择患者生成提交评测表需要的ID
+export const chosePatientToTest = params => { return vAjax.post(`${base}/Dr/Exam/Send`, params).then(res => res.data); };
+
+// 提交评测表
+export const sendTestPaper = (result, params) => { return vAjax.post(`${base}/Dr/Exam/Result/${result}`, params).then(res => res.data); };
+
+// 获取已评测的学生
+export const requestTestMembers = params => { return vAjax.post(`${base}/Dr/Exam/Members`, params).then(res => res.data); };
+
+// 获取患者的评估详情
+export const getPacientTestDetails = params => { return vAjax.get(`${base}/Dr/Exam/Details/${params}`).then(res => res.data); };
+
+// 获取用户的评估分析报告
+export const getPacientTestReport = params => { return vAjax.get(`${base}/Dr/Exam/Report/${params}`).then(res => res.data); };
+
+// 获取基础信息设置数据
+export const getDictionaryData = params => { return vAjax.get(`${base}/Setting/List/${params}`) };
+
+
+
+

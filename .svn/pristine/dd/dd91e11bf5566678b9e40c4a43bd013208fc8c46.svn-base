@@ -1,0 +1,499 @@
+<template>
+    <div class="printWrap">
+        <div class="print-sider">
+            <h2 class="print-sider-title">广东省智力残疾儿童康复档案</h2>
+            <li class="print-sider-paper" @click='choseRegister'>
+                <p class="print-sider-paperTitle">智力残疾儿童入学登记表</p>
+            </li>
+
+            <li class="print-sider-paper" v-for="ele in testPaperListData">
+                <p @click="requestTestPaticent(ele.ID)">
+                    <span >{{ ele.PackageName}}</span>
+                    <el-button type="primary" size="mini" @click.stop="requestTestReportData(ele.ID)">评测报告</el-button>
+                    <el-button type="primary" size="mini" @click.stop="requesTestResultData(ele.ID)">分析表</el-button>
+                </p>
+            </li>
+
+            <li class="print-sider-paper" @click="paperIndex = 3" v-for="ele in personalPlanData.Records">
+                <div class="print-sider-paperTitle">
+                    <p @click="requestPlanDetails(ele.ID)">{{ ele.Title }}</p>
+                    <p class="roundNum" v-for="item in planDetailsData.MonthPlans">
+                        <span @click="requestMonthDetails(item.ID)">{{ item.Name }}</span>
+                    </p>
+
+                </div>
+
+            </li>
+        </div>
+        <div class="print-content">
+            <div id="print-content-paper">
+                <div v-if="paperIndex === 0">
+                    <registerPrinter :userInfo="stuData" :dpData="diagnosisesDeptData" :fcData="fiveConditionData"></registerPrinter>
+                </div>
+
+                <div class="paperform-content" v-if="paperIndex === 1">
+                    <analysisReportPrinter :userInfo="reportData" :fcData="fiveConditionData"></analysisReportPrinter>
+                </div>
+
+                <div class="paperform-content" v-if="paperIndex === 2">
+                    <testResultPaper :paperResultData="resultData"></testResultPaper>
+                </div>
+
+                <div class="paperform-content" v-if="paperIndex === 3">
+                    <iepPrinter :iepMothInfo="iepMonthData"></iepPrinter>
+                </div>
+            </div>
+
+        </div>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            size="tiny"
+            :before-close="handleClose">
+            <a id='lodapA' href='http://www.lodop.net/demolist/CLodopPrint_Setup_for_Win32NT.zip' target='_blank'>打印插件未安装!点击确定执行安装</a>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="jumpLogin">确 定</el-button>
+            </span>
+        </el-dialog>
+        <!--<div class="print-tool" @click="printSth">打印</div>-->
+        <!--<div class="print-tool" @click="prn1_printA">lodop打印</div>-->
+        <div class="print-tool" @click="prn1_printA">lodop打印预览</div>
+        <div class="print-back" @click="goback">返回</div>
+    </div>
+</template>
+<script>
+    import _ from 'lodash'
+    import axios from 'axios'
+    import api from '../api/index.js';
+    import registerPrinter from '../components/registerPrinter.vue'
+    import analysisReportPrinter from '../components/analysisReportPrinter.vue'
+    import testResultPaper from '../components/testResultPaper.vue'
+    import iepPrinter from '../components/iepPrinter.vue'
+    export default {
+        name: 'print',
+        components: {
+            registerPrinter,
+            analysisReportPrinter,
+            testResultPaper,
+            iepPrinter,
+        },
+        data() {
+            return {
+                paperIndex: 0,
+                stuData: [],
+                diagnosisesDeptData: [],
+                fiveConditionData: [],
+                IEPdata: [],
+                testPaperListData: [],
+                reportData: [],
+                resultData: [],
+                personalPlanData: [],
+                planDetailsData: [],
+                iepMonthData: [],
+                isTest: false,
+                testID: '',
+                dialogVisible: false
+            }
+        },
+        methods: {
+            choseRegister() {
+                this.paperIndex = 0
+                this.registerRequest()
+            },
+            requestDiagnosises() {
+                let _this = this;
+                api.requestDept().then(res => {
+                    _this.diagnosisesDeptData = res.data.List;
+                }).catch(err => {
+                    _this.$message.error('病种数据请求失败,请稍后再试');
+                });
+            },
+            prn1_printA() {
+                this.CreateOneFormPage();
+                LODOP.PREVIEW();
+//                LODOP.PRINTA();
+            },
+            CreateOneFormPage(){
+                LODOP=this.getLodop();
+                LODOP.PRINT_INIT("学生注册信息");
+                LODOP.SET_PRINT_STYLE("FontSize",16);
+                LODOP.SET_PRINT_STYLE("Bold",1);
+                var styleCSS;
+                if (this.paperIndex === 0) {
+                    styleCSS = "<link href='../../static/printReg.css' type='text/css' rel='stylesheet'>"
+                }
+                else if (this.paperIndex === 1){
+                    styleCSS = "<link href='../../static/printReg.css' type='text/css' rel='stylesheet'>"
+                }
+                if (this.paperIndex === 2) {
+                    styleCSS = "<link href='../../static/printResult.css' type='text/css' rel='stylesheet'>"
+                }
+                else if (this.paperIndex === 3){
+                    styleCSS = "<link href='../../static/iepPrinter.css' type='text/css' rel='stylesheet'>"
+                }
+                var printSth = styleCSS + "<body>"+document.getElementsByClassName("print-content")[0].innerHTML+"</body>"
+                LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                LODOP.ADD_PRINT_HTM('1cm', '1cm', '19cm', '27.7cm',printSth);
+            },
+            goback() {
+                this.$router.go(-1);
+            },
+            getLodop(oOBJECT,oEMBED){
+                var strHtmInstall="<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='http://113.10.155.131/install_lodop32.zip' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font>";
+                var strHtmUpdate="<br><font color='#FF00FF'>打印控件需要升级!点击这里<a href='http://113.10.155.131/install_lodop32.zip' target='_self'>执行升级</a>,升级后请重新进入。</font>";
+                var strHtm64_Install="<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='http://113.10.155.131/install_lodop64.zip' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font>";
+                var strHtm64_Update="<br><font color='#FF00FF'>打印控件需要升级!点击这里<a href='http://113.10.155.131/install_lodop64.zip' target='_self'>执行升级</a>,升级后请重新进入。</font>";
+                var strHtmFireFox="<br><br><font color='#FF00FF'>（注意：如曾安装过Lodop旧版附件npActiveXPLugin,请在【工具】->【附加组件】->【扩展】中先卸它）</font>";
+                var strHtmChrome="<br><br><font color='#FF00FF'>(如果此前正常，仅因浏览器升级或重安装而出问题，需重新执行以上安装）</font>";
+                var strCLodopInstall="<p style='color: #ffffff;background-color: #1c8de0'>打印插件未安装!点击这里<span @click='jumpLogin'>执行安装</span><a id='lodapA' href='http://www.lodop.net/demolist/CLodopPrint_Setup_for_Win32NT.zip' target='_self'></a>,安装后重新登录。</p>";
+                var strCLodopUpdate="<br><font color='#FF00FF'>CLodop云打印服务需升级!点击这里<a href='CLodopPrint_Setup_for_Win32NT.zip' target='_self'>执行升级</a>,升级后请刷新页面。</font>";
+                var LODOP;
+                try{
+                    var isIE = (navigator.userAgent.indexOf('MSIE')>=0) || (navigator.userAgent.indexOf('Trident')>=0);
+                    if (this.needCLodop()) {
+                        try{ LODOP=getCLodop();} catch(err) {};
+                        if (!LODOP && document.readyState!=="complete") {alert("C-Lodop没准备好，请稍后再试！"); return;};
+                        if (!LODOP) {
+                            if (isIE) document.write(strCLodopInstall); else
+                                this.dialogVisible = true
+//                                document.documentElement.innerHTML=strCLodopInstall+document.documentElement.innerHTML;
+                            return;
+                        } else {
+
+                            if (CLODOP.CVERSION<"2.0.9.0") {
+                                if (isIE) document.write(strCLodopUpdate); else
+                                    document.documentElement.innerHTML=strCLodopUpdate+document.documentElement.innerHTML;
+                            };
+                            if (oEMBED && oEMBED.parentNode) oEMBED.parentNode.removeChild(oEMBED);
+                            if (oOBJECT && oOBJECT.parentNode) oOBJECT.parentNode.removeChild(oOBJECT);
+                        };
+                    } else {
+                        var is64IE  = isIE && (navigator.userAgent.indexOf('x64')>=0);
+                        //=====如果页面有Lodop就直接使用，没有则新建:==========
+                        if (oOBJECT!=undefined || oEMBED!=undefined) {
+                            if (isIE) LODOP=oOBJECT; else  LODOP=oEMBED;
+                        } else if (CreatedOKLodop7766==null){
+                            LODOP=document.createElement("object");
+                            LODOP.setAttribute("width",0);
+                            LODOP.setAttribute("height",0);
+                            LODOP.setAttribute("style","position:absolute;left:0px;top:-100px;width:0px;height:0px;");
+                            if (isIE) LODOP.setAttribute("classid","clsid:2105C259-1E0C-4534-8141-A753534CB4CA");
+                            else LODOP.setAttribute("type","application/x-print-lodop");
+                            document.documentElement.appendChild(LODOP);
+                            CreatedOKLodop7766=LODOP;
+                        } else LODOP=CreatedOKLodop7766;
+                        //=====Lodop插件未安装时提示下载地址:==========
+                        if ((LODOP==null)||(typeof(LODOP.VERSION)=="undefined")) {
+                            if (navigator.userAgent.indexOf('Chrome')>=0)
+                                document.documentElement.innerHTML=strHtmChrome+document.documentElement.innerHTML;
+                            if (navigator.userAgent.indexOf('Firefox')>=0)
+                                document.documentElement.innerHTML=strHtmFireFox+document.documentElement.innerHTML;
+                            if (is64IE) document.write(strHtm64_Install); else
+                            if (isIE)   document.write(strHtmInstall);    else
+                                document.documentElement.innerHTML=strHtmInstall+document.documentElement.innerHTML;
+                            return LODOP;
+                        };
+                    };
+                    if (LODOP.VERSION<"6.2.1.5") {
+                        if (this.needCLodop())
+                            document.documentElement.innerHTML=strCLodopUpdate+document.documentElement.innerHTML; else
+                        if (is64IE) document.write(strHtm64_Update); else
+                        if (isIE) document.write(strHtmUpdate); else
+                            document.documentElement.innerHTML=strHtmUpdate+document.documentElement.innerHTML;
+                        return LODOP;
+                    };
+                    //===如下空白位置适合调用统一功能(如注册语句、语言选择等):===
+                    LODOP.SET_LICENSES("","13528A153BAEE3A0254B9507DCDE2839","","");
+                    //===========================================================
+                    return LODOP;
+                } catch(err) {alert("getLodop出错:"+err);};
+
+
+            },
+            needCLodop(){
+                try{
+                    var ua=navigator.userAgent;
+                    if (ua.match(/Windows\sPhone/i) !=null) return true;
+                    if (ua.match(/iPhone|iPod/i) != null) return true;
+                    if (ua.match(/Android/i) != null) return true;
+                    if (ua.match(/Edge\D?\d+/i) != null) return true;
+
+                    var verTrident=ua.match(/Trident\D?\d+/i);
+                    var verIE=ua.match(/MSIE\D?\d+/i);
+                    var verOPR=ua.match(/OPR\D?\d+/i);
+                    var verFF=ua.match(/Firefox\D?\d+/i);
+                    var x64=ua.match(/x64/i);
+                    if ((verTrident==null)&&(verIE==null)&&(x64!==null))
+                        return true; else
+                    if ( verFF !== null) {
+                        verFF = verFF[0].match(/\d+/);
+                        if ((verFF[0]>= 42)||(x64!==null)) return true;
+                    } else
+                    if ( verOPR !== null) {
+                        verOPR = verOPR[0].match(/\d+/);
+                        if ( verOPR[0] >= 32 ) return true;
+                    } else
+                    if ((verTrident==null)&&(verIE==null)) {
+                        var verChrome=ua.match(/Chrome\D?\d+/i);
+                        if ( verChrome !== null ) {
+                            verChrome = verChrome[0].match(/\d+/);
+                            if (verChrome[0]>=42) return true;
+                        };
+                    };
+                    return false;
+                } catch(err) {return true;};
+            },
+            registerRequest() {
+                let _this = this;
+                let patientId = _this.$store.state.mystudent.currentPatientId.ID;
+                api.getPatientAgentDetails(patientId).then(res => {
+                    console.log('患者详细信息')
+                    console.log(res.data)
+                    _this.stuData = res.data;
+                    _this.requestDiagnosises();
+                }).catch(err => {
+                    _this.$message.error('获取患者信息失败！');
+                });
+                //获取家庭模式(FAMILYMODEL)、居住社区(COMMUNITY)、教养方式(EDUCATIONSTYLE)、语言环境(LANGUAGE)、抚养带教人(DEPENDENTS)
+                axios.all([api.getDictionaryData('FAMILYMODEL'),api.getDictionaryData('COMMUNITY'),api.getDictionaryData('EDUCATIONSTYLE'),api.getDictionaryData('LANGUAGE'),api.getDictionaryData('DEPENDENTS')])
+                    .then(axios.spread(function (one,two,three,four,five) {
+                        // Both requests are now complete
+                        _this.fiveConditionData.push(one.data.List,two.data.List,three.data.List,four.data.List,five.data.List)
+                    }));
+            },
+            IEPRequest() {
+                let params = {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    planType: 1,
+                    StudentID: this.$store.state.mystudent.currentPatientId.ID
+                }
+                api.drTeachingPlan(params).then(res => {
+                    this.personalPlanData = res.data;
+                });
+            },
+            getSingleIEPData(id) {
+                var _this = this
+                api.getPlanDetail(id).then( res => {
+                    let months = res.MonthPlans.map(function (ele) {
+                        return ele.ID
+                    })
+                    let MonthNames = res.MonthPlans.map(function (ele) {
+                        return ele.Name
+                    })
+                    axios.all([api.getPlanItemDetail(months[0]),api.getPlanItemDetail(months[1]),api.getPlanItemDetail(months[2]),api.getPlanItemDetail(months[3]),api.getPlanItemDetail(months[4])])
+                        .then(axios.spread(function (one, two, three, four, five) {
+                            one.Name = MonthNames[0]
+                            two.Name = MonthNames[1]
+                            three.Name = MonthNames[2]
+                            four.Name = MonthNames[3]
+                            five.Name = MonthNames[4]
+                            _this.IEPdata.push(one,two,three,four,five)
+                            console.log(_this.IEPdata)
+                        }))
+                })
+            },
+            testRequest () {
+                let _this = this;
+                let params = {
+                    PageIndex: 1,
+                    PageSize: 100,
+                    PatientAgentID: _this.$store.state.mystudent.currentPatientId.ID
+                };
+                api.requestTestMembers(params).then(res => {
+                    let arr = res.Records.filter(ele => ele.Status === 1);
+                    this.testPaperListData = arr
+                })
+            },
+            requestTestPaticent(pageIndex) {
+                let params = {
+                    ExamID: this.examID,
+                    PageIndex: pageIndex,
+                    PageSize: 10
+                };
+                api.requestTestMembers(params).then(res => {
+                    this.testedPatientListData = res.Records;
+                    this.testedPatientListTotal = res.Total;
+                });
+            },
+            requestTestReportData(id) {
+                this.paperIndex = 1
+                api.getPacientTestReport(id).then(res => {
+                    this.reportData = res;
+                })
+            },
+            requesTestResultData(id) {
+                this.paperIndex = 2
+                api.getPacientTestDetails(id).then(res => {
+                    console.log('foo')
+                    console.log(res)
+                    this.resultData = res;
+                });
+            },
+            initData() {
+                this.requestDiagnosises();  //获取病种信息，多个打印页面都要使用
+                this.choseRegister()  //首次加载页面，先进行入学登记请求
+                this.testRequest()    //首次加载页面，患者完成的评测列表
+                this.IEPRequest()  //个人iep网络请求
+            },
+            jumpLogin() {
+                this.dialogVisible = false
+                this.$router.go(-1);
+                let anchor = document.getElementById('lodapA')
+                setTimeout(function () {
+                    anchor.click()
+                },200)
+            },
+            handleClose() {
+
+            },
+            requestPlanDetails(id) {
+                api.getPlanDetail(id).then(res => {
+                    this.planDetailsData = res;
+                });
+            },
+            requestMonthDetails(id) {
+                api.getPlanItemDetail(id).then(res => {
+                    this.iepMonthData = res.List
+                });
+            }
+        },
+        created() {
+            if (this.needCLodop()) {
+                var head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
+                var oscript = document.createElement("script");
+                oscript.src ="http://localhost:8000/CLodopfuncs.js?priority=1";
+                head.insertBefore( oscript,head.firstChild );
+
+                //引用双端口(8000和18000）避免其中某个被占用：
+                oscript = document.createElement("script");
+                oscript.src ="http://localhost:18000/CLodopfuncs.js?priority=0";
+                head.insertBefore( oscript,head.firstChild );
+            };
+            this.initData()
+        },
+        mounted() {
+
+        }
+    }
+</script>
+<style scoped>
+    .printWrap {
+        position: relative;
+        width: 100%;
+        height: 720px;
+        border: 1px solid #cccccc
+    }
+
+    .print-sider {
+        float: left;
+        width: 320px;
+        box-sizing: border-box;
+        height: 100%;
+        border-right: 1px solid #cccccc;
+        padding: 10px;
+    }
+
+    .print-sider-title {
+        margin-bottom: 40px;
+    }
+
+    .print-sider-paper {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .print-sider-paperNav {
+
+    }
+
+    .print-sider-paperIndex {
+        display: inline-block;
+        margin-right: 5px;
+        width: 18px;
+        height: 18px;
+        text-align: center;
+        line-height: 18px;
+        border-radius: 50%;
+        color: white;
+        background-color: black;
+    }
+    .print-content {
+        position: relative;
+        margin-left: 320px;
+        width: 860px;
+        height: 100%;
+        padding: 5px 0;
+        overflow: scroll;
+    }
+
+    #print-content-paper {
+        width: 595px;
+        /*height: 842px;*/
+        margin: 0 auto;
+        box-sizing: border-box;
+        box-shadow: 0 0 0 3px #edf7ff
+    }
+
+    .print-content {
+        /*box-sizing: border-box;*/
+    }
+
+    .paperform-title {
+        font-size: 22px;
+        text-align: center
+    }
+
+    .paperform-filecode {
+        text-align: right
+    }
+
+    .paperform-form {
+        width: 100%;
+    }
+
+    .print-tool {
+        position: absolute;
+        top: 100px;
+        right: 100px;
+        width: 100px;
+        height: 40px;
+        color: #252729;
+        background-color: #FFCF71;
+        border-color: #FFCF71;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    .print-back {
+        position: absolute;
+        top: 160px;
+        right: 100px;
+        width: 100px;
+        height: 40px;
+        color: #252729;
+        background-color: #FFCF71;
+        border-color: #FFCF71;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    /*1080*1920 页面展示时设置padding:2px 10px   打印时的设置  padding:10px 18px*/
+
+    .tg  {border-collapse:collapse;border-spacing:0;width: 100%;border-color: black}
+    .tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center;vertical-align:center}
+    .tg .tg-baqh{text-align:center;vertical-align:center}
+    .tg .tg-yw4l{text-align:center;vertical-align:center}
+
+    .tg .tg-textleft{text-align:left;vertical-align:top}
+
+    .tg .tg-s6z2{text-align:center}
+</style>
+

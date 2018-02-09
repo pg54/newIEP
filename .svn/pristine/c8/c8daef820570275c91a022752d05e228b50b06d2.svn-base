@@ -1,0 +1,348 @@
+<template>
+    <div class="main">
+        <div class="articleWrap" v-show="showEduWrap">
+            <div class="tabs-chose">
+                <li v-for="(tab, index) in tabs" :class="{active : currentTab === index }" @click="currentTab = index">{{tab}}
+                </li>
+            </div>
+            <div class="tabs-content">
+                <div v-show="currentTab === 0" class="tab-content">
+
+                    <div class="toolBox">
+                        <el-button @click="goAddTrainingForm" style="float:right">
+                            <Icon type="plus-round"></Icon>
+                            新增培训
+                        </el-button>
+                    </div>
+                    <div class="center-content" style="padding-left:20px">
+                        <div class="newsList">
+                            <div v-for="o in allTrainingData" class="item hoverEle">
+                                <a :href="o.Path" target="eduIframe" @click="gotoIframe(o)">
+                                    <img :src="o.Logo" alt="logo">
+                                    <p class="activityWrap">
+                                        <span class="activity">公益活动</span>
+                                    </p>
+                                    <p class="newsTitle">{{ shortTitle(o.Title) }}</p>
+                                </a>
+                                <p class="toolBtns" v-show="o.DoctorID === doctorID">
+                                    <el-button size="small" :plain="true" type="warning" @click="modifyTraining(o)">修改</el-button>
+                                    <el-button size="small" :plain="true" type="warning" @click="deleteTraining(o.ID)">删除</el-button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page">
+                        <el-pagination @current-change="nextPage" layout="prev, pager, next" :page-size="8" :total="pageTotal">
+                        </el-pagination>
+                    </div>
+                </div>
+
+                <div v-show="currentTab === 1" class="tab-content">
+                    <div class="center-content dyArticleBox" style="padding-left:20px">
+                        <div class="newsList ">
+                            <div v-for="o in drArticleData" class="item hoverEle">
+                                <a :href="o.Path" target="eduIframe" @click="gotoIframe(o)">
+                                    <img :src="o.Logo" alt="logo">
+                                    <p class="activityWrap">
+                                        <span class="activity">公益活动</span>
+                                    </p>
+                                    <p class="newsTitle">{{ shortTitle(o.Title) }}</p>
+                                </a>
+                                <p class="toolBtns" v-show="o.DoctorID === doctorID">
+                                    <el-button size="small" :plain="true" type="warning" @click="modifyTraining(o)">修改</el-button>
+                                    <el-button size="small" :plain="true" type="warning" @click="deleteMyArticle(o.ID)">删除</el-button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="page" >
+                        <el-pagination @current-change="myArticleNextPage" layout="prev, pager, next" :page-size="8" :total="drPageTotal">
+                        </el-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <addNewsForm :newsCategoryOptions="CategoryIndex"></addNewsForm>
+        <div v-show="showEduIframe" class="eduIframeWrap">
+            <iframe :src="newsURL" width="1280" height="580" name="eduIframe" id="eduIframe" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+        </div>
+    </div>
+</template>
+<script>
+import { requestArticle, requestDrArticle, getArticleDetail, deleteArticle } from '../../../api/api';
+import addNewsForm from '../../../components/addNewsForm.vue';
+export default {
+    name: 'dymaArticle',
+    components: {
+        addNewsForm
+    },
+    computed: {
+        doctorID: function () {
+            console.log('医生ID');
+            console.log(this.$store.state.questionPaper.drProfile.ID);
+            return this.$store.state.questionPaper.drProfile.ID;
+        },
+        showEduWrap: function () {
+            return this.$store.state.questionPaper.generalNewsStatus;
+        },
+        showEduIframe: function () {
+            return this.$store.state.questionPaper.newsIframeStatus;
+        }
+    },
+    data() {
+        return {
+            currentTab: 0,
+            tabs: ['全部培训', '我的文章'],
+            drDrTrainingData: '',
+            CategoryIndex: 3,
+            allTrainingData: [],
+            pageTotal: 1,
+            trainingCurrentPage: 1,
+            newsURL: '',
+            drArticleData: [],
+            drPageTotal: 1,
+            myArticleCurrentPage: 1,
+            myArticle: false
+        }
+    },
+    methods: {
+        gotoIframe(o) {
+            this.newsURL = o.Path;
+            this.$store.dispatch('showGeneralNews', false);
+            this.$store.dispatch('showNewsIframe', true);
+        },
+        goBack() {
+            this.$router.push('/dynamicConsultation');
+        },
+        shortTitle(originStr) {
+            if (originStr.length > 26) {
+                let newStr = originStr.substr(0, 23) + '...';
+                return newStr;
+            } else {
+                return originStr;
+            }
+        },
+        requestTrainingData(pageIndex) {
+            var params = {
+                'CategoryType': 3,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 10
+            };
+            requestArticle(params).then(res => {
+                this.allTrainingData = res.Records;
+                this.pageTotal = res.Total;
+            });
+        },
+        nextPage(currentPage) {
+            this.trainingCurrentPage = currentPage;
+            this.requestTrainingData(this.trainingCurrentPage);
+        },
+        goAddTrainingForm() {
+            this.$store.dispatch('addFormVisible');
+        },
+
+        requestTrainingData(pageIndex) {
+            var params = {
+                'CategoryType': 3,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 8
+            };
+            requestArticle(params).then(res => {
+                this.allTrainingData = res.Records;
+                this.pageTotal = res.Total;
+            });
+        },
+        nextPage(currentPage) {
+            this.trainingCurrentPage = currentPage;
+            this.requestTrainingData(this.trainingCurrentPage);
+        },
+        goAddTrainingForm() {
+            this.$store.dispatch('addFormVisible');
+        },
+        modifyTraining(o) {
+            var obj = Object.assign({}, o);
+            getArticleDetail(o.ID).then(res => {
+                this.$store.dispatch('setFormContent', res.data);
+            });
+            this.$store.dispatch('isModify');
+            this.$store.dispatch('addFormVisible');
+        },
+        deleteTraining(id) {
+            deleteArticle(id).then(res => {
+                if (res.Code === 0) {
+                    this.$message.success('删除成功');
+                    this.allArticle = true;
+                    this.requestPageData(this.myArticleCurrentPage);
+                    this.requestTrainingData(this.trainingCurrentPage);
+                    this.allArticle = false;
+                }
+            });
+        },
+        // 培训，全部文章分界线
+        myArticleNextPage(pageIndex) {
+            //            this.myArticle = true;
+            this.myArticleCurrentPage = pageIndex;
+            this.requestPageData(this.myArticleCurrentPage);
+        },
+        requestPageData(pageIndex) {
+            requestDrArticle(pageIndex, 8).then(res => {
+                this.drArticleData = res.data.Records;
+                this.drPageTotal = res.data.Total;
+            });
+        },
+        deleteMyArticle(id) {
+            deleteArticle(id).then(res => {
+                if (res.Code === 0) {
+                    this.$message.success('删除成功');
+                    this.allArticle = true;
+                    this.requestPageData(this.myArticleCurrentPage);
+                }
+            });
+        }
+
+    },
+    mounted() {
+        this.requestTrainingData(1);
+        this.requestPageData(1);
+    }
+};
+</script>
+<style scoped>
+.main {
+    position: absolute;
+    left: 0;
+    top: 43px;
+    width: 100%;
+    height: 583px;
+}
+
+.tabs-chose {
+    position: absolute;
+    width: 94px;
+    height: 583px;
+    background-color: #EEEFF0
+}
+
+.tabs-content {
+    position: absolute;
+    left: 94px;
+    top: 0;
+    width: 1185px;
+    height: 583px;
+    border-left: 1px solid #EFEFEF;
+    overflow: scroll;
+}
+
+
+.tabs-chose li {
+    width: 94px;
+    height: 60px;
+    background-color: RGBA(238, 239, 240, 1.00);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.tabs-chose .active {
+    background-color: #ffffff;
+    color: RGBA(32, 160, 255, 1.00);
+    border-left: 6px solid #31BBFC;
+}
+
+.item {
+    display: inline-block;
+    width: 250px;
+    height: 232px;
+    margin: 10px 10px
+}
+
+.item a {
+    display: flex;
+    flex-direction: column;
+    /*justify-items: center;*/
+    align-items: center
+}
+
+.item img {
+    width: 230px;
+    height: 140px
+}
+
+.activityWrap {
+    width: 230px;
+    margin: 8px
+}
+
+.activity {
+    width: 60px;
+    display: inline-block;
+    background-color: rgba(255, 187, 0, 1);
+    line-height: 20px;
+    color: white;
+}
+
+.tabs-content .newsTitle {
+    width: 230px;
+    color: black;
+    font-size: 18px;
+    position: relative;
+    left: 0px;
+    line-height: 18px;
+}
+
+.tabs-content .toolBtns {
+    width: 230px;
+    position: relative;
+    margin-top: 6px;
+    padding-left: 10px;
+}
+
+.hoverEle:hover {
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, .19);
+    transform: translate3d(0, -2px, 0);
+    transition: all .3s cubic-bezier(.55, 0, .1, 1);
+}
+
+.navigation {
+    font-size: 16px;
+    padding-left: 18px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    padding-top: 10px;
+    border-bottom: 1px solid gray;
+}
+
+.navigation span:hover {
+    text-decoration: underline;
+    color: #42ABD8;
+}
+
+.center-content {
+    width: 1140px;
+    margin: 0 auto;
+    height: 480px;
+    margin-top: 40px;
+    overflow-y: scroll;
+}
+
+.dyArticleBox {
+    margin-top: 30px;
+}
+
+.toolBox {
+    width: 1140px;
+    margin: 0 auto;
+    padding-top: 10px;
+}
+
+.page {
+    float: right;
+    margin-right: 18px;
+}
+
+</style>

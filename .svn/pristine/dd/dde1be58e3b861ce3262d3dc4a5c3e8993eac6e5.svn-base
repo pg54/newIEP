@@ -1,0 +1,143 @@
+<template>
+    <div class="iepWrap">
+        <div id="sidebar">
+            <ul slot="links" class="links">
+                <li>
+                    <router-link class='link' to="/iep/iepBasicInfo"  >
+                        <p>基本信息</p>
+                    </router-link>
+                </li>
+
+
+                <li>
+                    <router-link class='link' to="/iep/iepAnalysis"v @click="">
+                        <p>评测分析</p>
+                    </router-link>
+                </li>
+                <li>
+                    <router-link class="link" to="/iep/iepPlan">
+                        <p>教学计划</p>
+                    </router-link>
+                </li>
+                <li>
+                    <router-link class='link' to="/iep/iepSchedule">
+                        <p>课程表</p>
+                    </router-link>
+                </li>
+                <li>
+                    <router-link class='link' to="/iep/ieplibrary">
+                        <p>教案库</p>
+                    </router-link>
+                </li>
+                <li>
+                    <router-link class='link' to="/iep/iepStudy">
+                        <p>个案研讨</p>
+                    </router-link>
+                </li>
+                <li v-if="false">
+                    <router-link class='link' to="/iep/iepSummary">
+                        <p>记录总结</p>
+                    </router-link>
+                </li>
+                <li>
+                    <router-link class='link' to="/iep/iepRecord">
+                        <p>活动记录</p>
+                    </router-link>
+                </li>
+                <li>
+                    <router-link class='link' to="/iep/iepFeedback">
+                        <p>反馈评价</p>
+                    </router-link>
+                </li>
+            </ul>
+        </div>
+        <div class="main">
+            <router-view :key="key"></router-view>
+        </div>
+    </div>
+</template>
+<script>
+import { setToken } from '../../api/api';
+export default {
+    name: 'iep',
+    computed: {
+        key() {
+            console.log(this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date());
+            if(this.$router.currentRoute.path == '/iep'){
+                this.jumptoIepPlan();
+            }
+            return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date();
+        }
+    },
+    methods: {
+        // test() {
+        //     console.log('test 当前路由地址 :');
+        //     console.log(this.$router.currentRoute.path);
+        //     if (this.$router.currentRoute.path == '/iep') {
+        //         //this.$router.push({ name: 'iepPlan', params: { userId: 123 }})
+        //         this.$router.push('/iep/iepPlan');
+        //     }
+        // }
+        jumptoIepPlan() {
+            this.$router.push('/iep/iepPlan');
+        }
+    },
+    created() {
+        //this.jumptoIepPlan();
+        //setToken();
+        // console.log('created 当前路由地址:');
+        // console.log(this.$route.path);
+    },
+    destroyed() {
+        console.log('iep 销毁');
+    },
+};
+</script>
+<style scoped>
+    .iepWrap { position: relative }
+#sidebar {
+    position: absolute;
+    left: 0;
+    top: 43px;
+    width: 94px;
+    height: 583px;
+    overflow-y: scroll;
+    background-color: #EFEFEF
+}
+.main {
+    position: absolute;
+    left: 95px;
+    height: 626px;
+    top: 0;
+    width: calc(100% - 95px)
+}
+
+.links {
+    width: 94px;
+    height: 626px;
+    background-color: #EFEFEF
+}
+
+.link {
+    display: flex;
+    width: 94px;
+    height: 70px;
+    font-size: 14px;
+    color: #333333;
+    align-items: center;
+    justify-content: center
+}
+
+.link span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 20px;
+}
+
+.router-link-active {
+    background-color: RGBA(254, 255, 255, 1.00);
+    color: RGBA(47, 189, 252, 1.00);
+    border-left: 6px solid #31BBFC
+}
+</style>

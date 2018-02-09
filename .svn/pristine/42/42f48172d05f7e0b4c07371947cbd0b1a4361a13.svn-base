@@ -1,0 +1,1095 @@
+<template>
+    <div class="main">
+        <div class="pageNavbar">
+            <span style="color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span @click="backroute">{{ tabs[currentTab] }}&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span v-if=" currentTab === 2 && testStatuses[1] ">开始评测</span>
+            <span v-if=" currentTab === 2 && !testStatuses[0] && !testStatuses[1]" @click="gobackTestList">评估列表&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span v-show=" currentTab === 2 && testStatuses[3] "><span style="color: rgba(49, 187, 252, 1)">{{ chosedPatient}}</span>的评估结果&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span v-show=" currentTab === 2 && testStatuses[4] "><span style="color: rgba(49, 187, 252, 1)">{{ chosedPatient}}</span>的评估报告&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+        </div>
+        <div class="tabs" v-show="tabsShow">
+            <div class="tabs-chose">
+                <li v-for="(tab, index) in tabs" :class="{active : currentTab === index }" @click="currentTab = index;testStatuses = [true,false,false,false,false];">{{tab}}
+                </li>
+            </div>
+
+            <div class="tabs-content">
+                <!--动态-->
+                <div v-show="currentTab === 0" class="tab-content">
+                    <ServiceDyma></ServiceDyma>
+                </div>
+                <!--咨询管理-->
+                <div v-show="currentTab === 1" class="tab-content">
+                    <div class="center-content">
+                        <div class="toolBox">
+                            <el-button @click="toAddPaper(21)">
+                                <Icon type="plus-round"></Icon>添加表格
+                            </el-button>
+                        </div>
+                        <el-card class="cardBox colorHeader" :body-style="{ padding: '0px'}">
+                            <div class="tableWrap">
+                                <el-table :data="consultData" style="width: 100%">
+                                    <el-table-column type="index" width="60">
+                                    </el-table-column>
+
+                                    <el-table-column prop="Name" label="名称" width="180">
+                                    </el-table-column>
+                                    <el-table-column prop="TotalCount" label="已发送个数" width="180">
+                                    </el-table-column>
+                                    <el-table-column prop="FinishedCount" label="已完成个数">
+                                    </el-table-column>
+                                    <el-table-column prop="CreatedOn" label="创建时间">
+                                    </el-table-column>
+
+                                    <el-table-column label="操作">
+                                        <template scope="scope">
+                                            <el-button size="mini" :plain="true" type="info" @click="checkPaper(scope.$index, scope.row)">查看填写结果</el-button>
+                                            <el-button size="mini" :plain="true" type="warning" @click="sendtoPaticent(scope.$index, scope.row)">发放</el-button>
+                                        </template>
+
+
+                                    </el-table-column>
+
+                                </el-table>
+                            </div>
+                        </el-card>
+                    </div>
+                </div>
+
+                <!--评测管理-->
+                <div v-show="currentTab === 2" class="tab-content testManager">
+                    <!--<div class="center-content" style="height: 580px">-->
+                        <!--<div class="testList" style="height: 580px">-->
+                            <div v-if="testStatuses[0]">
+                                <div class="toolBox">
+                                    <el-button @click="addTestPaper">
+                                        <Icon type="plus-round"></Icon>新建评估表
+                                    </el-button>
+                                </div>
+                                <el-card class="cardBox colorHeader" :body-style="{ padding: '0px'}">
+                                    <div class="tableWrap" style="height: 480px">
+                                        <el-table :data="testPaperListData" style="width: 100%">
+                                            <el-table-column type="index" width="70">
+                                            </el-table-column>
+
+                                            <el-table-column prop="Name" label="名称" width="160">
+                                            </el-table-column>
+
+                                            <el-table-column prop="PackageName" label="课程包名称">
+                                            </el-table-column>
+
+                                            <el-table-column prop="CreatedOn" label="创建时间">
+                                            </el-table-column>
+
+
+                                            <el-table-column label="操作">
+                                                <template scope="scope">
+                                                    <el-button size="mini" :plain="true" type="info" @click="startTest(scope.$index, scope.row)">开始新评测</el-button>
+                                                    <el-button size="mini" :plain="true" type="warning" @click="checkTestPaticent(scope.$index, scope.row)">已评测患者</el-button>
+                                                    <el-button  size="mini" :plain="true" type="danger" @click="deleteExam(scope.$index, scope.row)">删除</el-button>
+                                                </template>
+                                            </el-table-column>
+
+                                        </el-table>
+                                    </div>
+                                    <el-pagination layout="prev, pager, next" @current-change="testPaperListChange" :page-size="10" :total="testPaperTotal" style="float:right;"></el-pagination>
+                                </el-card>
+                            </div>
+                            <div v-if="testStatuses[1]" class="moveLeft">
+                                <!--<TestPaper :course_id="paperCourseID" :patiend_id="paperPatientID" :examID="paperExamID"></TestPaper>-->
+                                <TestResult :paticentID="resultPaticentID" :testID="resultTestID" :isComplete="completeTest"></TestResult>
+                            </div>
+                            <div v-if="testStatuses[2]" class="testStudent" style="z-index: 100">
+                                <el-card class="newCardBox colorHeader" :body-style="{ padding: '0px'}">
+                                    <div class="tableWrap">
+                                        <el-table :data="testedPatientListData" style="width: 100%">
+                                            <el-table-column type="index" width="80">
+                                            </el-table-column>
+
+                                            <el-table-column prop="ExamName" label="评测名称">
+                                            </el-table-column>
+
+                                            <el-table-column prop="Name" label="姓名" >
+                                            </el-table-column>
+
+                                            <el-table-column label="操作" width="300">
+                                                <template scope="scope">
+                                                    <el-button v-if="!scope.row.Status" size="mini" :plain="true" type="info" @click="checkPacientTestDetail(scope.$index, scope.row, false)">继续评测</el-button>
+                                                    <el-button v-if="!scope.row.Status" size="mini" :plain="true" type="info" @click="toDeleteExamPatient(scope.$index, scope.row)">删除</el-button>
+                                                    <el-button v-if="scope.row.Status" size="mini" :plain="true" type="info" @click="checkPacientTestresult(scope.$index, scope.row, true)">分析表</el-button>
+                                                    <el-button v-if="scope.row.Status" size="mini" :plain="true" type="info" @click="checkPacientTestReport(scope.$index, scope.row)">评估报告</el-button>
+                                                </template>
+                                            </el-table-column>
+
+                                        </el-table>
+
+
+                                    </div>
+                                    <el-pagination layout="prev, pager, next" @current-change="testedPatientListNextPage" :page-size="10" :total="testedPatientListTotal" style="float:right;"></el-pagination>
+                                </el-card>
+                            </div>
+                            <div v-if="testStatuses[3]" class="moveLeft">
+                                <TestResult :paticentID="resultPaticentID" :testID="resultTestID" :isComplete="completeTest"></TestResult>
+                            </div>
+                            <div v-if="testStatuses[4]" class="moveLeft">
+                                <TestReport :testID="reportID" :paticentID="reportPaticentID"></TestReport>
+                            </div>
+                        <!--</div>-->
+                    <!--</div>-->
+                </div>
+
+                <!--训练管理-->
+                <div v-show="currentTab === 3">
+                    <div class="center-content">
+                        <div class="toolBox">
+                            <el-button @click="toAddPaper(41)">
+                                <Icon type="plus-round"></Icon>添加表格
+                            </el-button>
+                        </div>
+                        <el-card class="cardBox colorHeader " :body-style="{ padding: '0px'}">
+                            <div class="tableWrap">
+                                <el-table :data="trainingData" style="width: 100%">
+                                    <el-table-column type="index" width="70">
+                                    </el-table-column>
+
+                                    <el-table-column prop="Name" label="名称" width="180">
+                                    </el-table-column>
+                                    <el-table-column prop="TotalCount" label="已发送个数" width="180">
+                                    </el-table-column>
+                                    <el-table-column prop="FinishedCount" label="已完成个数">
+                                    </el-table-column>
+                                    <el-table-column prop="CreatedOn" label="创建时间">
+                                    </el-table-column>
+
+                                    <el-table-column label="操作">
+                                        <template scope="scope">
+                                            <el-button size="mini" :plain="true" type="info" @click="checkPaper(scope.$index, scope.row)">查看填写结果</el-button>
+                                            <el-button size="mini" :plain="true" type="warning" @click="sendtoPaticent(scope.$index, scope.row)">发放</el-button>
+                                        </template>
+                                    </el-table-column>
+
+                                </el-table>
+                            </div>
+                        </el-card>
+                    </div>
+                </div>
+
+                <!--随访中心-->
+                <div v-show="currentTab === 4">
+                    <vueTab :tabtitles="['反馈表','复查表','关心提醒']" :current-page="1">
+                        <div class="tab-content-container">
+                            <div class="center-content">
+                                <div class="toolBox">
+                                    <el-button @click="toAddPaper(11)">
+                                        <Icon type="plus-round"></Icon>添加表格
+                                    </el-button>
+                                </div>
+                                <el-card class="cardBox colorHeader shortLength" :body-style="{ padding: '0px'}">
+                                    <div class="tableWrap" style="overflow-y: scroll">
+                                        <el-table :data="feedbackData" style="width: 100%">
+                                            <el-table-column type="index" width="70">
+                                            </el-table-column>
+
+                                            <el-table-column prop="Name" label="名称" width="180">
+                                            </el-table-column>
+                                            <el-table-column prop="TotalCount" label="已发送个数" width="180">
+                                            </el-table-column>
+                                            <el-table-column prop="FinishedCount" label="已完成个数">
+                                            </el-table-column>
+                                            <el-table-column prop="CreatedOn" label="创建时间">
+                                            </el-table-column>
+
+                                            <el-table-column label="操作">
+                                                <template scope="scope">
+                                                    <el-button size="mini" :plain="true" type="info" @click="checkPaper(scope.$index, scope.row)">查看填写结果</el-button>
+                                                    <el-button size="mini" :plain="true" type="warning" @click="sendtoPaticent(scope.$index, scope.row)">发放</el-button>
+                                                </template>
+                                            </el-table-column>
+
+                                        </el-table>
+                                    </div>
+                                </el-card>
+                            </div>
+                        </div>
+                        <div class="tab-content-container">
+                            <div class="center-content">
+
+                                <div class="toolBox">
+                                    <el-button @click="toAddPaper(12)">
+                                        <Icon type="plus-round"></Icon>添加表格
+                                    </el-button>
+
+                                </div>
+                                <el-card class="cardBox colorHeader shortLength" :body-style="{ padding: '0px'}">
+                                    <div class="tableWrap">
+                                        <el-table :data="reviewData" style="width: 100%">
+                                            <el-table-column type="index" width="50">
+                                            </el-table-column>
+
+                                            <el-table-column prop="Name" label="名称" width="180">
+                                            </el-table-column>
+                                            <el-table-column prop="TotalCount" label="已发送个数" width="180">
+                                            </el-table-column>
+                                            <el-table-column prop="FinishedCount" label="已完成个数">
+                                            </el-table-column>
+                                            <el-table-column prop="CreatedOn" label="创建时间">
+                                            </el-table-column>
+
+                                            <el-table-column label="操作">
+                                                <template scope="scope">
+                                                    <el-button size="mini" :plain="true" type="info" @click="checkPaper(scope.$index, scope.row)">查看填写结果</el-button>
+                                                    <el-button size="mini" :plain="true" type="warning" @click="sendtoPaticent(scope.$index, scope.row)">发放</el-button>
+                                                </template>
+                                            </el-table-column>
+
+                                        </el-table>
+                                    </div>
+                                </el-card>
+                            </div>
+                        </div>
+                        <div class="tab-content-container">
+                            <div class="center-content">
+
+                                <div class="toolBox">
+                                    <el-button @click="toAddPaper(13)">
+                                        <Icon type="plus-round"></Icon>添加表格
+                                    </el-button>
+                                </div>
+                                <el-card class="cardBox colorHeader shortLength" :body-style="{ padding: '0px'}">
+                                    <div class="tableWrap">
+                                        <el-table :data="remindData" style="width: 100%">
+                                            <el-table-column type="index" width="80">
+                                            </el-table-column>
+
+                                            <el-table-column prop="Name" label="名称" width="180">
+                                            </el-table-column>
+                                            <el-table-column prop="TotalCount" label="已发送个数" width="180">
+                                            </el-table-column>
+                                            <el-table-column prop="FinishedCount" label="已完成个数">
+                                            </el-table-column>
+                                            <el-table-column prop="CreatedOn" label="创建时间">
+                                            </el-table-column>
+
+                                            <el-table-column label="操作">
+                                                <template scope="scope">
+                                                    <el-button size="mini" :plain="true" type="info" @click="checkPaper(scope.$index, scope.row)">查看填写结果</el-button>
+                                                    <el-button size="mini" :plain="true" type="warning" @click="sendtoPaticent(scope.$index, scope.row)">发放</el-button>
+                                                </template>
+                                            </el-table-column>
+                                        </el-table>
+                                    </div>
+                                </el-card>
+                            </div>
+                        </div>
+                    </vueTab>
+                </div>
+            </div>
+        </div>
+        <router-view :key="key"></router-view>
+
+        <el-dialog title="发送问卷" v-model="sendToPaticentVisible" :close-on-click-modal="false" @close="resetPatientList" :show-close="false">
+            <el-select v-model="selectedPacientIDS" placeholder="请选择小组" @change="filterPacient">
+                <el-option v-for="(item, index) in selectedGroup" :key="item.groupName" :label=item.groupName :value=index>
+                </el-option>
+            </el-select>
+
+            <el-select v-model="pacientsIDS" placeholder="请选择患者" ref="pacientesSelecter">
+                <el-option v-for="(item, index) in selectedGroupPacientes" :key="item.Name" :label=item.Name :value=item.ID>
+                </el-option>
+            </el-select>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="sendToPaticentVisible = false">返回</el-button>
+                <el-button  type="primary" class="transBtn" @click="sendToPacientSubmit()">发送</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="选择患者" v-model="choseToTestVisible" :close-on-click-modal="false" @close="resetChosePatientTest" :show-close="false">
+
+            <el-select v-model="selectedPacientIDS" placeholder="请选择小组" @change="filterPacient">
+                <el-option v-for="(item, index) in selectedGroup" :key="item.groupName" :label=item.groupName :value=index>
+                </el-option>
+            </el-select>
+
+            <el-select v-model="choseToTestPatient" placeholder="请选择患者">
+                <el-option v-for="(item, index) in selectedGroupPacientes" :key="item.Name" :label=item.Name :value=item.ID>
+                </el-option>
+            </el-select>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="choseToTestVisible = false">返回</el-button>
+                <el-button type="primary" class="testPaper" @click="choseToTestSubmit('yy', false)">评测开始</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="已发送问卷" v-model="replyPatientListVisible" :close-on-click-modal="false" >
+            <el-table :data="editedPaperData" style="width: 100%">
+                <el-table-column type="index">
+                </el-table-column>
+
+                <el-table-column prop="PatientName" label="姓名">
+                </el-table-column>
+
+                <el-table-column prop="Status" label="状态">
+                    <template scope="scope">
+                        <span>{{scope.row.Status?'已完成':'未完成'}}</span>
+                    </template>
+                </el-table-column>
+
+                <el-table-column prop="PaperName" label="表名" >
+                </el-table-column>
+
+                <el-table-column prop="CreatedOn" label="创建时间" show-overflow-tooltip >
+                </el-table-column>
+                <el-table-column label="操作">
+                    <template scope="scope">
+                        <el-button size="mini" :plain="true" type="info" @click="previewEditedForm(scope.$index, scope.row)">查看</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <el-pagination layout="prev, pager, next" @current-change="reslutCurrentChange" :page-size="10" :total="resultTotal" style="float:right;"></el-pagination>
+
+        </el-dialog>
+
+
+        <el-dialog v-model="previewFormVisible" :close-on-click-modal="false" :show-close="false">
+            <div class="paperContent">
+                <QuestionPaper></QuestionPaper>
+            </div>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="previewFormVisible = false">返回</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="模板列表" v-model="createQuestionnaireVisible" :close-on-click-modal="false" :show-close="false">
+
+            <el-table :data="paperTmeplateData" style="width: 100%">
+                <el-table-column type="index" width="50">
+                </el-table-column>
+
+                <el-table-column prop="Name" label="名称" width="180">
+                </el-table-column>
+
+                <el-table-column prop="Comments" label="内容" width="180">
+                </el-table-column>
+
+                <el-table-column label="操作">
+                    <template scope="scope">
+                        <el-button size="mini" :plain="true" type="info" @click="addForm(scope.$index, scope.row)">添加</el-button>
+                        <el-button size="mini" :plain="true" type="warning" @click="previewForm(scope.$index, scope.row)">查看</el-button>
+                    </template>
+                </el-table-column>
+
+            </el-table>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="createQuestionnaireVisible = false">返回</el-button>
+            </div>
+
+        </el-dialog>
+
+        <el-dialog title="模板列表" v-model="addTestPaperVisible" :close-on-click-modal="false" @close="testPaperCancel">
+            <div class="addTestFormWrap">
+                <el-form ref="addTestform" :model="testFormData" label-width="80px">
+                    <el-form-item label="名称">
+                        <el-input v-model="testFormData.Name" type="mini" style="width: 474px"></el-input>
+                    </el-form-item>
+                    <el-form-item label="课程包">
+                        <el-select v-model="testFormData.PaperPackageID" placeholder="请选择课程包" style="width: 474px">
+                            <el-option v-for="o in testPaperData" :label="o.Name" :value="o.ID" ></el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div class="addTestsubmit">
+                <el-button @click.native="submitTestPaper">确认</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="" v-model="testPaperContentVisible" :close-on-click-modal="false" :show-close="false">
+
+            <el-form>
+                <div v-for="paper in testPaperContentData.Papers">
+                    <h2>试卷名: {{paper.Name}}</h2>
+                    <div v-for="section in paper.Sections">
+                        <h3>章节: {{section.Name}}</h3>
+                        <div v-for="question in section.Questions">
+                            <p>{{ question.Description}}</p>
+                            <p>{{ question.ID}}</p>
+                            <el-radio-group v-model="questionAnswers.Result">
+                                <el-radio v-for="option in question.Options" :key="option.Sequence" :label="option.Sequence">{{option.Name}}</el-radio>
+                            </el-radio-group>
+                        </div>
+                    </div>
+                </div>
+            </el-form>
+        </el-dialog>
+
+    </div>
+</template>
+<script>
+import QuestionPaper from '../../components/QuestionPaper.vue';
+import TestPaper from './child/testPaper.vue';
+import TestResult from '../../components/resultPaper.vue';
+import TestReport from '../../components/reportPaper.vue';
+import ServiceDyma from './MyServiceDyma/MyServiceDyma.vue';
+import vueTab from '../../components/vue-tab.vue';
+import api  from '../../api/index.js';
+export default {
+    name: 'ServiceTool',
+    components: {
+        ServiceDyma,
+        QuestionPaper,
+        vueTab,
+        TestPaper,
+        TestResult,
+        TestReport
+    },
+    computed: {
+        key() {
+            console.log(this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date());
+            if(this.$router.currentRoute.path == '/serviceTool'){
+                this.tabsShow = true;
+                this.jumptoIepPlan();
+            }
+            return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date();
+        }
+    },
+    data() {
+        return {
+            currentTab: 0,
+            tabs: ['动态', '咨询管理', '评测管理', '训练管理', '随访中心'],
+            zxPage: 1,
+            pcPage: 1,
+            xlPage: 1,
+            fkbPage: 1,
+            fcPage: 1,
+            gxPage: 1,
+            resultPage: 1,
+            resultTotal: 1,
+            studentListVisible: true,
+            createQuestionnaireVisible: false,
+            replyPatientListVisible: false,
+            sendToPaticentVisible: false,
+            previewFormVisible: false,
+            addTestPaperVisible: false,
+            testPaperContentVisible: false,
+            testedPatientListVisible: false,
+            reportAndResult: false,
+            consultData: [], // 咨询管理
+            paperConsultURL: '',
+            testPaperListData: [], // 评测管理
+            testPaperTotal: 1,
+            testPaperCurrentPage: 1,
+            paperEvaluationURL: '',
+            trainingData: [], // 训练管理
+            paperTrainingURL: '',
+            feedbackData: [], // 反馈表
+            paperFeedbackURL: '',
+            reviewData: [], // 负责复评
+            paperReviewURL: '',
+            remindData: [], // 关心提醒,
+            paperRemindURL: '',
+            testPaperContentData: [], // 评测内容data
+            paperTmeplateData: [],
+            testPaperData: [],
+            editedPaperData: [],
+            patientOptions: [],
+            selectedOptions: '',
+            activeName: 'first',
+            sendListID: '',
+            selectedGroup: this.$store.state.mystudent.patientList, // 患者小组数组
+            selectedGroupPacientes: [], // 小组中患者数组
+            pacientsIDS: [],
+            selectedPacientIDS: '',
+            tabsShow: true,
+            paperID: '',
+            testFormData: {
+                Name: '',
+                PaperPackageID: ''
+            },
+            questionAnswers: [
+                {
+                    QuestionID: '',
+                    Result: ''
+                }
+            ],
+            testedPatientListData: [],
+            examID: '',
+            examPatientID: '',
+            testedPatientListTotal: 1,
+            testedPatientCurrentPage: 1,
+            choseToTestVisible: false,
+            choseToTestPatient: '',
+            paperPackageID: '',
+            testID: '',
+            testStatuses: [true, false, false, false, false],
+            resultPaticentID: '', //结果
+            resultTestID: '', //结果
+            reportPaticentID: '', //报告
+            reportID: '', //报告
+            paperCourseID: '', //答题页面
+            paperPatientID: '',//答题页面
+            paperExamID: '', //答题页面-试卷ID,
+            completeTest: false,
+            chosedPatient: '', //选中的患者
+            consfirmDeleteExamMsg: ''
+        };
+    },
+    watch: {
+        '$route': 'init'
+    },
+    methods: {
+        backroute() {
+            this.getTestList(1);
+          this.testStatuses = [true,false,false,false,false];
+        },
+        gobackTestList() {
+//          this.testStatuses = [false,false,true,false,false];
+            this.requestTestPaticent();
+        },
+        formatStatus: function (row, column) {
+            let status = row.Status;
+            let statusResult;
+            switch (status) {
+                case 0:
+                    statusResult = '未完成';
+                    break;
+                case 1:
+                    statusResult = '已完成';
+                    break;
+            };
+            return statusResult;
+        },
+        jumptoIepPlan() {  // route变化触发
+            this.$router.push('/serviceTool');
+        },
+        checkPacientTestDetail(index, row, isComplete) {
+            this.testStatuses = [false,false,false,true,false];
+            this.resultPaticentID = row.PatientAgentID;
+            this.resultTestID = row.ID;
+            this.completeTest = isComplete;
+            console.log('选中的患者');
+            console.log(row.Name);
+            this.chosedPatient = row.Name;
+        },
+        checkPacientTestresult(index, row, isComplete) {
+            this.testStatuses = [false,false,false,true,false];
+            this.resultPaticentID = row.PatientAgentID;
+            this.resultTestID = row.ID;
+            this.completeTest = isComplete;
+            console.log('选中的患者');
+            console.log(row.Name);
+            this.chosedPatient = row.Name;
+        },
+        checkPacientTestReport(index, row) {
+            this.reportID = row.ID;
+            this.reportPaticentID = row.PatientAgentID;
+            console.log('选中的患者');
+            console.log(row.Name);
+            this.chosedPatient = row.Name;
+            this.testStatuses = [false,false,false,false,true];
+        },
+        handleClick() {
+        },
+        addTestPaper() {
+            this.addTestPaperVisible = true;
+            api.requestCourseList().then(res => {
+                console.log('添加模板');
+                console.log(res);
+                this.testPaperData = res.List;
+            });
+        },
+        submitTestPaper() {
+            let params = this.testFormData;
+            api.addTestPaper(params).then(res => {
+                if (res.Code === 0) {
+                    this.$message.success('成功');
+                    this.addTestPaperVisible = false;
+                    this.getTestList(this.testedPatientCurrentPage);
+                } else {
+                    this.$message.err('失败');
+                }
+            });
+        },
+        resetChosePatientTest() {
+            this.selectedPacientIDS = [];
+            this.choseToTestPatient = '';
+        },
+        resetPatientList() {
+            this.selectedPacientIDS = [];
+            this.pacientsIDS = [];
+        },
+        testPaperCancel() {
+            this.testFormData = {
+                Name: '',
+                PaperPackageID: ''
+            }
+        },
+        testPaperListChange(currentPage) {
+            this.testPaperCurrentPage = currentPage;
+            this.getTestList(this.testPaperCurrentPage);
+        },
+        startTest(index, row) {
+            this.paperPackageID = row.PaperPackageID;
+            this.testID = row.ID;
+            this.showTestStart = true;
+            this.choseToTestVisible = true;
+        },
+        choseToTestSubmit(title, isComplete) {
+            let params = {
+                ExamID: this.testID,
+                PatientAgentID: this.choseToTestPatient
+            };
+            api.chosePatientToTest(params).then(res => {
+                console.log('患者信息');
+//                console.log(this.selectedGroup);
+                console.log(res);
+                if (res.Code === 0) {
+                    this.choseToTestVisible = false;
+                  this.testStatuses = [false,true,false,false,false];
+                  this.resultPaticentID = this.choseToTestPatient;
+                  this.resultTestID = res.Msg;
+                  this.completeTest = isComplete;
+                  console.log('选中的患者');
+                  console.log(row.Name);
+                  this.chosedPatient = title;
+                }
+            });
+        },
+        checkTestPaticent(index, row) {
+            this.examID = row.ID;
+            console.log(this.examID);
+            this.requestTestPaticent(1);
+        },
+        requestTestPaticent(pageIndex) {
+            let params = {
+                ExamID: this.examID,
+                PageIndex: pageIndex,
+                PageSize: 10
+            };
+            api.requestTestMembers(params).then(res => {
+                console.log('已评测的学生');
+                console.log(res);
+                this.testedPatientListData = res.Records;
+                this.testedPatientListTotal = res.Total;
+//                this.studentListVisible = false;
+            });
+            this.testStatuses = [false,false,true,false,false];
+        },
+        testedPatientListClose() {
+            this.testedPatientListData = '';
+        },
+        testedPatientListNextPage(currentPage) {
+            this.testedPatientCurrentPage = currentPage;
+            this.requestTestPaticent(this.testedPatientCurrentPage);
+        },
+        previewEditedForm(index, row) {
+            var resultID = row.ID;
+            api.getPaperResult(resultID).then(res => {
+                this.$store.dispatch('addPaper', res.data);
+                this.previewFormVisible = true;
+            });
+        },
+        toDeleteExamPatient(index, row) {
+            this.examPatientID = row.ID
+            let params = {
+                ID: this.examPatientID
+            };
+            api.deleteExamPatient(params).then(res => {
+                console.log(res);
+                if (res.Code === 3) {
+                    this.consfirmDeleteExamMsg = res.Msg;
+                    this.$confirm('关联数据会被删除, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.confirmDeleteExamPatient();
+                    });
+                }
+                else if (res.Code === 0) {
+                    this.$message.success('删除成功');
+                    this.requestTestPaticent(this.testedPatientCurrentPage);
+                }
+                else if (res.Code === 1) {
+                    this.$message.warning('指定评估不存在');
+                }
+                else if (res.Code === 2) {
+                    this.$message.warning('指定评估不属于当前医生');
+                }
+            });
+        },
+        confirmDeleteExamPatient() {
+            let params = {
+                ID: this.examPatientID,
+                key: this.consfirmDeleteExamMsg
+            };
+            api.deleteExamPatient(params).then(res => {
+                if (res.Code === 0) {
+                    this.requestTestPaticent(this.testedPatientCurrentPage);
+                    this.$message.success('删除成功');
+                }
+                else if (res.Code === 1) {
+                    this.$message.warning('指定评估不存在');
+                }
+                else if (res.Code === 2) {
+                    this.$message.warning('指定评估不属于当前医生');
+                }
+            });
+
+        },
+        deleteExam(index, row) {
+            this.examID = row.ID;
+            var params = {
+                ID: this.examID
+            };
+            api.deleteExam(params).then(res => {
+                if (res.Code === 3) {
+                    this.consfirmDeleteExamMsg = res.Msg;
+                    this.$confirm('关联数据会被删除, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.confirmDeleteExam();
+                    });
+                }
+                else if (res.Code === 0) {
+                    this.$message.warning('删除成功');
+                    this.getTestList(this.testedPatientCurrentPage);
+                }
+                else if (res.Code === 1) {
+                    this.$message.warning('指定评估不存在');
+                }
+                else if (res.Code === 2) {
+                    this.$message.warning('指定评估不属于当前医生');
+                }
+            });
+        },
+        confirmDeleteExam() {
+            let params = {
+                ID: this.examID,
+                key: this.consfirmDeleteExamMsg
+            };
+            api.deleteExam(params).then(res => {
+                console.log('确认删除后');
+                console.log(res);
+                if (res.Code === 0) {
+                    this.requestInitData();
+                    this.$message.success('删除成功');
+                }
+                else if (res.Code === 1) {
+                    this.$message.warning('指定评估不存在');
+                }
+                else if (res.Code === 2) {
+                    this.$message.warning('指定评估不属于当前医生');
+                }
+            });
+        },
+        previewForm(index, row) {
+            var resultID = row.ID;
+            api.paperDetails(resultID).then(res => {
+                this.$store.dispatch('addPaper', res.data);
+                this.previewFormVisible = true;
+            });
+        },
+        addForm(index, row) {
+            var id = row.ID;
+            api.addPapertoDr(id).then(res => {
+                console.log('返回的信息');
+                console.log(res);
+                var code = res.Code;
+                switch (code) {
+                    case 0:
+                        this.$message.success('添加成功');
+                        break;
+                    case 1:
+                        this.$message.warning('指定的表单不存在');
+                        break;
+                    case 2:
+                        this.$message.error('已添加');
+                        break;
+                }
+                this.createQuestionnaireVisible = false;
+                this.requestInitData();
+            });
+        },
+        toAddPaper(value) {
+            this.createQuestionnaireVisible = true;
+            api.filterPaperTmeplate(value).then(res => {
+                console.log('添加模板');
+                console.log(res);
+                this.paperTmeplateData = res.data.List;
+            });
+        },
+        reslutCurrentChange(val) {
+            this.resultPage = val;
+            this.getDrPaperSendList(this.sendListID, this.resultPage);
+        },
+        checkPaper(index, row) {
+            this.replyPatientListVisible = true;
+            this.sendListID = row.ID;
+            var id = row.ID;
+            this.getDrPaperSendList(id, this.resultPage);
+        },
+        getDrPaperSendList(id, index) {
+            api.getDrPaperSendOut(id, index, 10).then(res => {
+                console.log('获取结果ID');
+                console.log(res.data);
+                this.resultTotal = res.data.Total;
+                this.editedPaperData = res.data.Records;
+            });
+        },
+        filterPacient(val) {
+            if (this.choseToTestVisible) {  //bug,两个选择病人的callback，我用choseToTestVisible区分
+                console.log('患者组');
+                console.log(this.selectedGroup);
+                console.log(val);
+                this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+                console.log('小组内容的成员');
+                console.log(this.selectedGroupPacientes);
+            }
+            if (this.sendToPaticentVisible) {  //bug,两个选择病人的callback，我用choseToTestVisible区分
+                console.log('患者组');
+                console.log(this.selectedGroup);
+                console.log(val);
+                this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+                console.log('小组内容的成员');
+                console.log(this.selectedGroupPacientes);
+            }
+        },
+        sendtoPaticent(index, row) {
+            this.paperID = row.ID;
+            this.sendToPaticentVisible = true;
+        },
+        sendToPacientSubmit() {
+            var params = {
+                PaperID: this.paperID,
+                Patients: [this.pacientsIDS]
+            };
+            api.sendPaperToPatient(params).then(res => {
+                console.log('发送表格结果');
+                console.log(res);
+                let code = res.Code;
+                switch (code) {
+                    case 0:
+                        this.$message.success('发送成功');
+                        break;
+                    case 1:
+                        this.$message.warning('指定的问卷不存在');
+                        break;
+                }
+                this.sendToPaticentVisible = false;
+            });
+        },
+        handleChange(val) {
+            this.selectedOptions = val;
+        },
+        getPaperData(type, data) {
+            var _this = this;
+            api.getDrPaperSummary(type).then(res => {
+                _this.paperURL = type;
+                data = res.data.List;
+            });
+        },
+        getTestList(pageIndex) {
+            let params = {
+                PageIndex: pageIndex,
+                PageSize: 10
+            };
+            api.requestTestList(params).then(res => {
+                console.log('评测列表');
+                console.log(res);
+                this.testPaperListData = res.Records;
+                this.testPaperTotal = res.Total;
+            });
+        },
+        requestInitData() {
+            this.getTestList(1);    // 评测管理
+            api.getDrPaperSummary(21).then(res => {
+                this.paperURL = 21;
+                console.log('评测管理的值');
+                console.log(res);
+                console.log(res.data.List);
+                this.consultData = res.data.List;
+            });
+            api.getDrPaperSummary(41).then(res => {
+                this.paperURL = 41;
+                this.trainingData = res.data.List;
+            });
+            api.getDrPaperSummary(11).then(res => {
+                this.paperURL = 11;
+                this.feedbackData = res.data.List;
+            });
+            api.getDrPaperSummary(12).then(res => {
+                this.paperURL = 12;
+                this.reviewData = res.data.List;
+            });
+            api.getDrPaperSummary(13).then(res => {
+                this.paperURL = 13;
+                this.remindData = res.data.List;
+            });
+        }
+    },
+    init() {
+            this.studentListVisible = true;
+            this.createQuestionnaireVisible = false;
+            this.replyPatientListVisible = false;
+            this.sendToPaticentVisible = false;
+            this.previewFormVisible = false;
+            this.addTestPaperVisible = false;
+            this.testPaperContentVisible = false;
+            this.testedPatientListVisible = false;
+            this.tabsShow = true;
+            this.choseToTestVisible = false;
+            this.requestInitData();
+    },
+    created() {
+        this.requestInitData();
+    }
+};
+</script>
+
+<style scoped>
+.main {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.pageTrack {
+    position: absolute;
+    width: 100%;
+    height: 40px
+}
+
+.tabs {
+    position: absolute;
+    top: 42px;
+    left: 0;
+    width: 100%;
+    height: 583px;
+    z-index: 5;
+}
+
+.tabs-chose {
+    position: absolute;
+    width: 95px;
+    height: 583px;
+    background-color: #EEEFF0;
+    border-right: 1px solid #EFEFEF;
+    box-sizing: border-box;
+}
+
+.tabs-content {
+    position: absolute;
+    left: 95px;
+    top: 0;
+    width: 1185px;
+    height: 583px;
+}
+
+.tabs-chose li {
+    width: 94px;
+    height: 60px;
+    background-color: #EEEFF0;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabs-chose .active {
+    background-color: #ffffff;
+    color: RGBA(47, 189, 252, 1.00);
+    border-left: 6px solid #31BBFC;
+}
+
+.center-content {
+    width: 1125px;
+    margin: 0 auto;
+}
+.testManager {
+    width: 1125px;
+    margin: 0 auto;
+}
+
+.moveLeft {
+    margin-left: -30px;
+}
+
+.toolBox {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.paticentLogo {
+    width: 60px;
+    height: 60px;
+    border-radius: 30px
+}
+
+.paperContent {
+    width: 100%;
+    max-height: 600px;
+    overflow-y: hidden
+}
+
+.addTestFormWrap {
+    width: 550px;
+    margin: 0 auto
+}
+
+.addTestsubmit {
+    width: 550px;
+    text-align: center;
+    margin: 0 auto
+}
+
+.colorHeader {
+    border-top: 4px solid RGBA(49, 187, 252, 1.00)
+}
+
+.cardBox {
+    width: 100%;
+    height: 530px;
+    margin-top: 10px;
+}
+.newCardBox {
+    width: 100%;
+    height: 570px;
+    margin-top: 10px;
+}
+.tableWrap {
+    width: 100%;
+    height: 530px;
+}
+
+.pageNavbar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1280px;
+    height: 42px;
+    border-bottom: 1px solid #cccccc;
+}
+
+.heightMaxBox {
+    height: 540px;
+}
+.pageNavbar span {
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 42px;
+}
+.pageNavbar span:hover {
+    color: rgb(66, 171, 216);
+}
+    .shortLength {height: 494px}
+
+    .longTest {height: 560px}
+</style>

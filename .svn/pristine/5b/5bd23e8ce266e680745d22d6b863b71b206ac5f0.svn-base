@@ -1,0 +1,242 @@
+<template>
+    <div class="testPaper">
+        <div class="studentBox">
+            <el-form :inline="true" :model="patientInfo">
+
+                    <el-form-item label="姓名">
+                        <el-input v-model="patientInfo.name" ></el-input>
+                    </el-form-item>
+
+                    <!--<el-form-item label="性别">-->
+                        <!--<el-select v-model="patientInfo.sex" multiple placeholder="">-->
+                            <!--<el-option-->
+                                    <!--v-for="(item, index) in sexOptions"-->
+                                    <!--:key="item.value"-->
+                                    <!--:label=item.label-->
+                                    <!--:value=item.value>-->
+                            <!--</el-option>-->
+                        <!--</el-select>-->
+                    <!--</el-form-item>-->
+
+                    <el-form-item label="出生日期">
+                        <el-date-picker type="date" placeholder="" v-model="patientInfo.birthDate" ></el-date-picker>
+                    </el-form-item>
+
+                    <el-form-item label="评估日期">
+                        <el-date-picker type="date" placeholder="" v-model="patientInfo.testDate" ></el-date-picker>
+                    </el-form-item>
+
+                    <el-form-item label="评估人">
+                        <el-input v-model="patientInfo.tester" ></el-input>
+                    </el-form-item>
+
+            </el-form>
+
+        </div>
+        <div class="formBox">
+                <div class="tabs">
+                    <div class="tabs-chose">
+                        <li v-for="(paper, index) in testPaperContentData.Papers"
+                            :class="{active : currentTab === index }"
+                            @click="currentTab = index">
+                            <p>{{paper.Name}}</p>
+                        </li>
+                    </div>
+
+                        <div class="tab-content" v-for="(paper, paperIndex) in testPaperContentData.Papers">
+                            <div class="secondLevel">
+                                <div v-for="(section, sectionIndex) in paper.Sections">
+                                    <li class="chaptTitle"
+                                        :class="{secondActive : secondTab === sectionIndex }"
+                                        @click="secondTab = sectionIndex">{{section.Name}}</li>
+                                    <div v-show="secondTab === sectionIndex" class="questionsBox">
+                                        <div v-for="(question, questionIndex) in section.Questions" class="questiones">
+                                            <p class="questionDescrib">题{{questionIndex+1}}:  {{ question.Description}}</p>
+                                            <div v-for="(option, optionIndex) in question.Options">
+                                                <span class="newRadio" :class="{on: optionChosed === true}">
+                                                    <input  class="radioclass " type="radio" :value="option.Sequence" :id="question.ID" :name="question.Description" @change.native="questionOptionChecked" v-model="testPaperFormData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result"  >
+                                                </span>
+                                                <label >{{ option.Name }}</label>
+                                            </div>
+                                            <br>
+                                        </div>
+                                        <div class="submitBox">
+                                            <el-button type="primary" @click="submitTestContent">完成</el-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+
+                </div>
+        </div>
+
+    </div>
+</template>
+<script>
+    import { getTestPaperContent, sendTestPaper } from '../../../api/api';
+    export default {
+        name: 'testPaper',
+        data() {
+            return {
+                questionAnswers: [],
+                testPaperContentData: [],
+                testPaperFormData: [],
+                updateData: [],
+                currentTab: 0,
+                secondTab: 0,
+                selectedGroup: this.$store.state.mystudent.patientList,
+                selectedPacientIDS: '',
+                selectedGroupPacientes: [],
+                patientAgents: [],
+                testID: '',
+                patientID: '',
+                sexOptions: [
+                    {label: '男', value: '1'},
+                    {label: '女', value: '0'}
+                ],
+                patientInfo: {
+                    tester: '',
+                    testDate: '',
+                    birthDate: '',
+                    sex: '',
+                    name: ''
+                },
+                optionChosed: false
+            };
+        },
+        methods: {
+            questionOptionChecked(event) {
+                this.optionChosed = event.returnValue;
+            },
+            requesTestPaperData() {
+                console.log('所传的值');
+                console.log(this.$route.params);
+                let paperPackageID = this.$route.params.course_id;
+                this.testID = this.$route.params.id;
+                this.patientID = this.$route.params.patientID;
+                getTestPaperContent(paperPackageID).then(res => {
+                    console.log('测试内容');
+                    console.log(res);
+                    this.patientInfo.testDate = res.CreatedOn;
+                    this.testPaperFormData = Object.assign({},res);
+                    this.testPaperContentData = res;
+                });
+            },
+          submitTestContent() {
+            let qustionAnswers = [];
+            let originData = this.testPaperFormData.Papers;
+            for(let i=0;i<originData.length;i++) {   //试卷
+
+              for (let j = 0; j < originData[i].Sections.length; j++) {  //章节
+
+                for (let k = 0; k < originData[i].Sections[j].Questions.length; k++) {  //问题
+
+                    if (originData[i].Sections[j].Questions[k].Result) {
+                        let unitForm = {
+                            QuestionID: originData[i].Sections[j].Questions[k].ID,
+                            Result: originData[i].Sections[j].Questions[k].Result
+                        };
+                        console.log('单个问题');
+                        console.log(unitForm);
+                        qustionAnswers.push(unitForm);
+                    }
+                }
+              }
+            }
+            console.log('已经填写的表单');
+            console.log(qustionAnswers);
+            sendTestPaper(this.testID, qustionAnswers).then(res => {
+                console.log('提交评测结果');
+                console.log(res);
+                if(res.Code === 0) {
+                    this.$message.success('正常');
+                    this.$router.go(-1);
+                    this.$parent.tabsShow = true;
+                } else if(res.Code === 1){
+                    this.$message.wraning('指定的评估不存在');
+                } else if(res.Code === 2) {
+                    this.$message.wraning('指定的评估不属于当前用户');
+                } else if(res.Code === 3) {
+                    this.$message.wraning('请指定患者');
+                } else if (res.Code === 4) {
+                    this.$message.wraning('指定的患者不属于当前医生');
+                } else {
+                    this.$message.error(res.Msg);
+                }
+            });
+          },
+          filterPacient(val) {
+            this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+          }
+        },
+        mounted() {
+            this.requesTestPaperData();
+        }
+    };
+</script>
+<style scoped>
+    .testPaper {position: absolute;width: 100%;top: 40px;left: 0;height: 586px;z-index: 10;}
+    .studentBox {width: 1180px;height: 86px;margin: 0 auto}
+    .tabs {position: relative;width: 1180px;height: 428px;margin: 0 auto}
+    .submitBox{width: 100%;height: 80px;display: flex;align-items: center;justify-content: flex-end;margin-bottom: 10px}
+    .formBox {position: relative;width: 100%;height: 428px}
+    .tabs-chose {position: absolute;width: 94px;height: 428px;background-color: #EEEFF0;border-right: 1px solid #EFEFEF;}
+    .secondLevel {position: absolute;width: 106px;height: 428px;left: 94px;top: 0}
+    .questionsBox {position: absolute;width: 900px;height: 428px;left: 106px;top: 0;overflow-y: scroll}
+    .questiones {padding-left: 68px}
+    .tabs-content {
+        position: absolute;
+        left: 94px;
+        top: 0;
+        width: 1100px;
+        height: 428px;
+        overflow-y: auto;
+    }
+    .tab-content {
+        width: 1000px;
+        margin: 30px auto;
+    }
+    .tabs-chose li{
+        width: 94px;
+        height: 60px;
+        background-color: RGBA(238, 239, 240, 1.00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .tabs-chose .active {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+        border-left: 6px solid #31BBFC;
+    }
+    .chaptTitle {
+        width: 106px;
+        height: 40px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+     .secondActive {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+    }
+    .optionsSpace {width: 100%;height: 20px}
+    .testWrap {width: 100px}
+    .questionDescrib {font-size: 16px;margin-top: 24px;margin-bottom: 12px}
+    .radioclass {
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+    .newRadio {
+        width: 18px;
+        height: 18px;
+        background-image: url("../../../assets/images/serviceToolImg/默认选框.png");
+    }
+    .newRadio .on{
+        background-image: url("../../../assets/images/serviceToolImg/选中选框.png");
+    }
+</style>

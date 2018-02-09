@@ -1,0 +1,194 @@
+<template>
+  <div class="consultManage">
+    <div class="consultItem">
+      <el-form :inline="true" class="demo-form-inline">
+  
+        <img src="../assets/images/图文.png" alt="logo" class="leftImg">
+        <span class="title">{{ service1.Name }}</span>
+        <el-form-item label="设置价格(元/次)" class="setPrice">
+          <el-input v-model="service1.Price" placeholder="￥30/次" :disabled="service1.Valid"></el-input>
+        </el-form-item>
+  
+        <el-form-item class="serviceSwitch">
+          <el-switch v-model="service1.Valid" on-text="" off-text="" @change="normalswithChange">
+          </el-switch>
+        </el-form-item>
+      </el-form>
+    </div>
+  
+    <div class="consultItem">
+      <el-form :inline="true" class="demo-form-inline">
+        <img src="../assets/images/康复管家.png" alt="">
+        <span class="title">{{ service2.Name }}</span>
+  
+        <el-form-item label="设置价格(元/次)" class="setPrice">
+          <el-input v-model="service2.Price" placeholder="￥30/次" :disabled="service2.Valid"></el-input>
+        </el-form-item>
+  
+        <el-form-item class="serviceSwitch">
+          <el-switch v-model="service2.Valid" on-text="" off-text="" @change="VideoSwithChange">
+          </el-switch>
+        </el-form-item>
+  
+      </el-form>
+    </div>
+  
+    <div class="consultItem">
+      <el-form :inline="true" class="demo-form-inline">
+        <img src="../assets/images/视频.png" alt="">
+        <span class="title">{{ service3.Name }}</span>
+  
+        <el-form-item label="设置价格(元/次)" class="setPrice">
+          <el-input v-model="service3.Price" placeholder="￥30/次" :disabled="service3.Valid"></el-input>
+        </el-form-item>
+  
+        <el-form-item class="serviceSwitch">
+          <el-switch v-model="service3.Valid" on-text="" off-text="" @change="managerSwithChange">
+          </el-switch>
+        </el-form-item>
+  
+      </el-form>
+    </div>
+  
+  </div>
+</template>
+<script>
+import api from '../api/index.js';
+
+export default {
+  name: 'consultManage',
+  computed: {
+  },
+  data() {
+    return {
+      service1: '',
+      service2: '',
+      service3: ''
+    }
+  },
+  methods: {
+    normalswithChange(open) {
+      console.log(this.service1.Price);
+      this.manageSwith(1, open, this.service1.Price);
+    },
+    VideoSwithChange(open) {
+      console.log(this.service2.Price);
+      this.manageSwith(3, open, this.service2.Price);
+    },
+    managerSwithChange(open) {
+      console.log(this.service3.Price);
+      this.manageSwith(4, open, this.service3.Price);
+    },
+    manageSwith: function (value, swith, price) {
+      //var priceNumber = Number(price);
+      var params = {
+        'Value': String(value),
+        'Price': price
+      };
+      if (swith === true) {
+        api.DrServiceOpen(params).then(res => {
+          if (res.Code === 0) {
+            this.$message({
+              message: '开通成功',
+              type: 'success'
+            });
+          } else {
+            this.$message({
+              message: '开通失败',
+              type: 'error'
+            });
+          }
+        });
+      } else {
+        var par = {'id':params.Value}
+        api.DrServiceClose(par).then(res => {
+          if (res.Code === 0) {
+            this.$message({
+              message: '关闭成功',
+              type: 'success'
+            });
+          } else {
+            this.$message({
+              message: '关闭失败',
+              type: 'error'
+            });
+          }
+        });
+      }
+    },
+    //获取用户资料
+    getUserProfile: function () {
+      api.drProfile().then(res => {
+        this.service1 = res.data.Services[0];
+        this.service2 = res.data.Services[1];
+        this.service3 = res.data.Services[2];
+      });
+    }
+  },
+  created: function () {
+    this.getUserProfile();
+  },
+ 
+};
+</script>
+<style scoped>
+.consultManage {
+  width: 900px;
+  height: 240px
+}
+
+.consultItem {
+  margin-left: 20px;
+  height: 74px;
+  border-bottom: 1px solid RGBA(239, 239, 239, 1.00);
+  vertical-align: middle
+}
+
+.demo-form-inline {
+  margin-top: 20px
+}
+
+.demo-form-inline>span {
+  margin-right: 146px
+}
+
+.setPrice {
+  display: inline-block;
+  margin-right: 146px
+}
+
+.serviceSwitch {
+  margin-left: 172px
+}
+
+.title {
+  margin-left: 10px
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*.leftImg {margin-top: 5px}*/
+</style>

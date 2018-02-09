@@ -1,0 +1,728 @@
+<template>
+    <div class="reportPaper">
+        <div class="tabs">
+            <div class="tabs-chose">
+                <li v-for="(section, index) in reportSections"
+                    :class="{active : currentTab === index }"
+                    @click="currentTab = index">
+                    <p>{{section}}</p>
+                </li>
+            </div>
+
+            <div class="tabs-content">
+                <div v-show="currentTab === 0" class="tab-content">
+
+                    <el-form ref="form" :model="userInfo" label-width="90px" label-position="right" style="width:100%;padding-left:10px;">
+
+
+                        <el-row :gutter="20">
+                            <el-col :span="24">
+
+                                <el-row >
+                                    <h2 class="data-header" style="margin: 10px">1、学生基本资料</h2>
+                                </el-row>
+
+                                <el-row>
+                                    <el-col :span="5">
+                                        <el-form-item label="头像:">
+                                            <img :src="userInfo.Logo" class="avatar" style="width: 130px;height: 130px">
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+
+                                <el-row>
+                                    <el-col :span="5">
+                                        <el-form-item label="姓名:">
+                                            <el-input  v-model="userInfo.Name" :disabled="true"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="性别:">
+                                            <el-select placeholder="请选择" style="width:100%" :disabled="true" v-model="userInfo.Sex">
+                                                <el-option v-for="(item, index) in sexsArrary" :key="item.Key" :label=item.Value :value=item.Key>
+                                                </el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+
+
+                                    <el-col :span="5">
+                                        <el-form-item label="出生日期:">
+                                            <el-date-picker type="date"  :disabled="true" style="width:100%" v-model="userInfo.BirthDate"></el-date-picker>
+                                        </el-form-item>
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="10">
+                                        <el-form-item label="身份证号码:">
+                                            <el-input  :disabled="true" v-model="userInfo.IDCard"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="诊断时间:">
+                                            <el-date-picker type="date" :disabled="true" style="width:100%" v-model="userInfo.DiagnosisDate"></el-date-picker>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="诊断结果:">
+                                            <el-input  :disabled="true" v-model="userInfo.Comments"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+                                    <el-col :span="5">
+                                        <el-form-item label="入学时间:">
+                                            <el-date-picker type="date"  style="width:100%" :disabled="true" v-model="userInfo.InDate"></el-date-picker>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="户籍所在地:">
+                                            <el-input :disabled="true" v-model="userInfo.Address1"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="家庭电话:">
+                                            <el-input :disabled="true" v-model="userInfo.Mobile"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+
+                                <el-row>
+                                    <el-col :span="21">
+                                        <el-form-item label="现居住地址:">
+                                            <el-input v-model="userInfo.Address2" :disabled="true"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="5">
+
+                                        <el-form-item label="母妊娠年龄:">
+                                            <el-input :disabled="true" v-model="userInfo.MotherGestationalAge"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="胎教情况:">
+                                            <el-input :disabled="true" v-model="userInfo.PrenatalEducation"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="先兆流产:">
+                                            <el-input :disabled="true" v-model="userInfo.ThreatenedAbortion"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="心理状态:">
+                                            <el-input :disabled="true" v-model="userInfo.Mentation"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="5">
+
+                                        <el-form-item label="生理状况:">
+                                            <el-input :disabled="true" v-model="userInfo.Physiological"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="环境状况:">
+                                            <el-input :disabled="true" v-model="userInfo.Environmental"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="先兆流产:">
+                                            <el-input :disabled="true" v-model="userInfo.ThreatenedAbortion"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="足 月:">
+                                            <el-input :disabled="true" v-model="userInfo.Mature"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                            </el-col>
+                        </el-row>
+
+                    </el-form>
+
+                </div>
+                <div v-show="currentTab === 1" class="tab-content">
+
+                    <el-form ref="form" :model="userInfo" label-width="90px" label-position="right" style="width:100%;padding-left:10px;">
+                        <el-row :gutter="20">
+                            <el-col :span="24" style="">
+                                <el-row >
+                                    <h2 class="data-header" style="margin: 10px">2、家庭情况</h2>
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="5">
+
+                                        <el-form-item label="产 程:">
+                                            <el-input :disabled="true" v-model="userInfo.Labor"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="分娩方式:">
+                                            <el-input :disabled="true" v-model="userInfo.Parturition"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="早产或过期:">
+                                            <el-input :disabled="true" v-model="userInfo.PrematureOrExpired"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="窒 息:">
+                                            <el-input :disabled="true" v-model="userInfo.Suffocate"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+                                <el-row>
+
+                                    <el-col :span="5">
+
+                                        <el-form-item label="出生体重:">
+                                            <el-input :disabled="true" v-model="userInfo.BirthWeight"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+
+                                    <el-col :span="5">
+                                        <el-form-item label="母乳喂养:">
+                                            <el-input :disabled="true" v-model="userInfo.Breastfeeding"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="人工喂养:">
+                                            <el-input :disabled="true" v-model="userInfo.ArtificialFeeding"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="高热抽搐:">
+                                            <el-input :disabled="true" v-model="userInfo.HighFeverTwitching"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="会抬头时间:">
+                                            <el-input :disabled="true" v-model="userInfo.LookedUpTime"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="会翻身时间:">
+                                            <el-input :disabled="true" v-model="userInfo.TurnOverTime"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="会爬行时间:">
+                                            <el-input :disabled="true" v-model="userInfo.CrawlingTime"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="会笑时间:">
+                                            <el-input :disabled="true" v-model="userInfo.LaughTime"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="会坐时间:">
+                                            <el-input :disabled="true" v-model="userInfo.SitTime"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="会走时间:">
+                                            <el-input :disabled="true" v-model="userInfo.WalkTime"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="会发音时间:">
+                                            <el-input :disabled="true" v-model="userInfo.PronouncedTime"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="说单词时间:">
+                                            <el-input :disabled="true" v-model="userInfo.SayWordTime"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="说词语时间:">
+                                            <el-input :disabled="true" v-model="userInfo.SpeakTime"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="既往病史:">
+                                            <el-input :disabled="true" v-model="userInfo.IllnessHistory"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="过　敏　史:">
+                                            <el-input :disabled="true" v-model="userInfo.AllergyHistory"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="特殊的饮食习惯:">
+                                            <el-input :disabled="true" v-model="userInfo.SpecialEatingHabits"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="特殊的睡眠时间:">
+                                            <el-input :disabled="true" v-model="userInfo.SpecialSleepingTime"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="最喜欢的活动，内:">
+                                            <el-input :disabled="true" v-model="userInfo.FavouriteActivityIn"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="最喜欢的活动，外:">
+                                            <el-input :disabled="true" v-model="userInfo.FavouriteActivityOut"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="最爱看的电视节目:">
+                                            <el-input :disabled="true" v-model="userInfo.FavouriteTV"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="最常玩的玩具:">
+                                            <el-input :disabled="true" v-model="userInfo.FavouriteToy"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="独处时常做事情:">
+                                            <el-input :disabled="true" v-model="userInfo.AloneThing"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="经常一起的玩伴:">
+                                            <el-input :disabled="true" v-model="userInfo.FavouritePlaymate"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="语言表达能力:">
+                                            <el-input :disabled="true" v-model="userInfo.LanguageExpressionAbility"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row v-if="false">
+
+                                    <el-col :span="5">
+                                        <el-form-item label="认知/认字能力:">
+                                            <el-input :disabled="true" v-model="userInfo.CognitiveAbility"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="数　数:">
+                                            <el-input :disabled="true" v-model="userInfo.Counting"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="穿　衣　服:">
+                                            <el-input :disabled="true" v-model="userInfo.WearClothes"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="大　小　便:">
+                                            <el-input :disabled="true" v-model="userInfo.Toilet"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row v-if="false">
+
+                                    <el-col :span="5">
+                                        <el-form-item label="伤害自己/他人:">
+                                            <el-input :disabled="true" v-model="userInfo.HurtSelfOrOthers"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="伤害自己/他人:">
+                                            <el-input :disabled="true" v-model="userInfo.RunAway"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="其　　　　他:">
+                                            <el-input :disabled="true" v-model="userInfo.OtherBehavior"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="智障成因:">
+                                            <el-input :disabled="true" v-model="userInfo.MentalRetardationReason"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row v-if="false">
+
+                                    <el-col :span="5">
+                                        <el-form-item label="目前主要障碍情况:">
+                                            <el-input :disabled="true" v-model="userInfo.ObstacleState"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="既往康复教育情况:">
+                                            <el-input :disabled="true" v-model="userInfo.RecoveryHistory"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                </el-row>
+
+                                <!--<el-row>-->
+                                    <!--<el-col :span="5">-->
+
+                                        <!--<el-form-item label="父亲:">-->
+                                            <!--<el-input :disabled="true" v-model="userInfo.Member1.Name"></el-input>-->
+                                        <!--</el-form-item>-->
+
+                                    <!--</el-col>-->
+
+                                    <!--<el-col :span="5">-->
+                                        <!--<el-form-item label="年龄:">-->
+                                            <!--<el-input :disabled="true" v-model="userInfo.Member1.Age"></el-input>-->
+                                        <!--</el-form-item>-->
+                                    <!--</el-col>-->
+
+                                    <!--<el-col :span="5">-->
+                                        <!--<el-form-item label="工作单位:">-->
+                                            <!--<el-input :disabled="true" v-model="userInfo.Member1.WorkUnit"></el-input>-->
+                                        <!--</el-form-item>-->
+
+                                    <!--</el-col>-->
+
+                                    <!--<el-col :span="5">-->
+                                        <!--<el-form-item label="联系方式:">-->
+                                            <!--<el-input placeholder="请输入" v-model="userInfo.Member1.Mobile"></el-input>-->
+                                        <!--</el-form-item>-->
+
+                                    <!--</el-col>-->
+                                <!--</el-row>-->
+
+
+                                <el-row>
+                                    <el-col :span="5">
+
+                                        <el-form-item label="家庭模式:">
+                                            <el-input :disabled="true" v-model="userInfo.FamilyModelText"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="居住社区:">
+                                            <el-input :disabled="true" v-model="userInfo.CommunityText"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="教养方式:">
+                                            <el-input :disabled="true" v-model="userInfo.EducationStyleText"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="5">
+                                        <el-form-item label="语言能力:">
+                                            <el-input :disabled="true" v-model="userInfo.LanguageText"></el-input>
+                                        </el-form-item>
+
+                                    </el-col>
+                                </el-row>
+
+
+                            </el-col>
+                        </el-row>
+                    </el-form>
+
+
+                </div>
+                <div v-show="currentTab === 2" class="tab-content">
+
+                    <div class="center-content">
+                        <div class="courseContent" v-for="course in rourseData.Courses">
+                            <p class="courseHeader">{{ course.Name}}</p>
+                            <el-table
+                                    :data="course.Subjects"
+                                    border
+                                    style="width: 100%"
+                                    height="550">
+                                <el-table-column
+                                        type="index"
+                                        width="54">
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="Name"
+                                        label="主题名"
+                                        width="280">
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="Advantages"
+                                        label="优势">
+                                    <template scope="scope">
+                                            <el-tag type="gray" v-for="item in scope.row.Advantages" style="margin: 4px">
+                                                {{ item }}
+
+                                            </el-tag>
+                                    </template>
+                                </el-table-column>
+
+                                <el-table-column
+                                        prop="Disadvantages"
+                                        label="劣势">
+                                    <template scope="scope">
+                                        <el-tag  type="gray" v-for="item in scope.row.Disadvantages" style="margin-right: 4px;margin-top: 4px;margin-bottom: 4px">
+                                            {{ item.substr(0,24)}}
+                                        </el-tag>
+
+                                    </template>
+                                </el-table-column>
+
+                            </el-table>
+                        </div>
+                    </div>
+
+                </div>
+                <div v-show="currentTab === 3" class="tab-content">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    import { getPacientTestReport, requestDept } from '../../../../api/api';
+
+    export default {
+        name: 'reportPaper',
+        props: ['testID', 'paticentID'],
+        data() {
+            return {
+                currentTab: 0,
+                reportSections: ['学生基本资料','家庭资料','优势，劣势','学习能力综合分析'],
+                form : {
+                    patient: '',
+                    sex: '',
+                    date1: '',
+                    date2: ''
+                },
+                sexOptions: [
+                    {label: '男', value: 1},
+                    {label: '女', value: 0}
+                ],
+                selectedGroup: this.$store.state.mystudent.patientList,
+                selectedPacientIDS: '',
+                selectedGroupPacientes: [],
+                rourseData: [],
+                userInfo: [],
+                sexsArrary: [{ "Key": 1, "Value": "男" }, { "Key": 2, "Value": "女" }],
+                diagnosises: [],//病种
+            }
+        },
+        methods: {
+            requestDiagnosises() {
+                let _this = this;
+                api.requestDept().then(res => {
+                    _this.diagnosisesDept = res.data.List;
+                    let flag = false;
+                    for (let i = 0; i < _this.diagnosisesDept.length; i++) {
+                        for (let j = 0; j < _this.diagnosisesDept[i].Diagnosises.length; j++) {
+                            if (_this.diagnosisesDept[i].Diagnosises[j].ID == _this.userInfo.DiagnosisID) {
+                                _this.currentDiaDeptId = _this.diagnosisesDept[i].ID;
+                                flag = true;
+                                break;
+                            }
+                        }
+                        if (flag)
+                            true;
+                    }
+                }).catch(err => {
+                    _this.$message.error('病种数据请求失败,请稍后再试');
+                });
+            },
+            setPatientInfo(paticentID) {
+                console.log('paticentID');
+                console.log(paticentID);
+                let originData = this.$store.state.mystudent.patientList;
+                console.log('originData');
+                console.log(originData);
+                for (let i=0;i<originData.length;i++) {
+                    if (originData[i].groupPatients.length) {
+                        for (let k=0;k<originData[i].groupPatients.length;k++) {
+                            if (originData[i].groupPatients[k].ID === paticentID) {
+                                this.form.patient = originData[i].groupPatients[k].Name;
+                                this.form.sex = originData[i].groupPatients[k].Sex;
+                                this.form.date1 = originData[i].groupPatients[k].BirthDate;
+                                this.form.date2 = new Date();
+                            }
+                        }
+                    }
+                }
+            },
+            goback() {
+                this.$router.go(-1);
+                this.$parent.tabsShow = true;
+            },
+            requestData() {
+                this.setPatientInfo(this.paticentID);
+                getPacientTestReport(this.testID).then(res => {
+                    console.log('返回的值');
+                    console.log(res);
+                    this.rourseData = res;
+                    this.userInfo = res.PatientAgentDetails
+                });
+            }
+        },
+        mounted() {
+            this.requestData();
+        }
+    };
+</script>
+<style scoped>
+    .reportPaper {position: relative;width: 1185px;top: 0;left: 0;height: 583px;margin-left: -30px}
+    .tabs {position: absolute;width: 1120px;height: 583px;left: 0;top: 0}
+    .tabs-chose {position: absolute;width: 106px;height: 580px;border-right: 1px solid #EFEFEF;box-sizing: border-box}
+    .tabs-content {
+        position: absolute;
+        left: 106px;
+        top: 0;
+        width: 1070px;
+        height: 580px;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
+    }
+    .tab-content {}
+    .tabs-chose li{
+        width: 105px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .tabs-chose .active {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+    }
+    .courseHeader {font-size: 16px;font-weight: bold}
+    .center-content {
+        width: 1034px;
+        height: 580px;
+        padding: 0 18px;
+        overflow: scroll;
+    }
+</style>

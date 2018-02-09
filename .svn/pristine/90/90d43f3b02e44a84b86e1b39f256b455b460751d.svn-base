@@ -1,0 +1,488 @@
+<template>
+    <div class="wrap">
+        <div class="pageNavbar">
+            <span style="color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span @click="backGernralNews" class="navCell">动态资讯&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span v-show="!showDymaInfo" @click="backNewsList">{{ navTitle }}&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+        </div>
+        <div class="dyma-data" v-show="showSummaryNewsFlag">
+            <div>
+                <el-card class="box-card announcement" body-style="padding-top:10px" style="border-top:5px solid #0CD5AF">
+                    <div class="clearfix newsHeader">
+                        <img src="../../assets/images/dyma/新闻快讯icon.png" alt="">
+                        <span class="header-title">新闻快讯</span>
+                        <el-button cl style="float: right;color: #333333;padding:5px 0px" @click="viewMore(0)" type="text">更多
+                            <i class="el-icon-d-arrow-right"></i>
+                        </el-button>
+                    </div>
+                    <div class="newsList quikNews">
+                        <div v-for="o in recCompanyNewsData" class="text item">
+                            <img :src="o.Logo" alt="logo" style="width: 66px;height: 40px">
+                            <a target="myFrameName" @click="newsURL = o.Path;showSummaryNewsFlag = false;showIframe = true">
+                                <span class="newsTitle">{{ shortTitle(o.Title) }}</span>
+                            </a>
+                            <span class="newsTime">{{ o.CreatedOn.split(' ')[0] }}</span>
+                        </div>
+                    </div>
+
+                </el-card>
+
+                <el-card class="box-card notification" body-style="padding-top:10px" style="border-top:5px solid #23B9FF ">
+                    <div class="clearfix newsHeader">
+                        <span style="line-height: 20px;">
+                            <img src="../../assets/images/dyma/患教中心--icon.png" alt="">
+                        </span>
+                        <span class="header-title">患教中心</span>
+                        <el-button style="float: right;color: #333333;padding:5px 0px" @click="viewMore(1)" type="text">更多
+                            <i class="el-icon-d-arrow-right"></i>
+                        </el-button>
+                    </div>
+
+                    <div class="newsList quikNews">
+                        <div v-for="o in recEduData" class="text item" @click="goLink(o.Path)">
+                            <img :src="o.Logo" alt="logo" style="width: 66px;height: 40px">
+                            <a target="myFrameName" @click="newsURL = o.Path;showSummaryNewsFlag = false;showIframe = true">
+                                <span class="newsTitle">{{ shortTitle(o.Title) }}</span>
+                            </a>
+                            <span class="newsTime" style="float: right">{{ o.CreatedOn.split(' ')[0] }}</span>
+                        </div>
+
+                    </div>
+
+                </el-card>
+
+                <el-card class="box-card diagnostic-trends" body-style="padding-top:10px" style="border-top:5px solid #84CF00">
+                    <div class="clearfix newsHeader">
+                        <span style="line-height: 20px;">
+                            <img src="../../assets/images/dyma/医生文章-icon.png" alt="">
+                        </span>
+                        <span class="header-title">医生文章</span>
+                        <el-button style="float: right;color: #333333;padding:5px 0px" @click="viewMore(2)" type="text">更多
+                            <i class="el-icon-d-arrow-right"></i>
+                        </el-button>
+                    </div>
+
+                    <div class="newsList quikNews">
+                        <div v-for="o in recArticleData" class="text item" @click="goLink(o.Path)">
+                            <img :src="o.Logo" alt="logo" style="width: 66px;height: 40px">
+
+                            <a target="myFrameName" @click="newsURL = o.Path;showSummaryNewsFlag = false;showIframe = true">
+                                <span class="newsTitle">{{ shortTitle(o.Title) }}</span>
+                            </a>
+                            <span class="newsTime">{{ o.CreatedOn.split(' ')[0] }}</span>
+                        </div>
+                    </div>
+                </el-card>
+
+                <el-card class="box-card diagnostic-distribution" body-style="padding-top:10px" style="border-top:5px solid #FEB903">
+                    <div class="clearfix newsHeader">
+                        <span style="line-height: 20px;">
+                            <img src="../../assets/images/dyma/培训活动-icon.png" alt="">
+                        </span>
+                        <span class="header-title">培训活动</span>
+                        <el-button style="float:right;color: #333333;padding:5px 0px" @click="viewMore(3)" type="text">更多
+                            <i class="el-icon-d-arrow-right"></i>
+                        </el-button>
+                    </div>
+
+                    <div class="trainingList">
+                        <div v-for="o in recTrainingData" class="item hoverEle">
+                            <a target="myFrameName" @click="newsURL = o.Path;showSummaryNewsFlag = false;showIframe = true">
+                                <img :src="o.Logo" alt="logo">
+                                <p class="activityWrap">
+                                    <span class="activity">公益活动</span>
+                                </p>
+                                <p class="traningnewsTitle">{{ o.Title }}</p>
+                            </a>
+                        </div>
+                    </div>
+                </el-card>
+            </div>
+        </div>
+        <div v-show="showIframe" class="iframeWrap">
+            <iframe  :src="newsURL" width="1280" height="580" name="myFrameName" id="myFrameName" frameborder="0" marginwidth="0" marginheight="0"></iframe>
+            <!--<el-button @click="cancelIframe">返回</el-button>-->
+        </div>
+        <router-view :key="key"></router-view>
+    </div>
+</template>
+<script>
+import api from '../../api/index.js';
+export default {
+    name: 'dymaConsult',
+    computed: {
+        key() {
+            if (this.$router.currentRoute.path == '/dynamicConsultation') {
+                this.showSummaryNewsFlag = true;
+            }
+            return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date();
+        }
+    },
+    watch: {
+        $route() {
+        }
+    },
+    data() {
+        return {
+            recCompanyNewsData: [],
+            recEduData: [],
+            recArticleData: [],
+            recTrainingData: [],
+            showSummaryNewsFlag: false,
+            navTitle: '新闻快讯',
+            newsURL: '', // iframe的url,
+            showIframe: false, //显示新闻iframe
+            showDymaInfo: true
+        }
+    },
+    methods: {
+//        cancelIframe() {
+//            console.log('触发');
+//            this.showIframe = false;
+//            this.showSummaryNewsFlag = true
+//        },
+        shortTitle(originStr) {
+            return originStr;
+            if (originStr.length > 26) {
+                let newStr = originStr.substr(0, 23) + '...';
+                return newStr;
+            } else {
+                return originStr;
+            }
+        },
+        changeValue() {
+            this.recCompanyNewsData = [];
+        },
+        viewMore(newsType) {
+            switch (newsType) {
+                case 0:
+                    //新闻快讯
+                    this.$router.push({ path: '/dynamicConsultation/dymaNews' });
+                    this.navTitle = '新闻快讯';
+                    break;
+                case 1:
+                    //患教中心
+                    this.$router.push({ path: '/dynamicConsultation/dymaEdu' });
+                    this.navTitle = '患教中心';
+                    break;
+                case 2:
+                    //医生文章
+                    this.$router.push({ path: '/dynamicConsultation/dymaArticle' });
+                    this.navTitle = '医生文章';
+                    break;
+                case 3:
+                    //培训活动
+                    this.$router.push({ path: '/dynamicConsultation/dymaTraining' });
+                    this.navTitle = '培训活动';
+                    break;
+                default:
+                    break;
+            }
+            this.showSummaryNewsFlag = false;
+            this.showIframe = false;
+            this.showDymaInfo = false;
+        },
+        goLink(path) {
+
+        },
+        requestCompanyNews(pageIndex) {
+            var params = {
+                'CategoryType': 5,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 10
+            };
+            api.requestArticle(params).then(res => {
+                this.recCompanyNewsData = res.Records.splice(0, 4);
+                return res.Records;
+            });
+        },
+        requestTrainingNews(pageIndex) {
+            var params = {
+                'CategoryType': 3,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 8
+            };
+            api.requestArticle(params).then(res => {
+                this.recTrainingData = res.Records.splice(0, 3);
+            });
+        },
+        fourDataRequest() {
+            this.requestCompanyNews(1);
+            this.requestEduNews(1);
+            this.requestArticleNews(1);
+            this.requestTrainingNews(1);
+        },
+        requestEduNews(pageIndex) {
+            var params = {
+                'CategoryType': 1,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 10
+            };
+            api.requestArticle(params).then(res => {
+                this.recEduData = res.Records.splice(0, 4);
+            });
+        },
+        requestArticleNews(pageIndex) {
+            var params = {
+                'CategoryType': 2,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 10
+            };
+            api.requestArticle(params).then(res => {
+                this.recArticleData = res.Records.splice(0, 4);
+            });
+        },
+        requestTrainingNews(pageIndex) {
+            var params = {
+                'CategoryType': 3,
+                'IsRecommend': 0,
+                'PageIndex': pageIndex,
+                'PageSize': 10
+            };
+            api.requestArticle(params).then(res => {
+                this.recTrainingData = res.Records.splice(0, 3);
+            });
+        },
+        fourDataRequest() {
+            this.requestCompanyNews(1);
+            this.requestEduNews(1);
+            this.requestArticleNews(1);
+            this.requestTrainingNews(1);
+        },
+      backGernralNews() {
+        console.log('返回首页');
+        if (!this.showDymaInfo) {
+            this.showDymaInfo = true;
+        }
+        if (this.showIframe) {
+            this.showSummaryNewsFlag = true;
+            this.showIframe = false;
+        }
+          this.backNewsList();
+        this.$router.push('/dynamicConsultation');
+          this.fourDataRequest(); //刷新页面
+      },
+        backNewsList() {
+            this.$store.dispatch('showGeneralNews',true);
+            this.$store.dispatch('showNewsIframe',false);
+        }
+    },
+    created() {
+        this.fourDataRequest();
+    }
+};
+</script>
+<style>
+.wrap {
+    position: relative;
+    width: 100%;
+    height: 100%
+}
+.generalNews {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0
+}
+
+
+/*新闻style*/
+
+.dyma-data {
+    position: absolute;
+    left: 0;
+    top: 42px;
+    width: 100%;
+    height: 583px;
+    padding-top: 10px
+}
+.iframeWrap {
+    position: absolute;
+    left: 0;
+    top: 43px;
+    width: 100%;
+    height: 583px;
+}
+
+.box-card {
+    display: inline-block;
+    width: 592px;
+    height: 264px;
+    padding: 0
+}
+
+.dyma-data a {
+    color: black;
+}
+.dyma-data a:hover {
+    color: #39f;
+}
+
+
+.box-card:nth-child(1) {
+    margin-right: 18px;
+    margin-left: calc((100% - 1244px) /2);
+    margin-bottom: 6px
+}
+
+.box-card:nth-child(2) {
+    margin-left: 18px;
+    margin-right: calc((100% - 1244px) /2);
+    margin-bottom: 6px
+}
+
+.box-card:nth-child(3) {
+    margin-right: 18px;
+    margin-left: calc((100% - 1244px) /2)
+}
+
+.box-card:nth-child(4) {
+    margin-left: 18px;
+    margin-right: calc((100% - 1244px) /2)
+}
+
+
+
+.announcement {
+    border-top: 4px solid RGBA(36, 218, 181, 1.00)
+}
+
+.announcement .text {
+    margin: 10px 0
+}
+
+.notification {
+    border-top: 4px solid RGBA(49, 187, 252, 1.00)
+}
+
+.notification .text {
+    margin: 10px 0
+}
+
+.diagnostic-trends {
+    border-top: 4px solid RGBA(135, 205, 39, 1.00)
+}
+
+.diagnostic-trends .text {
+    margin: 10px 0
+}
+
+.diagnostic-distribution {
+    border-top: 4px solid RGBA(253, 185, 44, 1.00)
+}
+
+.item {
+    width: 100%;
+    height: 108px;
+    align-items: center
+}
+
+.quikNews .item {
+    width: 100%;
+    height: 40px;
+    position: relative;
+}
+
+.newsTitle {
+    font-size: 16px;
+    left: 75px;
+    position: absolute;
+    bottom: 0px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 380px;
+    line-height: 40px;
+    vertical-align: middle;
+    /*top: 20px;*/
+}
+
+.newsTime {
+    float: right;
+    font-size: 16px;
+    color: #989999;
+    line-height: 40px;
+    vertical-align: middle;
+    /*margin-top: 20px;*/
+}
+
+.newsHeader {
+    position: relative;
+}
+
+.header-title {
+    font-size: 18px;
+    font-weight: bold;
+    position: absolute;
+    left: 30px;
+    color: #cccccc;
+}
+
+.trainingList .item {
+    display: inline-block;
+    width: 160px;
+    height: 190px;
+    margin: 5px 10px
+}
+
+.trainingList .item a {
+    display: flex;
+    flex-direction: column;
+    /*justify-items: center;*/
+    align-items: center
+}
+
+.trainingList .item img {
+    width: 160px;
+    height: 100px
+}
+
+.trainingList .activityWrap {
+    width: 160px;
+    margin: 6px;
+    padding-left: 4px;
+}
+
+.trainingList .activity {
+    width: 50px;
+    background-color: rgba(255, 187, 0, 1);
+    color: white;
+}
+
+.trainingList .traningnewsTitle {
+    width: 160px;
+    color: black;
+    font-size: 14px;
+    padding-left: 4px;
+}
+
+.trainingList .hoverEle:hover {
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, .19);
+    transform: translate3d(0, -2px, 0);
+    transition: all .3s cubic-bezier(.55, 0, .1, 1);
+}
+
+.pageNavbar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1280px;
+    height: 43px;
+    border-bottom: 1px solid #cccccc;
+}
+.pageNavbar span {
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 42px;
+}
+.pageNavbar span:hover {
+    color: rgb(51, 153, 255);
+}
+
+</style>
+

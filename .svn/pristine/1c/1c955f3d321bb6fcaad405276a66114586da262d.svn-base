@@ -1,0 +1,346 @@
+<template>
+  <div class="nav">
+    <div class="logo">
+      <img src="../assets/images/logo.png" alt="">
+    </div>
+    <ul class="navbar">
+  
+      <li>
+        <router-link class='link' @click.native="dynamicConsultationClick()" to="/dynamicConsultation">
+          <div class="itemImg homeLink"></div>
+          <p class="itemText">动态资讯</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+  
+      <li v-if="!isTest">
+        <router-link class='link' to="/informCoope">
+          <div class="itemImg informLink"></div>
+          <p class="itemText">通报合作</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+  
+      <li v-if="!isTest">
+        <router-link class='link' to="/coopGroup">
+          <div class="itemImg coopLink"></div>
+          <p class="itemText">合作小组</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+      <li>
+        <router-link class='link' to="/studentFile/">
+          <div class="itemImg fileLink"></div>
+          <p class="itemText">康复档案</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+      <li>
+        <router-link class='link' to="/studentTrack/">
+          <div class="itemImg recoverLink"></div>
+          <p class="itemText">康复轨迹</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+  
+      <li>
+        <router-link class='link' to="/myService">
+          <div class="itemImg serviceLink"></div>
+          <p class="itemText">我的服务</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+  
+      <li>
+        <router-link class='link' to="/serviceTool">
+          <div class="itemImg toolLink"></div>
+          <p class="itemText">服务安排</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+  
+      <li>
+        <router-link class='link' to="/iep"  >
+          <div class="itemImg iepLink"></div>
+          <p class="itemText">IEP计划</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+  
+      <li v-if="!isTest">
+        <router-link class='link' to="/dataAnalysis">
+          <div class="itemImg dataLink"></div>
+          <p class="itemText">数据分析</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+  
+      <li v-if="!isTest">
+        <router-link class='link' to="/authManage">
+          <div class="itemImg authLink"></div>
+          <p class="itemText">权限管理</p>
+          <div class="triangle-up">
+            <img src="../assets/images/多边形-1.png" alt="">
+          </div>
+        </router-link>
+      </li>
+  
+    </ul>
+    <div class="person">
+      <el-col :span="5" class="userinfo">
+        <el-dropdown trigger="hover">
+          <span class="el-dropdown-link userinfo-inner">
+            <img :src="userInfo.Logo" class="userPhoto">
+            <span class="user-name">{{ userInfo.NickName }}</span>
+          </span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>我的消息</el-dropdown-item>
+            <el-dropdown-item @click.native="toProfile">设置</el-dropdown-item>
+            <el-dropdown-item divided @click.native="logout">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </el-col>
+    </div>
+  </div>
+</template>
+
+<script>
+import api from '../api/index.js';
+export default {
+  name: 'navbar',
+  computed: {
+  },
+  data() {
+    return {
+      userInfo: '',
+      isTest: true
+    };
+  },
+  methods: {
+      flushCom: function () {
+          this.$router.go(0);
+      },
+    logout: function () {
+      var _this = this;
+      this.$confirm('确认退出吗?', '提示', {
+        type: 'warning'
+      })
+        .then(() => {
+          _this.$router.push('/login');
+        })
+        .catch(() => {
+        });
+    },
+    toProfile: function () {
+      this.$router.push('/myService/serviceFile');
+    },
+    dynamicConsultationClick: function () {
+      //this.$store.state.questionPaper.showGeneralNews = true;
+    },
+    iepPlanClick: function () {
+      // console.log('当前路由地址:');
+      // console.log(this.$route.path);
+      // location.reload();
+    }
+  },
+  mounted() {
+    api.drProfile().then(res => {
+      this.userInfo = res.data;
+      console.log('用户信息');
+      console.log(this.userInfo);
+    });
+  }
+};
+
+</script>
+<style scoped>
+.nav {
+  height: 94px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background-image: url("../assets/images/背景.png");
+  background-size: cover;
+  overflow: hidden
+}
+
+.logo {
+  color: #FFFFFF;
+  position: absolute;
+  left: 12px;
+  top: 17px
+}
+
+.navbar {
+  position: absolute;
+  left: 324px;
+  top: 17px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.navbar li {
+  margin: 0 10px;
+  position: relative;
+}
+
+.link {
+  color: #FFFFFF;
+  font: 12px bold;
+  position: relative;
+  height: 77px;
+  width: 60px;
+  display: block
+}
+
+.itemImg {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto
+}
+
+.itemText {
+  margin-top: 8px;
+  text-align: center
+}
+
+.triangle-up {
+  position: absolute;
+  left: 18px;
+  top: 77px;
+  width: 24px;
+  height: 10px;
+  z-index: 10
+}
+
+.router-link-active .itemImg {
+  width: 42px;
+  height: 42px
+}
+
+.router-link-active .triangle-up {
+  top: 67px
+}
+
+.link .homeLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E5%8A%A8%E6%80%81%E8%B5%84%E8%AE%AF.png')
+}
+
+.router-link-active .homeLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E5%8A%A8%E6%80%81%E8%B5%84%E8%AE%AF-%E9%80%89%E4%B8%AD.png')
+}
+
+.link .informLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E9%80%9A%E6%8A%A5%E5%90%88%E4%BD%9C.png')
+}
+
+.router-link-active .informLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E9%80%9A%E6%8A%A5%E5%90%88%E4%BD%9C-%E9%80%89%E4%B8%AD.png')
+}
+
+.link .toolLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E6%9C%8D%E5%8A%A1%E5%AE%89%E6%8E%92-.png')
+}
+
+.router-link-active .toolLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E6%9C%8D%E5%8A%A1%E5%AE%89%E6%8E%92-%E9%80%89%E4%B8%AD.png')
+}
+
+.link .serviceLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1.png')
+}
+
+.router-link-active .serviceLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1-%E9%80%89%E4%B8%AD.png')
+}
+
+.link .iepLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/IEP%E8%AE%A1%E5%88%92--.png')
+}
+
+.router-link-active .iepLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/IEP%E8%AE%A1%E5%88%92--%E9%80%89%E4%B8%AD.png')
+}
+
+.link .dataLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-.png')
+}
+
+.router-link-active .dataLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90--%E9%80%89%E4%B8%AD.png')
+}
+
+.link .authLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86-.png')
+}
+
+.router-link-active .authLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86-%E9%80%89%E4%B8%AD.png')
+}
+
+.link .coopLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E5%90%88%E4%BD%9C%E5%B0%8F%E7%BB%84-.png')
+}
+
+.router-link-active .coopLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E5%90%88%E4%BD%9C%E5%B0%8F%E7%BB%84-%E9%80%89%E4%B8%AD.png')
+}
+
+.link .fileLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E5%BA%B7%E5%A4%8D%E6%A1%A3%E6%A1%88.png')
+}
+
+.router-link-active .fileLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E5%BA%B7%E5%A4%8D%E6%A1%A3%E6%A1%88-%E9%80%89%E4%B8%AD.png')
+}
+
+.link .recoverLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E5%BA%B7%E5%A4%8D%E8%BD%A8%E8%BF%B9-.png')
+}
+
+.router-link-active .recoverLink {
+  background-image: url('http://opqo1r3m7.bkt.clouddn.com/%E5%BA%B7%E5%A4%8D%E8%BD%A8%E8%BF%B9-%E9%80%89%E4%B8%AD.png')
+}
+
+.person {
+  position: absolute;
+  top: 16px;
+  left: 1142px
+}
+
+.userinfo-inner img {
+  display: block;
+  width: 53px;
+  height: 53px;
+  border-radius: 26px
+}
+
+.userinfo-inner .user-name {
+  display: block;
+  width: 53px;
+  font-size: 14px;
+  color: #ffffff;
+  text-align: center;
+}
+</style>

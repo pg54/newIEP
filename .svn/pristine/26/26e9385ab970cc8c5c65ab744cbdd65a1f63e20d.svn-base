@@ -1,0 +1,697 @@
+<template>
+    <div class="paperform-form">
+        <div id="cpepTbWrap">
+            <table id="cpepTb" v-if="false" class="tg">
+                <tr>
+                    <th class="tg-yw4l tranFourBorders" colspan="7" style="text-align: left">
+                        姓名：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </th>
+                    <th class="tg-nrw8 tranThreeBorders leftAlign" colspan="4">各项总和#</th>
+                    <th class="tg-031e">6</th>
+                    <th class="tg-031e">7</th>
+                    <th class="tg-031e">6</th>
+                    <th class="tg-031e">14</th>
+                    <th class="tg-031e">11</th>
+                    <th class="tg-031e tranThreeBorders">#</th>
+                    <th class="tg-031e">10</th>
+                    <th class="tg-031e">11</th>
+                    <th class="tg-031e">10</th>
+                    <th class="tg-031e">11</th>
+                    <th class="tg-031e">14</th>
+                    <th class="tg-031e">20</th>
+                    <th class="tg-yw4l">19</th>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l tranFourBorders" colspan="7">
+                        性别：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="tg-yw4l tranThreeBorders leftAlign" colspan="4">合计数A</td>
+                    <td class="tg-yw4l">{{ resultData[0].Result.A}}</td>
+                    <td class="tg-yw4l">{{ resultData[1].Result.A}}</td>
+                    <td class="tg-yw4l">{{ resultData[2].Result.A}}</td>
+                    <td class="tg-yw4l">{{ resultData[3].Result.A}}</td>
+                    <td class="tg-yw4l">{{ resultData[4].Result.A}}</td>
+                    <td class="tg-yw4l tranThreeBorders">P</td>
+                    <td class="tg-yw4l">{{ resultData[5].Result.P}}</td>
+                    <td class="tg-yw4l">{{ resultData[6].Result.P}}</td>
+                    <td class="tg-yw4l">{{ resultData[7].Result.P}}</td>
+                    <td class="tg-yw4l">{{ resultData[8].Result.P}}</td>
+                    <td class="tg-yw4l">{{ resultData[9].Result.P}}</td>
+                    <td class="tg-yw4l">{{ resultData[10].Result.P}}</td>
+                    <td class="tg-yw4l">{{ resultData[11].Result.P}}</td>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l tranFourBorders" colspan="7">
+                        年龄：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="tg-yw4l tranThreeBorders leftAlign" colspan="4">合计数M</td>
+                    <td class="tg-yw4l">{{ resultData[0].Result.M}}</td>
+                    <td class="tg-yw4l">{{ resultData[1].Result.M}}</td>
+                    <td class="tg-yw4l">{{ resultData[2].Result.M}}</td>
+                    <td class="tg-yw4l">{{ resultData[3].Result.M}}</td>
+                    <td class="tg-yw4l">{{ resultData[4].Result.M}}</td>
+                    <td class="tg-yw4l tranThreeBorders">E</td>
+                    <td class="tg-yw4l">{{ resultData[5].Result.E}}</td>
+                    <td class="tg-yw4l">{{ resultData[6].Result.E}}</td>
+                    <td class="tg-yw4l">{{ resultData[7].Result.E}}</td>
+                    <td class="tg-yw4l">{{ resultData[8].Result.E}}</td>
+                    <td class="tg-yw4l">{{ resultData[9].Result.E}}</td>
+                    <td class="tg-yw4l">{{ resultData[10].Result.E}}</td>
+                    <td class="tg-yw4l">{{ resultData[11].Result.E}}</td>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l tranFourBorders" colspan="7">
+                        出生日期：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="tg-yw4l tranThreeBorders leftAlign" colspan="4">合计数S</td>
+                    <td class="tg-yw4l">{{ resultData[0].Result.S}}</td>
+                    <td class="tg-yw4l">{{ resultData[1].Result.S}}</td>
+                    <td class="tg-yw4l">{{ resultData[2].Result.S}}</td>
+                    <td class="tg-yw4l">{{ resultData[3].Result.S}}</td>
+                    <td class="tg-yw4l">{{ resultData[4].Result.S}}</td>
+                    <td class="tg-yw4l tranThreeBorders">E</td>
+                    <td class="tg-yw4l">{{ resultData[5].Result.F}}</td>
+                    <td class="tg-yw4l">{{ resultData[6].Result.F}}</td>
+                    <td class="tg-yw4l">{{ resultData[7].Result.F}}</td>
+                    <td class="tg-yw4l">{{ resultData[8].Result.F}}</td>
+                    <td class="tg-yw4l">{{ resultData[9].Result.F}}</td>
+                    <td class="tg-yw4l">{{ resultData[10].Result.F}}</td>
+                    <td class="tg-yw4l">{{ resultData[11].Result.F}}</td>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l tranFourBorders" colspan="7">
+                        测试日期：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="tg-yw4l tranFourBorders" colspan="17"></td>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l tranFourBorders" colspan="7">
+                        测试者：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="tg-yw4l tranFourBorders" colspan="10"></td>
+                    <td class="tg-baqh tranFourBorders" colspan="5">发展评分</td>
+                    <td class="tg-baqh tranFourBorders" colspan="2">
+                        <span class="fourBorder">{{ deveScore }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l tranFourBorders" colspan="7">
+                        住址：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="tg-yw4l tranFourBorders" colspan="17"></td>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l tranFourBorders" colspan="7">
+                        父母姓名：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="tg-yw4l tranFourBorders" colspan="17"></td>
+                </tr>
+                <tr>
+                    <td class="tg-yw4l tranFourBorders" colspan="7">
+                        联系电话：
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td class="tg-yw4l tranFourBorders" colspan="17"></td>
+                </tr>
+
+                <template v-for="unit in testResultData">
+                    <tr>
+                        <td class="tg-yw4l leftAlign tranFourBorders questionsTitle" colspan="11">
+                            {{ unit.material}}
+                        </td>
+                        <td class="tg-yw4l" colspan="13" style="border-right: transparent;border-left: transparent"></td>
+                    </tr>
+                    <tr v-for="ele in unit.sameArr">
+                        <td class="tg-yw4l leftAlign tranThreeBorders" colspan="11">
+                            {{ele.Number}}&nbsp;&nbsp;{{ ele.Name}}
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </td>
+                        <td class="tg-yw4l">{{ ele.Domain === '情感'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '人际关系'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '物品喜好'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '感觉模式'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '语言'? ele.Result: ' '}}</td>
+
+                        <td class="tg-yw4l"></td>
+
+                        <td class="tg-yw4l">{{ ele.Domain === '模仿'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '知觉'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '精细动作'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '粗大动作'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '手眼协调'? ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '认知表现'?ele.Result: ' '}}</td>
+                        <td class="tg-yw4l">{{ ele.Domain === '口语认知'? ele.Result: ' '}}</td>
+                    </tr>
+                </template>
+
+                <tfoot>
+                <tr>
+                    <th class="tg-yw4l tranThreeBorders" colspan="11" rowspan="4"></th>
+                    <th class="tg-s6z2" rowspan="4">情<br>感</th>
+                    <th class="tg-031e" rowspan="4">人<br>际<br>关<br>系</th>
+                    <th class="tg-031e" rowspan="4">物<br>品<br>喜<br>好</th>
+                    <th class="tg-031e" rowspan="4">感<br>觉<br>模<br>式</th>
+                    <th class="tg-031e" rowspan="4">语<br>言</th>
+                    <th class="tg-031e" rowspan="4">
+                        &nbsp;&nbsp;&nbsp;
+                    </th>
+                    <th class="tg-031e" rowspan="4">模<br>仿</th>
+                    <th class="tg-031e" rowspan="4">知<br>觉</th>
+                    <th class="tg-031e" rowspan="4">精<br>细<br>动<br>作</th>
+                    <th class="tg-031e" rowspan="4">粗<br>大<br>动<br>作</th>
+                    <th class="tg-031e" rowspan="4">手<br>眼<br>协<br>调</th>
+                    <th class="tg-031e" rowspan="4">认<br>知<br>表<br>现</th>
+                    <th class="tg-031e" rowspan="4">口<br>语<br>认<br>知</th>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div id="canvasArea" style="width: 610px;height: 920px;position: relative;">
+            <div style="width:600px">
+                <canvas id="b" width=600 height=560 style="border:1px solid grey"></canvas>
+            </div>
+            <p style="text-align: center;font-size: 18px;font-weight: bold;width: 610px">C-PEP-3&nbsp;&nbsp;&nbsp;病理行为量表侧面图</p>
+            <p class="chartText">
+                <b>[说明]</b>
+                根据每个病理行为中评分为严重（S）的项目数，从圆心开始涂黑相应的环数。再根据各病理行为领域
+                中评为轻度（M）的项目数，继续将相应的环数涂上阴影。其余的留作空白。
+            </p>
+            <div id="roundInsert" style="width: 610px;height: 560px;border-bottom: 1px solid #000"></div>
+
+            <div>
+                <p style="text-align: center;font-size: 18px;font-weight: bold;margin: 10px 0;width: 600px">发展功能量表侧面图记录方法说明</p>
+                <p class="chartText">
+                    <span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C-PEP-3功能量表分的记录在专门的计分册上进行，每通过一题记一分。在将记分册各页的积分累加后，
+                记录在计分册第一页的右上角的汇总表上，在将统计出的各领域的得分转画到侧面图上，分别用一水平短线
+                标出。接下来用实线将各点连接成一条折线，可以直观地看出被试在各个功能领域的发展水平相当于多大岁数的
+                正常儿童。最后将所有领域得分总和标记在“发展评分”的相应数值上，由此向右划出一横线，即可直观地看出
+                被试在总体上的功能发展相当于多大岁数的正常儿童。（若横线位于两个数字之间，则取下位数）
+                    </span>
+                </p>
+                <p class="chartText">
+                    <span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;将各个领域的中间反应项目数，加在通用的项目上，用圆点标出，再用虚线连接起来。功能发展测面图上实线和
+                虚线之间的区域，显示出该孩子目前潜在的、可能发展的项目
+                    </span>
+                </p>
+            </div>
+            <div style="visibility: hidden">
+                <button @click="drawDevelopChart(lineData)">加载图表</button>
+            </div>
+        </div>
+        <!--<p style="page-break-after:always">&nbsp;</p>-->
+        <div id="developChartWrap" >
+            <div style="width:610px">
+                <canvas id="c" width=610 height=902></canvas>
+            </div>
+            <p style="text-align: center;font-size: 18px;font-weight: bold;width: 610px">C-PEP-3&nbsp;&nbsp;&nbsp;发展功能量表侧面图</p>
+            <div style="visibility: hidden">
+                <button @click="drawDevelopChart(lineData)">加载图表</button>
+            </div>
+        </div>
+    </div>
+
+</template>
+
+<script>
+    import api from '../api/index.js';
+    export default {
+        name: 'printCECP',
+        props: ['cpepChartData'],
+        data() {
+            return {
+                resultData: '',
+                roundData: [],
+                lineData: [],
+            }
+        },
+        methods: {
+            drawRound(roundData) {
+                CanvasRenderingContext2D.prototype.sector = function (x, y, radius, sAngle, eAngle, counterclockwise, total, storeS, storeM, img) {
+                    let distance = radius / total
+                    for (let i = total - 1; i >= 0; i--) {
+                        this.save()
+                        this.beginPath()
+                        this.translate(x, y);
+                        this.arc(0, 0, distance + distance * i, sAngle, eAngle, counterclockwise)
+                        this.save();
+                        this.rotate(eAngle);
+                        this.moveTo(distance + distance * i, 0)
+                        this.lineTo(0, 0)
+                        this.restore()
+                        this.rotate(sAngle)
+                        this.lineTo(distance + distance * i, 0)
+                        this.strokeStyle = '#000'
+                        this.stroke()
+                        if ( i >= storeS && i< storeS + storeM) {
+//                            var _this = this;
+//                            img.onload = (function(img) {
+//                                console.log('setImg');
+//                                var pattern = _this.createPattern(img,"repeat");
+//                                _this.fillStyle = pattern;
+//                            })(img)
+                            this.fillStyle = '#cecece'
+                            this.fill()
+
+
+                        }
+                        if (storeS !== 0 && i < storeS) {
+                            this.fillStyle = '#aaaaaa'
+                            this.fill()
+                        }
+                        this.restore()
+                    }
+                    return this;
+                };
+                let canvasWrap = document.getElementById('canvasArea')
+                var canvas = document.getElementById("b");
+                let ctx = canvas.getContext('2d');
+                let deg = Math.PI / 180;
+                var img = new Image();    //创建Image对象
+                img.src = 'http://osp49ppau.bkt.clouddn.com/xiexian.png';
+                ctx.sector(300, 300, 200, 324 * deg, 36 * deg, false, 7, roundData[0].Result.S, roundData[0].Result.M, img)
+                ctx.sector(300, 300, 200, 36 * deg, 108 * deg, false, 6, roundData[1].Result.S, roundData[1].Result.M, img)
+                ctx.sector(300, 300, 200, 108 * deg, 180 * deg, false, 14, roundData[2].Result.S, roundData[2].Result.M, img);
+                ctx.sector(300, 300, 200, 180 * deg, 252 * deg, false, 11,roundData[3].Result.S, roundData[3].Result.M, img);
+                ctx.sector(300, 300, 200, 252 * deg, 324 * deg, false, 6, roundData[4].Result.S, roundData[4].Result.M, img);
+
+                let textArr = ['情感','人际关系','游戏及物品喜好','感觉模式','语言']
+                let coordinateArr = [
+                    { x: 260, y: 40},
+                    { x: 500, y: 200},
+                    { x: 400, y: 480},
+                    { x: 20, y: 400},
+                    { x: 20, y: 200}
+                    ]
+                for (var i = 0; i < textArr.length; i++) {
+                    ctx.beginPath()
+                    ctx.rect(coordinateArr[i].x, coordinateArr[i].y, 80, 30)
+                    ctx.strokeStyle = '#000'
+                    ctx.font = "14px serif";
+                    ctx.textAlign = 'center';
+                    ctx.fillText(textArr[i], coordinateArr[i].x + 30, coordinateArr[i].y + 20, 40);
+                    ctx.stroke()
+                }
+                this.convertCanvasToImage(canvas)
+                canvasWrap.removeChild(canvasWrap.childNodes[0])
+            },
+            drawDevelopChart(lineData) {
+                let dymaDataP = this.lineData.map(ele => ele.Result.P)
+                let score = 0;
+                for (let i = 0; i < dymaDataP.length; i++) {
+                    score += dymaDataP[i]
+                }
+                let canvasWrap = document.getElementById('developChartWrap')
+                var myCanvas = document.getElementById("c");
+                var c = myCanvas.getContext("2d");
+                var w = 580;
+                var h = 860;
+                var head = 40;
+                var count = 80;
+                var categories = ['年龄（岁）', '模仿', '知觉', '精细动作', '粗大动作', '手眼协调', '认知表现', '口语认知', '总评分', '年龄（岁）']
+                draw()
+                this.chartConvertCanvasToImage(myCanvas)
+                canvasWrap.removeChild(canvasWrap.childNodes[0])
+
+                function draw() {
+                    drawCategory()
+                    drawBaseLine()
+                    drawGrap()
+                    drawData()
+                }
+
+                function drawCategory() {
+                    let tickSize = 58
+                    let tickCnt = 10
+                    for (var i = 0; i < tickCnt; i++) {
+                        c.beginPath()
+                        c.rect(tickSize * i, 0, tickSize, 40)
+                        c.strokeStyle = '#000'
+                        c.font = "10px serif";
+                        c.textAlign = 'center';
+                        c.fillText(categories[i], 30 + tickSize * i, 20);
+                        c.stroke()
+                    }
+                }
+
+                function drawGrap() {
+                    let tickSize = 58
+                    let tickCnt = 10
+                    for (var i = 0; i < tickCnt + 1; i++) {
+                        if (1 < i < tickCnt + 1) {
+                            c.beginPath()
+                            c.moveTo(tickSize * i, head);
+                            c.lineTo(tickSize * i, head + h);
+                            c.strokeStyle = '#000'
+                            c.stroke()
+                        }
+                    }
+                    //最底部
+                    c.beginPath()
+                    c.moveTo(0, head + h);
+                    c.lineTo(580, head + h);
+                    c.strokeStyle = '#000'
+                    c.stroke()
+                }
+
+                function drawBaseLine() {
+                    c.clearRect(0, 40, w, h);
+                    var tickSize = h / count
+                    c.moveTo(0, head);
+                    c.lineTo(0, head + h);
+                    for (var i = 1; i < count; i++) {
+                        c.beginPath()
+                        c.moveTo(0, 40 + tickSize * i);
+                        c.lineTo(w, 40 + tickSize * i);
+                        c.strokeStyle = '#efefef'
+                        c.stroke();
+                    }
+                }
+
+                function drawData() {
+                    //年龄（岁）
+                    let tickSize = 58
+                    for (var i = 1; i < 7; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 0 + 0, 40 + (count - 12 * i) / count * h);
+                        c.lineTo(tickSize * 0 + 15, 40 + (count - 12 * i) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 0 +20, 45 + (count - 12 * i) / count * h);
+                        c.stroke();
+                    }
+
+                    //模仿  0-10
+                    var arr2 = [23, 25, 28, 30, 32, 35, 37, 39, 42, 44, 62]
+                    for (var i = 0; i < 11; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 1 + 0, 40 + (count - arr2[i]) / count * h);
+                        c.lineTo(tickSize * 1 + 15, 40 + (count - arr2[i]) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 1 + 20, 45 + (count - arr2[i]) / count * h);
+                        c.stroke();
+                    }
+
+                    //知觉 0-11
+                    var arr3 = [10, 14, 19, 23, 28, 32, 37, 41, 46, 50, 54, 60]
+                    for (var i = 0; i < 12; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 2 + 0, 40 + (count - arr3[i]) / count * h);
+                        c.lineTo(tickSize * 2 + 15, 40 + (count - arr3[i]) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 2 + 20, 45 + (count - arr3[i]) / count * h);
+                        c.stroke();
+                    }
+
+                    //精细动作 0-10
+                    var arr4 = [22, 25, 28, 31, 33, 36, 39, 42, 45, 55, 71]
+                    for (var i = 0; i < 11; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 3 + 0, 40 + (count - arr4[i]) / count * h);
+                        c.lineTo(tickSize * 3 + 15, 40 + (count - arr4[i]) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 3 + 20, 45 + (count - arr4[i]) / count * h);
+                        c.stroke();
+                    }
+
+                    //粗大动作 0-11
+                    var arr5 = [21, 24, 26, 28,30,32,35,37,39,41,44,60]
+                    for (var i = 0; i < 12; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 4 + 0, 40 + (count - arr5[i]) / count * h);
+                        c.lineTo(tickSize * 4 + 15, 40 + (count - arr5[i]) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 4 + 20, 45 + (count - arr5[i]) / count * h);
+                        c.stroke();
+                    }
+
+                    //手眼协调 0-14
+                    var arr6 = [12, 16, 20, 24, 28, 32, 37, 41, 45, 49, 53, 57, 62, 66, 70]
+                    for (var i = 0; i < 15; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 5 + 0, 40 + (count - arr6[i]) / count * h);
+                        c.lineTo(tickSize * 5 + 15, 40 + (count - arr6[i]) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 5 + 20, 45 + (count - arr6[i]) / count * h);
+                        c.stroke();
+                    }
+
+                    //认知表现 0-20
+                    var arr7 = [13,16,20,23,25,28,31,34,37,41,44,47,50,53,56,59,62,65,68,71,74]
+                    for (var i = 0; i < 21; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 6 + 0, 40 + (count - arr7[i]) / count * h);
+                        c.lineTo(tickSize * 6 + 15, 40 + (count - arr7[i]) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 6 + 20, 45 + (count - arr7[i]) / count * h);
+                        c.stroke();
+                    }
+
+                    //口语认知 0-19
+                    var arr8 = [21,24,27,30,33,36,39,42,45,47,50,53,56,59,62,65,68,71,74,76]
+                    for (var i = 0; i < 21; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 7 + 0, 40 + (count - arr8[i]) / count * h);
+                        c.lineTo(tickSize * 7 + 15, 40 + (count - arr8[i]) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 7 + 20, 45 + (count - arr8[i]) / count * h);
+                        c.stroke();
+                    }
+
+                    //总评分 0-95
+                    var arr9 = [
+                        {sc: 0,y: 8},  {sc: 1,y: 9},   {sc: 2,y: 10},   {sc: 3,y: 11}, {sc: 4,y: 12}, {sc: 5,y: 13}, {sc: 6,y: 14}, {sc: 7,y: 15}, {sc: 8,y: 16},
+                        {sc: 9,y: 17}, {sc: 10,y: 18}, {sc: 11,y: 19}, {sc: 12,y: 20}, {sc: 13,y: 21}, {sc: 14,y: 22}, {sc: 15,y: 23}, {sc: 16,y: 24}, {sc: 18,y: 25},
+                        {sc: 20,y: 26}, {sc: 23,y: 27}, {sc: 26,y: 28}, {sc: 28,y: 29}, {sc: 31,y: 30}, {sc: 34,y: 31}, {sc: 37,y: 32}, {sc: 39,y: 33}, {sc: 42,y: 34},
+                        {sc: 45,y: 35}, {sc: 47,y: 36}, {sc: 50,y: 37}, {sc: 52,y: 38}, {sc: 55,y: 39}, {sc: 58,y: 40}, {sc: 61,y: 41}, {sc: 63,y: 42}, {sc: 66,y: 43},
+                        {sc: 69,y: 44}, {sc: 71,y: 45}, {sc: 73,y: 47}, {sc: 74,y: 49}, {sc: 75,y: 50}, {sc: 76,y: 52}, {sc: 77,y: 53}, {sc: 78,y: 55}, {sc: 79,y: 56},
+                        {sc: 80,y: 58}, {sc: 81,y: 59}, {sc: 82,y: 60}, {sc: 83,y: 62}, {sc: 84,y: 63}, {sc: 85,y: 65}, {sc: 86,y: 66}, {sc: 87,y: 68}, {sc: 88,y: 69},
+                        {sc: 89,y: 70}, {sc: 90,y: 72}, {sc: 91,y: 73}, {sc: 92,y: 75}, {sc: 93,y: 76}, {sc: 94,y: 78}, {sc: 95,y: 79},
+                    ]
+                    for (var i = 0; i < 61; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 8 + 0, 40 + (count - arr9[i].y) / count * h);
+                        c.lineTo(tickSize * 8 + 15, 40 + (count - arr9[i].y) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(arr9[i].sc, tickSize* 8 + 20, 45 + (count - arr9[i].y) / count * h);
+                        c.stroke();
+                    }
+
+                    for (var i = 1; i < 7; i++) {
+                        c.beginPath()
+                        c.moveTo(tickSize * 10 - 15, 40 + (count - 12 * i) / count * h);
+                        c.lineTo(tickSize * 10, 40 + (count - 12 * i) / count * h);
+                        c.strokeStyle = '#000'
+                        c.textAlign = 'center';
+                        c.fillText(i, tickSize* 10 - 20, 45 + (count - 12 * i) / count * h);
+                        c.stroke();
+                    }
+
+                    let scoreH =  arr9.filter(function (ele) {
+                        if (ele.sc === score) {
+                            return ele
+                        }
+                    })
+
+                    let scoreInt = parseInt(scoreH[0].y)
+                    let ageYear = scoreInt < 12 ? 0 : parseInt(scoreInt / 12)
+
+                    let ageMouth = scoreInt % 12
+                    let age = ageYear + '岁' + ageMouth + '月'
+
+                    c.beginPath()
+                    c.fillText('P总数', 20, head + (count - arr2[dymaDataP[0]]) / count * h - 10, 20);
+                    c.moveTo(0, head + (count - arr2[dymaDataP[0]]) / count * h);
+                    c.lineTo(58 + 58 * 0, head + (count - arr2[dymaDataP[0]]) / count * h);
+                    c.lineTo(58 + 58 * 1, head + (count - arr3[dymaDataP[1]]) / count * h);
+                    c.lineTo(58 + 58 * 2, head + (count - arr4[dymaDataP[2]]) / count * h);
+                    c.lineTo(58 + 58 * 3, head + (count - arr5[dymaDataP[3]]) / count * h);
+                    c.lineTo(58 + 58 * 4, head + (count - arr6[dymaDataP[4]]) / count * h);
+                    c.lineTo(58 + 58 * 5, head + (count - arr7[dymaDataP[5]]) / count * h);
+                    c.lineTo(58 + 58 * 6, head + (count - arr8[dymaDataP[6]]) / count * h);
+                    c.lineTo(58 + 58 * 7, head + (count -  scoreH[0].y) / count * h);
+                    c.lineTo(58 + 58 * 9, head + (count -  scoreH[0].y) / count * h);  //测试显示儿童的年龄
+                    c.strokeStyle = '#000'
+                    c.textAlign = 'left';
+                    c.fillText(age, 570, head + (count -  scoreH[0].y) / count * h + 10);
+                    c.stroke();
+                }
+            },
+            convertCanvasToImage(canvas) {
+                let image = new Image();
+                image.src = canvas.toDataURL("image/png");
+                image.setAttribute('class','round_img')
+                document.getElementById('roundInsert').appendChild(image)
+            },
+            chartConvertCanvasToImage(canvas) {
+                let image = new Image();
+                image.src = canvas.toDataURL("image/png");
+                document.getElementById('developChartWrap').appendChild(image)
+            },
+        },
+        created() {
+
+        },
+        beforeMount() {
+            console.log('beforeMount')
+        },
+        mounted() {
+            console.log('beforeMount')
+            let originData = this.cpepChartData.Result
+            for (let i = 0;i < 5;i++) {
+                this.roundData.push(originData[i])
+            }
+            this.drawRound(this.roundData);
+            for (let j = 5;j < originData.length;j++) {
+                this.lineData.push(originData[j])
+            }
+            this.drawDevelopChart(this.lineData);
+
+        },
+        beforeUpdate() {
+            console.log('beforeUpdate')
+        },
+        updated() {
+            console.log('updated')
+        }
+    }
+  </script>
+<style scoped>
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-baqh{text-align:center;vertical-align:top}
+    .tg .tg-nrw8{font-size:14px}
+    .tg .tg-yw4l{vertical-align:top}
+
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center}
+    .tg .tg-yw4l{vertical-align:top}
+
+    .leftAlign {
+        text-align: left;
+    }
+    .rightAlign {
+        text-align: right;
+    }
+
+    .tranFourBorders {
+        border: transparent;
+    }
+    .tranThreeBorders {
+        border-top: transparent;
+        border-bottom: transparent;
+        border-left: transparent;
+    }
+    .onlyBottom {
+        border-top: transparent;
+        border-right: transparent;
+        border-left: transparent;
+    }
+    .onlySides {
+        border-top: transparent;
+        border-bottom: transparent;
+    }
+
+    .fourBorder {
+        display: block;
+        border: 1px solid #000000;
+    }
+
+    .questionsTitle {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+
+    .roundTitle {
+
+
+    }
+    .round_img {
+
+    }
+
+    .round_react_emotion {
+        position: absolute;
+        top: 110px;
+        left: 280px;
+        width: 100px;
+        height: 40px;
+        border: 1px solid #000000;
+        text-align: center;
+        line-height: 40px;
+    }
+    .round_react_lang {
+        position: absolute;
+        top: 180px;
+        left: 20px;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid #000000;
+        text-align: center;
+    }
+
+    .round_react_relationship {
+        position: absolute;
+        top: 242px;
+        left: 485px;
+        width: 110px;
+        height: 40px;
+        border: 1px solid #000000;
+        text-align: center;
+
+    }
+    .round_react_sense {
+        position: absolute;
+        top: 480px;
+        left: 20px;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid #000000;
+        text-align: center;
+    }
+    .round_react_game {
+        position: absolute;
+        top: 520px;
+        left: 440px;
+        width: 100px;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid #000000;
+        text-align: center;
+    }
+
+    .chartText {
+        width: 610px;
+    }
+
+
+</style>

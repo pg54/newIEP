@@ -1,0 +1,866 @@
+<template>
+    <div class="printWrap">
+        <div class="print-sider onc-scrollbar">
+            <h2 class="print-sider-title">广东省孤独症儿童康复档案</h2>
+            <el-menu default-active="1" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
+                <el-menu-item index="12" @click.native='choseAttachment'>患者材料</el-menu-item>
+                <!--<el-menu-item index="1" @click.native='choseRegister'>智力残疾儿童入学登记表</el-menu-item>-->
+                <!--<el-submenu index="4">-->
+                <!--<template slot="title">智力残疾儿童学习能力评估表</template>-->
+                <!--<el-menu-item-group v-for="(item, itemIndex) in entrancelistData" :key='item.ID' :title="item.CreatedOn">-->
+                <!--<el-menu-item :key="item.ID"  :index="'4' + itemIndex + 1" @click.native="requestEntranceContent(item.ID)">结果</el-menu-item>-->
+                <!--<el-menu-item :key="item.ID"  :index="'4' + itemIndex + 2" @click.native="requestEntranceReport(item.ID)">报告</el-menu-item>-->
+                <!--</el-menu-item-group>-->
+                <!--</el-submenu>-->
+
+                <!--<el-submenu index="2">-->
+                <!--<template slot="title">{{stuName}}的评测表</template>-->
+                <!--<el-menu-item-group v-for="(ele, index) in testPaperListData" :title="ele.PackageName">-->
+                <!--<el-menu-item :index="'2' + (index + 1) + '-1'" @click.native="requestTestReportData(ele.ID)">学习能力评估结果综合分析报告</el-menu-item>-->
+                <!--<el-menu-item :index="'2' +(index + 1) + '-2'" @click.native="requesTestResultData(ele.ID)">智力残疾儿童学习能力评估表</el-menu-item>-->
+                <!--</el-menu-item-group>-->
+                <!--</el-submenu>-->
+
+                <!--<el-submenu index="3">-->
+                <!--<template slot="title">{{stuName}}的IEP计划</template>-->
+
+                <!--<el-submenu v-for="(ele, el) in personalPlanData.Records" :index="'3-'+ (el + 1)">-->
+                <!--<template slot="title" >-->
+                <!--<p @click="requestPlanDetails(ele.ID)">{{ ele.Title }}</p>-->
+                <!--</template>-->
+                <!--<el-menu-item :index="'3-'+ (el + 1)+ (index + 1)" v-for="(item, index) in planDetailsData.MonthPlans"-->
+                <!--@click="requestMonthDetails(item.ID, ele.Title, item.Name)"-->
+                <!--&gt;{{ item.Name }}</el-menu-item>-->
+                <!--</el-submenu>-->
+                <!--</el-submenu>-->
+
+                <!--<el-menu-item index="7" @click.native='choseClassRecords'>班级教学记录卡</el-menu-item>-->
+
+                <!--<el-menu-item index="8" @click.native='choseSpecialRecords'>个别训练记录卡</el-menu-item>-->
+
+                <!--<el-menu-item index="9" @click.native='choseStuTracking'>智力残疾儿童后续教育跟踪表</el-menu-item>-->
+
+                <!--<el-menu-item index="10" @click.native='choseProgress'>学生学习进度报告表</el-menu-item>-->
+
+                <!--<el-menu-item index="11" @click.native='choseSummary'>年度评估与总结</el-menu-item>-->
+
+                <!--<el-submenu index="5">-->
+                <!--<template slot="title">CPEP</template>-->
+
+                <!--&lt;!&ndash;<el-menu-item :index="'5-'+ (el + 1)+ (index + 1)" @click="checkCPEPResult(index, item)"&ndash;&gt;-->
+                <!--&lt;!&ndash;&gt;{{ item.PatientAgentName }}</el-menu-item>&ndash;&gt;-->
+
+                <!--<el-menu-item-group v-for="(item, index) in cpepMemdbersData" :title="item.PatientAgentName + item.CreatedOn.split('T')[0]">-->
+                <!--<el-menu-item :index="'5' + (index + 1) + '-2'" @click="checkCPEPScore(index, item)"-->
+                <!--&gt;C-PEP-3计分册</el-menu-item>-->
+                <!--<el-menu-item :index="'5' + (index + 1) + '-1'" @click="checkCPEPResult(index, item)"-->
+                <!--&gt;C-PEP-3分析图表</el-menu-item>-->
+                <!--</el-menu-item-group>-->
+
+                <!--</el-submenu>-->
+
+            </el-menu>
+
+        </div>
+        <div class="print-content">
+            <div class="print-content-paper-wrapper onc-scrollbar">
+                <div id="print-content-paper">
+
+                    <!--<div v-if="paperIndex === 0">-->
+                    <!--<registerPrinter :userInfo="stuData" :dpData="diagnosisesDeptData" :fcData="fiveConditionData"></registerPrinter>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content" v-if="paperIndex === 1">-->
+                    <!--<analysisReportPrinter :userInfo="reportData" :fcData="fiveConditionData"></analysisReportPrinter>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content" v-if="paperIndex === 2">-->
+                    <!--<testResultPaper :paperResultData="resultData"></testResultPaper>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content" v-if="paperIndex === 3">-->
+                    <!--<iepPrinter :iepMothInfo="iepMonthData" :iepTitle="iepMonthTitle" :iepTheme="iepTotalTheme"></iepPrinter>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content"  v-if="paperIndex === 5">-->
+                    <!--<CPEPPaper :cpepChartData="cpepDevResult"></CPEPPaper>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content"  v-if="paperIndex === 6">-->
+                    <!--<CPEPScore :resultData="cpepTotalResult" :testResultData="cpepQuestionResults" :deveScore="cpepScores"></CPEPScore>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content"  v-if="paperIndex === 7">-->
+                    <!--<ClassRecords></ClassRecords>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content"  v-if="paperIndex === 8">-->
+                    <!--<SpecialRecords></SpecialRecords>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content"  v-if="paperIndex === 9">-->
+                    <!--<StudentTracking></StudentTracking>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content"  v-if="paperIndex === 10">-->
+                    <!--<ProgressReport></ProgressReport>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content"  v-if="paperIndex === 11">-->
+                    <!--<YearSummary></YearSummary>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content"  v-if="paperIndex === 4">-->
+                    <!--<testResultPaper :paperResultData="resultData"></testResultPaper>-->
+                    <!--</div>-->
+
+                    <!--<div class="paperform-content" v-if="paperIndex === 12">-->
+                    <!--<analysisReportPrinter :userInfo="reportData" :fcData="fiveConditionData"></analysisReportPrinter>-->
+                    <!--</div>-->
+
+                    <div class="paperform-content" v-if="paperIndex === 13">
+                        <div style="position: relative;height: 675px">
+                            <AttachUpload ref="attachmentChild"></AttachUpload>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <el-dialog
+            title="提示"
+            :visible.sync="dialogVisible"
+            size="tiny"
+            :before-close="handleClose">
+            <a id='lodapA' href='http://www.lodop.net/demolist/CLodopPrint_Setup_for_Win32NT.zip' target='_blank'>打印插件未安装!点击确定执行安装</a>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="jumpLogin">确 定</el-button>
+            </span>
+        </el-dialog>
+        <div class="print-tool" @click="prn1_printA">打印</div>
+        <!--<div class="print-tool" @click="prn1_printA">lodop打印预览</div>-->
+        <div class="print-back" @click="goback">返回</div>
+
+    </div>
+</template>
+<script>
+    import axios from 'axios'
+    import api from '../api/index.js';
+    import registerPrinter from '../components/printerRegister.vue'
+    import analysisReportPrinter from '../components/printerReport.vue'
+    import testResultPaper from '../components/printResult.vue'
+    import iepPrinter from '../components/printerIEP.vue'
+    import CPEPPaper from '../components/printerCPEP.vue'
+    import CPEPScore from '../components/printCPEPScore.vue'
+    import ClassRecords from '../components/classTeachRecordCard.vue'
+    import SpecialRecords from '../components/specialTrainRecord.vue'
+    import StudentTracking from '../components/studentTracking.vue'
+    import ProgressReport from '../components/progressReport.vue'
+    import YearSummary from '../components/yearSummary.vue'
+    import AttachUpload from '../components/AttachmentUpload.vue'
+    export default {
+        name: 'autismPrinter',
+        components: {
+            registerPrinter,
+            analysisReportPrinter,
+            testResultPaper,
+            iepPrinter,
+            CPEPPaper,
+            CPEPScore,
+            ClassRecords,
+            SpecialRecords,
+            StudentTracking,
+            ProgressReport,
+            YearSummary,
+            AttachUpload
+        },
+        computed: {
+            stuName: function () {
+                return this.$store.state.mystudent.currentPatientId.Name
+            }
+        },
+        data() {
+            return {
+                paperIndex: 13,
+                stuData: [],
+                diagnosisesDeptData: [],
+                fiveConditionData: [],
+                IEPdata: [],
+                testPaperListData: [],
+                reportData: [],
+                resultData: [],
+                personalPlanData: [],
+                planDetailsData: [],
+                iepMonthData: [],
+                iepMonthTitle: '',
+                iepTotalTheme: '',
+                isTest: false,
+                testID: '',
+                dialogVisible: false,
+                cpepMemdbersData: '',
+                CPEPResultData: '',
+                pacientID: '',
+                cpepTotalResult: '',
+                cpepQuestionResults: '',
+                cpepScores: '',
+                cpepDevResult: '',
+                entrancelistData: []
+            }
+        },
+        methods: {
+            prn1_printA() {
+                this.CreateOneFormPage();
+//                LODOP.PREVIEW();
+                LODOP.PRINTA();
+            },
+            CreateOneFormPage() {
+                LODOP=this.getLodop();
+                var styleCSS, headTitle
+                if (this.paperIndex === 0) {
+                    styleCSS = "<link href='../../static/printReg.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+document.getElementById("paperform-form2").innerHTML+"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26,"5%","89%",40,headerSth);
+                    LODOP.ADD_PRINT_HTM(80,"5%","89%",'24.3cm',printSth);
+                }
+                else if (this.paperIndex === 1){
+                    styleCSS = "<link href='../../static/printReport.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+document.getElementById("paperform-form2").innerHTML+"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(25,"5%","90%",65,headerSth);
+                    LODOP.ADD_PRINT_HTM(100,"5%","90%",'22.3cm',printSth);
+                }
+                else if (this.paperIndex === 2) {
+                    styleCSS = "<link href='../../static/printResult.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+document.getElementById("paperform-form2").innerHTML+"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26,"5%","90%",60,headerSth);
+                    LODOP.ADD_PRINT_HTM(100,"5%","90%",'24.7cm',printSth);
+                }
+                else if (this.paperIndex === 3){
+                    styleCSS = "<link href='../../static/printIEP.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+ document.getElementById("paperform-form2").innerHTML +"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.ADD_PRINT_HTM(26,"5%","90%",60,headerSth);
+                    LODOP.ADD_PRINT_TABLE(66,"5%","90%",'24.7cm',printSth);
+                }
+
+                else if (this.paperIndex === 5) {
+                    styleCSS = "<link href='../../static/printCPEP.css' type='text/css' rel='stylesheet'>"
+//                    var printSth = document.getElementsByClassName("paperform-form")[0].innerHTML
+                    var roundImg = document.getElementById("canvasArea").innerHTML
+                    var chartdImg = document.getElementById("developChartWrap").innerHTML
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.NewPage();
+                    LODOP.ADD_PRINT_HTM('10', '120', '94%', '25.7cm', styleCSS + roundImg);
+                    LODOP.NewPage();
+                    LODOP.ADD_PRINT_HTM('10', '120', '95%', '25.7cm',styleCSS + chartdImg);
+                }
+                else if (this.paperIndex === 6) {
+                    styleCSS = "<link href='../../static/printCPEP.css' type='text/css' rel='stylesheet'>"
+                    var printSth = document.getElementsByClassName("paperform-form")[0].innerHTML
+                    LODOP.ADD_PRINT_TABLE('10', '40', '95%', '25.7cm', styleCSS + printSth);
+                }
+                else if (this.paperIndex === 7){
+                    styleCSS = "<link href='../../static/classRecord.css' type='text/css' rel='stylesheet'>"
+                    var printSth1 = document.getElementById("paperform-form1").innerHTML
+                    var printSth2 = document.getElementById("paperform-form2").innerHTML
+                    // var printSth3 = document.getElementById("paperform-form3").innerHTML
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26, '5%', '90%', 30,  styleCSS + printSth1);
+                    LODOP.ADD_PRINT_TABLE( 60, '5%', '90%', '28.2cm', styleCSS + printSth2);
+                    // LODOP.NewPage();
+                    // LODOP.ADD_PRINT_HTM('10', '1cm', '19cm', '25.7cm', styleCSS + printSth3);
+                }
+                else if (this.paperIndex === 8) {
+                    styleCSS = "<link href='../../static/specialCard.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+document.getElementById("paperform-form2").innerHTML+"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26,"5%","90%",30,headerSth);
+                    LODOP.ADD_PRINT_HTM(56,"5%","90%",'28.2cm',printSth);
+                }
+                else if (this.paperIndex === 9) {
+                    styleCSS = "<link href='../../static/stuTracking.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+document.getElementById("paperform-form2").innerHTML+"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26,"5%","90%",30,headerSth);
+                    LODOP.ADD_PRINT_HTM(56,"5%","90%",'28.2cm',printSth);
+                }
+                else if (this.paperIndex === 10) {
+                    styleCSS = "<link href='../../static/progressReport.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+document.getElementById("paperform-form2").innerHTML+"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26,"5%","90%",60,headerSth);
+                    LODOP.ADD_PRINT_HTM(82,"5%","90%",'27.6cm',printSth);
+                }
+                else if (this.paperIndex === 11) {
+                    styleCSS = "<link href='../../static/yearSummary.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+document.getElementById("paperform-form2").innerHTML+"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26,"5%","90%",30,headerSth);
+                    LODOP.ADD_PRINT_HTM(56,"5%","90%",'27.6cm',printSth);
+                }
+                else if (this.paperIndex === 4) {
+                    styleCSS = "<link href='../../static/printResult.css' type='text/css' rel='stylesheet'>"
+                    var headerSth = document.getElementById("paperform-form1").innerHTML
+                    var printSth = styleCSS + "<body>"+document.getElementById("paperform-form2").innerHTML+"</body>"
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26,"5%","90%",60,headerSth);
+                    LODOP.ADD_PRINT_HTM(100,"5%","90%",'24.7cm',printSth);
+                }
+                else if (this.paperIndex === 13) {
+                    let imgPaths = this.$refs['attachmentChild'].$data.attachmentList.map(ele => ele.Path);
+                    let imgContainer = document.createElement('div');
+                    for (let i = 0; i< imgPaths.length; i++) {
+                        let img = document.createElement('img');
+                        img.src = imgPaths[i];
+                        img.style.margin = '18px';
+                        imgContainer.appendChild(img)
+                    }
+                    LODOP.PRINT_INIT("");
+                    LODOP.SET_PRINT_PAGESIZE(1, 0, 0, "A4");
+                    LODOP.ADD_PRINT_HTM(26,"5%","90%",'27cm',imgContainer.innerHTML);
+                }
+            },
+            goback() {
+                this.$router.go(-1);
+            },
+            getLodop(oOBJECT,oEMBED){
+                var strHtmInstall="<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='http://113.10.155.131/install_lodop32.zip' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font>";
+                var strHtmUpdate="<br><font color='#FF00FF'>打印控件需要升级!点击这里<a href='http://113.10.155.131/install_lodop32.zip' target='_self'>执行升级</a>,升级后请重新进入。</font>";
+                var strHtm64_Install="<br><font color='#FF00FF'>打印控件未安装!点击这里<a href='http://113.10.155.131/install_lodop64.zip' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font>";
+                var strHtm64_Update="<br><font color='#FF00FF'>打印控件需要升级!点击这里<a href='http://113.10.155.131/install_lodop64.zip' target='_self'>执行升级</a>,升级后请重新进入。</font>";
+                var strHtmFireFox="<br><br><font color='#FF00FF'>（注意：如曾安装过Lodop旧版附件npActiveXPLugin,请在【工具】->【附加组件】->【扩展】中先卸它）</font>";
+                var strHtmChrome="<br><br><font color='#FF00FF'>(如果此前正常，仅因浏览器升级或重安装而出问题，需重新执行以上安装）</font>";
+                var strCLodopInstall="<p style='color: #ffffff;background-color: #1c8de0'>打印插件未安装!点击这里<span @click='jumpLogin'>执行安装</span><a id='lodapA' href='http://www.lodop.net/demolist/CLodopPrint_Setup_for_Win32NT.zip' target='_self'></a>,安装后重新登录。</p>";
+                var strCLodopUpdate="<br><font color='#FF00FF'>CLodop云打印服务需升级!点击这里<a href='CLodopPrint_Setup_for_Win32NT.zip' target='_self'>执行升级</a>,升级后请刷新页面。</font>";
+                var LODOP;
+                try{
+                    var isIE = (navigator.userAgent.indexOf('MSIE')>=0) || (navigator.userAgent.indexOf('Trident')>=0);
+                    if (this.needCLodop()) {
+                        try{ LODOP=getCLodop();} catch(err) {};
+                        if (!LODOP && document.readyState!=="complete") {alert("C-Lodop没准备好，请稍后再试！"); return;};
+                        if (!LODOP) {
+                            if (isIE) document.write(strCLodopInstall); else
+                                this.dialogVisible = true
+//                                document.documentElement.innerHTML=strCLodopInstall+document.documentElement.innerHTML;
+                            return;
+                        } else {
+
+                            if (CLODOP.CVERSION<"2.0.9.0") {
+                                if (isIE) document.write(strCLodopUpdate); else
+                                    document.documentElement.innerHTML=strCLodopUpdate+document.documentElement.innerHTML;
+                            };
+                            if (oEMBED && oEMBED.parentNode) oEMBED.parentNode.removeChild(oEMBED);
+                            if (oOBJECT && oOBJECT.parentNode) oOBJECT.parentNode.removeChild(oOBJECT);
+                        };
+                    } else {
+                        var is64IE  = isIE && (navigator.userAgent.indexOf('x64')>=0);
+                        //=====如果页面有Lodop就直接使用，没有则新建:==========
+                        if (oOBJECT!=undefined || oEMBED!=undefined) {
+                            if (isIE) LODOP=oOBJECT; else  LODOP=oEMBED;
+                        } else if (CreatedOKLodop7766==null){
+                            LODOP=document.createElement("object");
+                            LODOP.setAttribute("width",0);
+                            LODOP.setAttribute("height",0);
+                            LODOP.setAttribute("style","position:absolute;left:0px;top:-100px;width:0px;height:0px;");
+                            if (isIE) LODOP.setAttribute("classid","clsid:2105C259-1E0C-4534-8141-A753534CB4CA");
+                            else LODOP.setAttribute("type","application/x-print-lodop");
+                            document.documentElement.appendChild(LODOP);
+                            CreatedOKLodop7766=LODOP;
+                        } else LODOP=CreatedOKLodop7766;
+                        //=====Lodop插件未安装时提示下载地址:==========
+                        if ((LODOP==null)||(typeof(LODOP.VERSION)=="undefined")) {
+                            if (navigator.userAgent.indexOf('Chrome')>=0)
+                                document.documentElement.innerHTML=strHtmChrome+document.documentElement.innerHTML;
+                            if (navigator.userAgent.indexOf('Firefox')>=0)
+                                document.documentElement.innerHTML=strHtmFireFox+document.documentElement.innerHTML;
+                            if (is64IE) document.write(strHtm64_Install); else
+                            if (isIE)   document.write(strHtmInstall);    else
+                                document.documentElement.innerHTML=strHtmInstall+document.documentElement.innerHTML;
+                            return LODOP;
+                        };
+                    };
+                    if (LODOP.VERSION<"6.2.1.5") {
+                        if (this.needCLodop())
+                            document.documentElement.innerHTML=strCLodopUpdate+document.documentElement.innerHTML; else
+                        if (is64IE) document.write(strHtm64_Update); else
+                        if (isIE) document.write(strHtmUpdate); else
+                            document.documentElement.innerHTML=strHtmUpdate+document.documentElement.innerHTML;
+                        return LODOP;
+                    };
+                    //===如下空白位置适合调用统一功能(如注册语句、语言选择等):===
+                    LODOP.SET_LICENSES("","13528A153BAEE3A0254B9507DCDE2839","","");
+                    //===========================================================
+                    return LODOP;
+                } catch(err) {alert("getLodop出错:"+err);};
+
+
+            },
+            needCLodop(){
+                try{
+                    var ua=navigator.userAgent;
+                    if (ua.match(/Windows\sPhone/i) !=null) return true;
+                    if (ua.match(/iPhone|iPod/i) != null) return true;
+                    if (ua.match(/Android/i) != null) return true;
+                    if (ua.match(/Edge\D?\d+/i) != null) return true;
+
+                    var verTrident=ua.match(/Trident\D?\d+/i);
+                    var verIE=ua.match(/MSIE\D?\d+/i);
+                    var verOPR=ua.match(/OPR\D?\d+/i);
+                    var verFF=ua.match(/Firefox\D?\d+/i);
+                    var x64=ua.match(/x64/i);
+                    if ((verTrident==null)&&(verIE==null)&&(x64!==null))
+                        return true; else
+                    if ( verFF !== null) {
+                        verFF = verFF[0].match(/\d+/);
+                        if ((verFF[0]>= 42)||(x64!==null)) return true;
+                    } else
+                    if ( verOPR !== null) {
+                        verOPR = verOPR[0].match(/\d+/);
+                        if ( verOPR[0] >= 32 ) return true;
+                    } else
+                    if ((verTrident==null)&&(verIE==null)) {
+                        var verChrome=ua.match(/Chrome\D?\d+/i);
+                        if ( verChrome !== null ) {
+                            verChrome = verChrome[0].match(/\d+/);
+                            if (verChrome[0]>=42) return true;
+                        };
+                    };
+                    return false;
+                } catch(err) {return true;};
+            },
+            choseRegister() {
+                this.paperIndex = 0
+                this.registerRequest()
+            },
+            requestEntrance() {
+                let patientId = this.$store.state.mystudent.currentPatientId.ID;
+                let params = {
+                    PatientAgentID: patientId,
+                    PageIndex: 1,
+                    PageSize: 10,
+                    'PackageType': '2'
+                };
+                api.requestTestMembers(params).then(res => {
+                    this.entrancelistData = res.Records;
+                });
+
+            },
+            requestEntranceContent(id) {
+                this.paperIndex = 4
+                api.getPacientTestDetails(id).then(res => {
+                    this.resultData  = res;
+                })
+            },
+            requestEntranceReport(id) {
+                this.paperIndex = 12
+                api.getPacientTestReport(id).then(res => {
+                    this.reportData = res;
+                })
+            },
+            requestDiagnosises() {
+                let _this = this;
+                api.requestDept().then(res => {
+                    _this.diagnosisesDeptData = res.data.List;
+                }).catch(err => {
+                    _this.$message.error('病种数据请求失败,请稍后再试');
+                });
+            },
+            registerRequest() {
+                let _this = this;
+                let patientId = _this.$store.state.mystudent.currentPatientId.ID;
+                api.getPatientAgentDetails(patientId).then(res => {
+                    _this.stuData = res.data;
+                    _this.requestDiagnosises();
+                }).catch(err => {
+                    _this.$message.error('获取患者信息失败！');
+                });
+                //获取家庭模式(FAMILYMODEL)、居住社区(COMMUNITY)、教养方式(EDUCATIONSTYLE)、语言环境(LANGUAGE)、抚养带教人(DEPENDENTS)
+                axios.all([api.getDictionaryData('FAMILYMODEL'),api.getDictionaryData('COMMUNITY'),api.getDictionaryData('EDUCATIONSTYLE'),api.getDictionaryData('LANGUAGE'),api.getDictionaryData('DEPENDENTS')])
+                    .then(axios.spread(function (one,two,three,four,five) {
+                        // Both requests are now complete
+                        _this.fiveConditionData.push(one.data.List,two.data.List,three.data.List,four.data.List,five.data.List)
+                    }));
+            },
+            IEPRequest() {
+                let params = {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    planType: 1,
+                    StudentID: this.$store.state.mystudent.currentPatientId.ID
+                }
+                api.drTeachingPlan(params).then(res => {
+                    this.personalPlanData = res.data;
+                });
+            },
+            checkCPEPResult(index, row) {
+//                var obj = {
+//                    Name: row.PatientAgentName,
+//                    ID: row.PatientAgentID
+//                }
+//                this.$store.dispatch('setCurrentPatientID', obj)
+//                this.$store.dispatch('setCPEPtestID',row.ID)
+//                this.paperIndex = 5
+
+                let params = {
+                    testId: row.ID,
+                    PatientAgentID: row.PatientAgentID,
+                    PageIndex: 1,
+                    PageSize: 10
+                };
+                api.getCPEPReport(params).then(res => {
+                    this.cpepDevResult =  res.data.Data;
+                    this.paperIndex = 5
+
+                })
+            },
+            checkCPEPScore(index, row) {
+                var obj = {
+                    Name: row.PatientAgentName,
+                    ID: row.PatientAgentID
+                }
+                this.$store.dispatch('setCurrentPatientID', obj)
+                this.$store.dispatch('setCPEPtestID',row.ID)
+
+                let params = {
+                    testId: row.ID,
+                    PatientAgentID: obj.ID,
+                    PageIndex: 1,
+                    PageSize: 10
+                };
+                api.getCPEPReport(params).then(res => {
+                    let resData =  res.data.Data;
+                    this.cpepTotalResult = resData.Result;
+                    this.cpepQuestionResults =  this.getSourceData(resData);
+                    this.cpepScores = this.calcDevScore(resData.Result);
+                    this.paperIndex = 6
+                })
+
+            },
+            choseClassRecords() {
+                this.paperIndex = 7
+            },
+            choseSpecialRecords() {
+                this.paperIndex = 8
+            },
+            choseStuTracking () {
+                this.paperIndex = 9
+            },
+            choseProgress () {
+                this.paperIndex = 10
+            },
+            choseSummary () {
+                this.paperIndex = 11
+            },
+            getSourceData(urlArr) {
+                let arr =  urlArr.TestResult.map(function (ele) {
+                    return ele.MaterialType;
+                }).filter(function(element,index,arr){
+                    return arr.indexOf(element) === index;
+                }).map(function (ele) {
+                    let sameMaterial = []
+                    let obj = {
+                        material: ele,
+                        sameArr: sameMaterial
+                    }
+                    return obj
+                });
+                urlArr.TestResult.forEach(function (ele) {
+                    for (let i = 0; i< arr.length; i++) {
+                        if (arr[i].material === ele.MaterialType) {
+                            arr[i].sameArr.push(ele)
+                        }
+                    }
+                })
+                return arr
+            },
+            calcDevScore(arr) {
+                let result = 0;
+                for (let i = 5;i < arr.length; i++) {
+                    result += arr[i].Result.P
+                }
+                return result
+            },
+            testRequest () {
+                let _this = this;
+                let params = {
+                    PageIndex: 1,
+                    PageSize: 100,
+                    PatientAgentID: _this.$store.state.mystudent.currentPatientId.ID
+                };
+                api.requestTestMembers(params).then(res => {
+                    let arr = res.Records.filter(ele => ele.Status === 1);
+                    this.testPaperListData = arr
+                })
+            },
+            requestTestPaticent(pageIndex) {
+                let params = {
+                    ExamID: this.examID,
+                    PageIndex: pageIndex,
+                    PageSize: 10
+                };
+                api.requestTestMembers(params).then(res => {
+                    this.testedPatientListData = res.Records;
+                    this.testedPatientListTotal = res.Total;
+                });
+            },
+            requestTestReportData(id) {
+                this.paperIndex = 1
+                api.getPacientTestReport(id).then(res => {
+                    this.reportData = res;
+                })
+            },
+            requesTestResultData(id) {
+                this.paperIndex = 2
+                api.getPacientTestDetails(id).then(res => {
+                    this.resultData = res;
+                });
+            },
+            checkTestedMembers() {
+                let params = {
+                    Size: 10,
+                    PageIndex: 1,
+                    PatientAgentID: this.$store.state.mystudent.currentPatientId.ID
+                }
+                api.getCPEPMember(params).then(res => {
+                    let arr = res.data.Data.Records;
+                    console.log('arr');
+                    console.log(arr);
+                    let lastEle = arr[arr.length - 1]
+                    this.cpepMemdbersData = arr
+                })
+            },
+            initData() {
+//                this.requestDiagnosises();  //获取病种信息，多个打印页面都要使用
+//                this.choseRegister()  //首次加载页面，先进行入学登记请求
+//                this.testRequest()    //首次加载页面，患者完成的评测列表
+//                this.IEPRequest()  //个人iep网络请求
+//                this.checkTestedMembers()  //cpep请求
+//                this.requestEntrance();  //入学测试
+            },
+            jumpLogin() {
+                this.dialogVisible = false
+                this.$router.go(-1);
+                let anchor = document.getElementById('lodapA')
+                setTimeout(function () {
+                    anchor.click()
+                },200)
+            },
+            handleClose() {},
+            handleOpen() {
+                console.log('handleOpen')
+            },
+            requestPlanDetails(id) {
+                api.getPlanDetail(id).then(res => {
+                    this.planDetailsData = res;
+                });
+            },
+            requestMonthDetails(id, title, name) {
+                this.paperIndex = 3
+                api.getPlanItemDetail(id).then(res => {
+                    this.iepMonthData = res.List;
+                    this.iepMonthTitle = '智力残疾康复个别化教育计划（IEP）' + '-' + name;
+                    this.iepTotalTheme = title.split('');
+                });
+            },
+            choseAttachment() {
+                this.paperIndex = 13
+            }
+        },
+        created() {
+            if (this.needCLodop()) {
+                var head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
+                var oscript = document.createElement("script");
+                oscript.src ="http://localhost:8000/CLodopfuncs.js?priority=1";
+                head.insertBefore( oscript,head.firstChild );
+
+                //引用双端口(8000和18000）避免其中某个被占用：
+                oscript = document.createElement("script");
+                oscript.src ="http://localhost:18000/CLodopfuncs.js?priority=0";
+                head.insertBefore( oscript,head.firstChild );
+            };
+            this.initData()
+        },
+        mounted() {
+
+        }
+    }
+</script>
+<style scoped>
+    .printWrap {
+        position: relative;
+        width: 100%;
+        height: 720px;
+    }
+
+    .print-sider {
+        float: left;
+        width: 320px;
+        box-sizing: border-box;
+        height: 100%;
+        padding: 10px;
+        overflow-y: scroll;
+        border: 1px solid #cccccc;
+    }
+
+    .print-sider-title {
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    .print-sider-paper {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .print-sider-paperNav {
+
+    }
+
+    .print-sider-paperIndex {
+        display: inline-block;
+        margin-right: 5px;
+        width: 18px;
+        height: 18px;
+        text-align: center;
+        line-height: 18px;
+        border-radius: 50%;
+        color: white;
+        background-color: black;
+    }
+
+    .print-content {
+        position: relative;
+        margin-left: 320px;
+        width: 860px;
+        height: 100%;
+    }
+
+    .print-content-paper-wrapper {
+        width: 750px;
+        margin: 0 auto;
+        padding: 10px 0;
+        height: 718px;
+        border: 1px solid #cccccc;
+        overflow: scroll;
+        background-color: #eef1f6;
+    }
+
+    #print-content-paper {
+        width: 715px;
+        /*height: 842px;*/
+        margin: 0 auto;
+        padding: 10px 18px;
+        box-sizing: content-box;
+        background-color: #fff;
+        /*box-shadow: 0 0 0 10px rgba(46,61,73,.1);*/
+        border-radius: .375rem;
+    }
+
+    /*自定义滚动条*/
+    .onc-scrollbar::-webkit-scrollbar
+    {
+        width: 8px;
+        height: 0;
+        background-color: #F5F5F5;
+    }
+
+    /*定义滚动条轨道 内阴影+圆角*/
+    .onc-scrollbar::-webkit-scrollbar-track
+    {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 10px;
+        background-color: #F5F5F5;
+    }
+
+    /*定义滑块 内阴影+圆角*/
+    .onc-scrollbar::-webkit-scrollbar-thumb
+    {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: #20a0ff;
+    }
+
+    .paperform-title {
+        font-size: 22px;
+        text-align: center
+    }
+
+    .paperform-filecode {
+        text-align: right
+    }
+
+    .paperform-form {
+        width: 100%;
+    }
+
+    .print-tool {
+        position: absolute;
+        top: 100px;
+        right: 20px;
+        width: 100px;
+        height: 40px;
+        color: #fff;
+        font-size: 14px;
+        background-color: #20a0ff;
+        border-color: #2d6297;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    .print-back {
+        position: absolute;
+        top: 160px;
+        right: 20px;
+        width: 100px;
+        height: 40px;
+        color: #fff;
+        font-size: 14px;
+        background-color: #20a0ff;
+        border-color: #2d6297;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    /*1080*1920 页面展示时设置padding:2px 10px   打印时的设置  padding:10px 18px*/
+
+    .tg  {border-collapse:collapse;border-spacing:0;width: 100%;border-color: black}
+    .tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center;vertical-align:center}
+    .tg .tg-baqh{text-align:center;vertical-align:center}
+    .tg .tg-yw4l{text-align:center;vertical-align:center}
+
+    .tg .tg-textleft{text-align:left;vertical-align:top}
+
+    .tg .tg-s6z2{text-align:center}
+
+    table {border-color: black}
+
+</style>
+

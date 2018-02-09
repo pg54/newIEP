@@ -1,0 +1,28 @@
+/*   css reset*/
+body {overflow-y: hidden;margin: 0;padding: 0;font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB,SimSun, sans-serif}
+body {background-color: #F6F6F6}
+li {list-style: none}
+/*   css reset------------------------------------------------end*/
+
+#container {
+  background-color: #F6F6F6;
+}
+/*   content*/
+
+.fullWidthContent {
+  width: 100vw;
+}
+.centerContent {
+  margin: 0 auto;
+  width: 1280px;
+  position: relative;
+}
+.clearfix:after {
+  display: block;
+  content: '';
+  clear: both;
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+/*   content------------------------------------------------end*/

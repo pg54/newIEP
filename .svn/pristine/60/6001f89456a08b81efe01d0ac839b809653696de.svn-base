@@ -1,0 +1,56 @@
+<template>
+    <div class="tabs" v-bind:style="{ width: labeleswidth + 'px' }">
+        <div class="tabs-chose">
+            <li v-for="(tab, index) in tablabels"
+                :class="{active : currenttab === index }"
+                @click="currentTab = index"
+                v-bind:style="{ height: labelheight + 'px', width: labeleswidth/len + 'px' }"
+            >{{tab}}
+            </li>
+        </div>
+
+        <div class="tabs-content">
+            <div v-for="(tab,index) in tabs" class="tab-content" v-show="currenttab === index">
+            </div>
+        </div>
+
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'tabs',
+        props: ['tablabels', 'labeleswidth','labelheight','currenttab'],
+        computed: {
+            len: function () {
+                return tablabels.length;
+            }
+        },
+        components: {
+        },
+        data() {
+            return {
+            };
+        },
+        mounted() {
+        }
+    };
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+    .tabs-chose {
+
+    }
+    .tabs-content {
+        width: 100%;
+        border: 1px solid red;
+    }
+    .tabs-chose li{
+        text-align: center;
+        cursor: pointer;
+    }
+    .tabs-chose .active {
+        color: #48C4FC;
+    }
+</style>

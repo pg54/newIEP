@@ -1,0 +1,226 @@
+<template>
+  <div>
+    <div class="table-area">
+
+      <div class="tool-box">
+        <el-row>
+          <el-col :span="14">
+            <el-dropdown @command="handleCommand" class="dataSelecter">
+         <span class="el-dropdown-link">
+         城市<i class="el-icon-caret-bottom el-icon--right"></i>
+         </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="a">湖北</el-dropdown-item>
+                <el-dropdown-item command="b">广东</el-dropdown-item>
+                <el-dropdown-item command="c">福建</el-dropdown-item>
+                <el-dropdown-item command="d" >山东</el-dropdown-item>
+                <el-dropdown-item command="e" >广西</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+
+            <el-dropdown @command="handleCommand" class="dataSelecter">
+         <span class="el-dropdown-link">
+         诊断<i class="el-icon-caret-bottom el-icon--right"></i>
+         </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="a">湖北</el-dropdown-item>
+                <el-dropdown-item command="b">广东</el-dropdown-item>
+                <el-dropdown-item command="c">福建</el-dropdown-item>
+                <el-dropdown-item command="d" >山东</el-dropdown-item>
+                <el-dropdown-item command="e" >广西</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+            <el-dropdown @command="handleCommand" class="dataSelecter">
+         <span class="el-dropdown-link">
+         分组<i class="el-icon-caret-bottom el-icon--right"></i>
+         </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="a">湖北</el-dropdown-item>
+                <el-dropdown-item command="b">广东</el-dropdown-item>
+                <el-dropdown-item command="c">福建</el-dropdown-item>
+                <el-dropdown-item command="d" >山东</el-dropdown-item>
+                <el-dropdown-item command="e" >广西</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </el-col>
+
+          <el-col :span="10">
+            <el-button>
+              <i class="icon-xinjianfenzu-copy">新增分组</i>
+            </el-button>
+            <el-button icon="plus">新增</el-button>
+            <el-button icon="delete">删除</el-button>
+          </el-col>
+        </el-row>
+      </div>
+
+      <el-table
+        :data="tableData3"
+        border
+        style="width: calc(100% - 100px)"
+        @selection-change="handleSelectionChange" class="op-table"
+        v-loading="listLoading">
+
+        <el-table-column
+          label="日期"
+          width="120">
+          <template scope="scope">{{ scope.row.date }}</template>
+        </el-table-column>
+
+        <el-table-column
+          prop="name"
+          label="姓名"
+          width="120">
+        </el-table-column>
+
+        <el-table-column
+          prop="address"
+          label="地址"
+          show-overflow-tooltip>
+        </el-table-column>
+
+        <el-table-column
+          label="编辑"
+          width="120">
+          <template scope="scope">
+            <el-button
+              @click.native.prevent="editgo(scope.$index, tableData3)"
+              type="text"
+              size="small">
+              <i class="icon iconfont icon-bianji"></i>
+            </el-button>
+          </template>
+        </el-table-column>
+
+
+        <el-table-column
+          label="删除"
+          width="120">
+          <template scope="scope">
+            <el-button
+              @click.native.prevent="deleteRow(scope.$index, tableData3)"
+              type="text"
+              size="small">
+              <i class="icon iconfont icon-shanchu"></i>
+            </el-button>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+
+      </el-table>
+
+      <el-button type="primary" @click="loaddata">加载数据</el-button>
+
+      <el-col :span="20" class="toolbar">
+        <el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">批量删除</el-button>
+        <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
+        </el-pagination>
+      </el-col>
+
+    </div>
+  </div>
+
+</template>
+
+<script>
+  export default {
+    name: 'usersTable',
+    data() {
+      return {
+        sels: [],
+        tableData3: [],
+        listLoading: false
+      };
+    },
+    methods: {
+      handleCommand(command) {
+        this.$message('click on item ' + command);
+      },
+      editgo: function(index, rows) {
+        const path = '/fileEditor' ;
+        this.$router.push({path: path});
+      },
+      deleteRow: function(index, rows) {
+        rows.splice(index, 1);
+      },
+      batchRemove: function() {
+        var ids = this.sels.map(item => item.id).toString();
+        this.$confirm('确认删除选中记录吗？', '提示', {type: 'warning'}).then(()=> {console.log(ids);})
+          .then(() => {
+            this.listLoading = true;
+//            let para = { ids: ids };
+//            batchRemoveUser(para)
+//              .then((res) => {
+//                this.listLoading = false;
+//                this.$message({
+//                  message: '删除成功',
+//                  type: 'success'
+//                });
+//              });
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            });
+          });
+      },
+      open: function() {
+        this.$message('这是一条消息提示');
+      },
+      handleSelectionChange: function(sels) {
+        this.sels = sels;
+      },
+      loaddata() {
+        var newdata = [
+          {
+            date: '2016-05-03',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-02',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-04',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-01',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-08',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-06',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-07',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }];
+        this.tableData3 = newdata;
+      }
+    }
+  };
+</script>
+<style scoped>
+  .op-table {
+    border-top: 2px solid RGBA(48, 188, 251, 1.00);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow:  0 0 5px gray;
+    -moz-box-shadow:  0 0 5px gray;
+    box-shadow:  0 0 5px gray;}
+
+  .tool-box {margin: 10px 0 10px;}
+  .icon-bianji {font-size: 25px}
+  .icon-shanchu {font-size: 25px}
+  .icon-xinjianfenzu-copy {font-size: 13px}
+</style>

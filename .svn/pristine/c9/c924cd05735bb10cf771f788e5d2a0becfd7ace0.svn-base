@@ -1,0 +1,401 @@
+<template>
+  <div class="mainContent">
+
+    <el-dialog title="修改个人信息" v-model="modifyProfileVisible" :close-on-click-modal="false" :show-close="false" @close="clearFormData">
+
+      <el-form :model="modifyProfileform" label-width="80px" :rules="modifyProfileRules" ref="modifyProfileRef">
+
+        <el-form-item label="更新头像">
+          <el-upload
+            class="avatar-uploader"
+            :action="getuploadURL()"
+            :headers="getAuth()"
+            :show-file-list="false"
+            :on-success="handleAvatarScucess"
+            :before-upload="beforeAvatarUpload">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar" v-model="modifyProfileform.Logo" style="width: 84px;height: 84px">
+            <Icon v-else type="upload" size="60"></Icon>
+          </el-upload>
+        </el-form-item>
+
+        <el-form-item label="姓名:">
+          <el-input v-model="modifyProfileform.NickName"></el-input>
+        </el-form-item>
+
+
+        <el-form-item label="科室:">
+          <el-select v-model="modifyProfileform.DeptID"  placeholder="请选择" @change="requestDepDiag">
+            <el-option
+              v-for="item in DeptNameData"
+              :key="item.Name"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+          <el-form-item label="病种选择:">
+              <el-select v-model="modifyProfileform.DiagnosisTags" multiple placeholder="请选择">
+                  <el-option
+                          v-for="item in diagnosisTagsData"
+                          :key="item.ID"
+                          :label="item.Name"
+                          :value="item.ID">
+                  </el-option>
+              </el-select>
+          </el-form-item>
+
+        <el-form-item label="职称:">
+
+          <el-select v-model="modifyProfileform.Title"  placeholder="请选择">
+            <el-option
+              v-for="item in TitleNameData"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="行政职务:">
+
+          <el-select v-model="modifyProfileform.Position"  placeholder="请选择">
+            <el-option
+              v-for="item in PositionNameData"
+              :key="item.ID"
+              :label="item.Name"
+              :value="item.ID">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="工作年限:">
+          <el-input v-model="modifyProfileform.WorkYear"></el-input>
+        </el-form-item>
+
+        <el-form-item label="研究领域:">
+          <el-input type="textarea" v-model="modifyProfileform.SearchArea"></el-input>
+        </el-form-item>
+
+        <el-form-item label="医疗工作领域:">
+          <el-input type="textarea" v-model="modifyProfileform.WorkArea"></el-input>
+        </el-form-item>
+
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click.native="closeModifyDailog">返回</el-button>
+        <el-button type="primary" @click.native="modifyProfileSubmit()">提交</el-button>
+      </div>
+
+    </el-dialog>
+
+    <div class="toolBox">
+      <el-button >发送名片</el-button>
+      <el-button  @click="modifyProfile()">修改</el-button>
+    </div>
+    <div class="person">
+      <el-card :body-style="{ padding: '0px',position: 'relative',height: '196px' }">
+
+        <div class="logoArea">
+          <div>
+            <img :src="drData.Logo" alt="logo" class="logoIMG">
+          </div>
+          <div>
+            <div>{{ drData.NickName }}</div>
+            <div>
+              <span>{{ drData.InstitutionName}}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="drDetails">
+          <div class="detailItem">
+            <span>工作年限: </span>
+            <span>{{ drData.WorkYear }}</span>
+          </div>
+
+          <div class="detailItem">
+            <span>职称:</span>
+            <span>{{ drData.TitleName }}</span>
+          </div>
+
+          <div class="detailItem">
+            <span>职称: </span>
+            <span>{{ drData.PositionName }}</span>
+          </div>
+        </div>
+
+        <div class="serviceInfo">
+          <div v-for="item in drData.Services" :key="item.OrderCount" class="order">
+            <div v-if="item.Name === '康复管家'" class="serviceItem">
+              <img src="../assets/images/dyma/康复管家.png" alt="logo">
+            </div>
+            <div v-else-if="item.Name === '图文咨询'" class="serviceItem">
+              <img src="../assets/images/dyma/图文咨询.png" alt="logo">
+            </div>
+            <div v-else-if="item.Name === '视频咨询'" class="serviceItem">
+              <img src="../assets/images/dyma/视频咨询.png" alt="logo">
+            </div>
+            <div v-else class="serviceItem">
+              图片加载中
+            </div>
+            <div class="serviceItem">{{item.Name}}</div>
+            <div class="servicePrice">价格:{{item.Price}}元/次</div>
+          </div>
+        </div>
+        
+
+        <div class="totalOrder">
+          <div class="orderNumber">总订单数</div>
+          <p CLASS="servicePrice">{{ drData.TotalOrderCount }}</p>
+        </div>
+
+      </el-card>
+
+    </div>
+
+
+    <div class="profession">
+
+      <el-card :body-style="{ padding: '0px' ,height: '310px'}">
+
+        <div class="professionItem workArea">
+          <p class="headTitle">研究领域:</p>
+          <p class="workContent">{{ drData.WorkArea }}</p>
+
+        </div>
+
+        <div class="professionItem">
+          <p class="headTitle">工作领域:</p>
+          <p class="workContent">{{ drData.SearchArea }}</p>
+        </div>
+
+        <div class="professionItem">
+          <p class="headTitle">病种领域</p>
+          <el-tag class="tag" v-for="item in drData.DiagnosisTags" :key="item.Name" type="primary"> {{item.Name}}</el-tag>
+
+        </div>
+        </el-card>
+
+    </div>
+  </div>
+</template>
+<script>
+  import { modifydrProfile, requestDept, requestTitle, requestPosition, uploadIMGURL, drProfile, setToken } from '../api/api';
+
+  export default {
+    name: 'serviceFile',
+      watch: {
+          '$route': 'getDrData'
+      },
+    data() {
+      return {
+        modifyProfileVisible: false,
+        isModify: false,
+        DeptNameData: [],
+        TitleNameData: [],
+        PositionNameData: [],
+        diagnosisTagsData: [],
+        imageUrl: '',
+        modifyProfileform: {
+          Logo: '',
+          NickName: '',
+          DeptID: '',
+          Title: '',
+          Position: '',
+          DiagnosisTags: [],
+          WorkArea: '',
+          SearchArea: '',
+          WorkYear: '',
+            drData: ''
+        }
+      };
+    },
+    methods: {
+        getDrData () {
+            drProfile().then(res => {
+                console.log('输出医生个人信息');
+                console.log(res);
+                this.drData = res.data;
+            });
+        },
+      clearFormData() {
+        this.modifyProfileform = {
+          Logo: '',
+          NickName: '',
+          DeptID: '',
+          Title: '',
+          Position: '',
+          DiagnosisTags: [],
+          WorkArea: '',
+          SearchArea: '',
+          WorkYear: ''
+        };
+      },
+      modifyProfileRules: {
+        NickName: [
+          { required: true, message: '请输入姓名', trigger: 'blur' }
+        ]
+      },
+      modifyProfile() {
+        drProfile().then(res => {
+          let originData = Object.assign({}, res.data);
+          this.imageUrl = originData.Logo
+          this.modifyProfileform.NickName = originData.NickName
+          this.modifyProfileform.DeptID = originData.DeptID
+          //two step
+          // first -> set dialog options
+          var totalArr = this.DeptNameData;
+          for (let i=0,j=totalArr.length;i<j;i++) {
+            if (totalArr[i].ID === this.modifyProfileform.DeptID) {
+              //设置病种options
+              this.diagnosisTagsData = totalArr[i].Diagnosises;
+              console.log('设置好的病种数据源');
+              console.log(this.diagnosisTagsData);
+            }
+          }
+          //second -> set select dialog option
+          var arr = originData.DiagnosisTags;
+          var selecedDialog = [];
+          for (var i=0;i<arr.length;i++) {
+            selecedDialog.push(arr[i].ID);
+          }
+          this.modifyProfileform.DiagnosisTags = selecedDialog
+          this.modifyProfileform.Title = originData.Title
+          this.modifyProfileform.Position = originData.Position
+          this.modifyProfileform.WorkArea = originData.WorkArea
+          this.modifyProfileform.SearchArea = originData.SearchArea
+          this.modifyProfileform.WorkYear = originData.WorkYear
+          this.modifyProfileVisible = true;
+        });
+      },
+      getAuth() {
+        return {'authorization': sessionStorage.getItem('accessToken')};
+      },
+      requestDepDiag(value) {
+        var totalArr = this.DeptNameData;
+        for (let i=0,j=totalArr.length;i<j;i++) {
+          if (totalArr[i].ID === value) {
+            //设置病种options
+            this.diagnosisTagsData = totalArr[i].Diagnosises;
+            if (i !== 0) {
+              this.$message.warning('暂时只开通诊断评估，请选择诊断评估科室后再选择病种');
+            }
+            console.log('设置好的病种数据源');
+            console.log(this.diagnosisTagsData);
+          }
+        }
+      },
+      closeModifyDailog() {
+        this.clearFormData();
+        this.modifyProfileVisible = false;
+      },
+      modifyProfileSubmit() {
+        var pushData = Object.assign({}, this.modifyProfileform);
+        var formDailogData = pushData.DiagnosisTags;
+        console.log('dialog have selected');
+        console.log(pushData.DiagnosisTags);
+        pushData.DiagnosisTags.map(function (item) {
+          return {'ID': item};
+        });
+        for(var i=0;i<pushData.DiagnosisTags.length;i++) {
+          var params = pushData.DiagnosisTags[i];
+          pushData.DiagnosisTags[i] = {'ID': params};
+        }
+        console.log('new dialog selected');
+        console.log(pushData.DiagnosisTags);
+        var params = pushData;
+        console.log('submit comtent');
+        console.log(params);
+        modifydrProfile(params).then(res => {
+          console.log('modify suceess RES');
+          console.log(res);
+          var code = res.data.Code;
+          if (code === 0) {
+            drProfile().then(res => {
+              console.log('重新获取用户profile');
+              console.log(res.data);
+              this.$store.dispatch('addbaseService', res.data);
+            });
+            this.modifyProfileVisible = false;
+            this.$message.success('修改成功');
+          }
+        });
+      },
+      makeFormData(data) {
+        let dialogIDs = [];
+        console.log( '病种的数据源');
+        for(let i=0;i<data.length;i++) {
+          var obj = {
+            ID: data[i].ID
+          }
+          dialogIDs.push(obj);
+        }
+        return dialogIDs;
+
+      },
+      getuploadURL() {
+        return uploadIMGURL;
+      },
+      handleAvatarScucess(res, file) {
+        if (res.Code === 0) {
+          this.imageUrl = res.Path;
+          console.log('UPLAOD PICTURE');
+          console.log(res.Msg);
+          this.modifyProfileform.Logo = res.Msg;
+        } else {
+          this.$message.error('没有找到文件');
+        }
+      },
+      beforeAvatarUpload() {
+      }
+    },
+      mounted() {
+      },
+      created () {
+        this.getDrData();
+//        requestDept().then(res => {
+//            this.DeptNameData = res.data.List;
+//            console.log('科室的详细数据');
+//            console.log(this.DeptNameData);
+//        });
+//        requestTitle().then(res => {
+//            this.TitleNameData = res.data.List;
+//        });
+//        requestPosition().then(res => {
+//            console.log(res.data);
+//            this.PositionNameData = res.data.List;
+//        });
+    }
+  };
+</script>
+<style scoped>
+  .title {width: 80%;height: 626px;margin: 20px auto 0}
+  .logoIMG {width: 80px;height: 80px;
+    -webkit-border-radius:40px;
+    -moz-border-radius:40px;
+    border-radius:40px;}
+  .headTitle {font-size: 16px;font-weight: bold;color: #333333;margin-bottom: 14px}
+
+  .mainContent {width: 1186px;height: 626px;padding: 0 28px}
+  .person {width: 1130px;margin: 20px 0;font-size: 16px}
+  .profession {width: 1130px;margin: 20px 0}
+  .toolBox {width: 1130px;margin: 16px 0;display: flex;justify-content: flex-end}
+  .logoArea {position: absolute;left: 0;top: 0;width: 152px;height: 100%;display: flex;flex-direction: column;align-items: center;justify-content: center}
+  .drDetails{position: absolute;left: 152px;top: 0;width: 136px;height: 100%;display: flex;flex-direction: column;align-items: center;justify-content: center}
+ .detailItem {margin-bottom: 26px;}
+ .detailItem span {}
+  .serviceInfo {position: absolute;left: 279px;top: 0;width: 584px;height: 100%;display: flex;align-items: center;justify-content: space-around}
+  .serviceItem{margin-bottom: 20px}
+  .servicePrice {font-size: 18px;color: #23BAFF}
+  .order {display: flex;flex-direction: column;align-items: center;justify-content: center}
+  .orderNumber {font-size: 18px;color: #333333;margin-bottom: 20px}
+  .totalOrder{position: absolute;left: 863px;top: 0;width:264px;height: 100%;display: flex;flex-direction: column;align-items: center;justify-content: center }
+  .professionItem {margin-bottom: 26px;margin-left: 24px}
+  .workContent {font-size: 16px;color: #999999}
+  .workArea {margin-top: 24px}
+  .tag {margin-right: 20px}
+  .avatar-uploader {}
+
+</style>

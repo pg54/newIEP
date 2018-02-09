@@ -1,0 +1,205 @@
+<template>
+    <div class="testPaper">
+        <div class="studentBox">
+            <el-select v-model="selectedPacientIDS" placeholder="请选择小组" @change="filterPacient">
+                <el-option
+                        v-for="(item, index) in selectedGroup"
+                        :key="item.groupName"
+                        :label=item.groupName
+                        :value=index>
+                </el-option>
+            </el-select>
+
+            <el-select v-model="PatientAgents" multiple placeholder="请选择患者" ref="pacientesSelecter">
+                <el-option
+                        v-for="(item, index) in selectedGroupPacientes"
+                        :key="item.Name"
+                        :label=item.Name
+                        :value=item.PatientID>
+                </el-option>
+            </el-select>
+        </div>
+        <div class="formBox">
+
+                <div class="tabs">
+
+                    <div class="tabs-chose">
+                        <li v-for="(paper, index) in testPaperContentData.Papers"
+                            :class="{active : currentTab === index }"
+                            @click="currentTab = index">
+                            <p>{{paper.Name}}</p>
+                        </li>
+                    </div>
+
+                    <div class="tabs-content">
+
+                        <div v-show="currentTab === paperIndex" class="tab-content" v-for="(paper, paperIndex) in testPaperContentData.Papers">
+
+                            <div class="questionBox">
+                                <div v-for="(section, sectionIndex) in paper.Sections">
+                                    <h2>章节: {{section.Name}}</h2>
+                                    <div v-for="(question, questionIndex) in section.Questions">
+                                        <p class="questionDescrib">{{ question.Description}}</p>
+                                        <div v-for="(option, optionIndex) in question.Options">
+                                            <input  type="radio" :value="option.Sequence" :name="question.Description" v-model="testPaperFormData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result"  >
+                                            <label >{{ option.Name }}</label>
+                                        </div>
+                                        <br>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+        </div>
+
+
+        <div class="submitBox">
+            <el-button type="primary" @click="submitTestContent">完成</el-button>
+        </div>
+
+    </div>
+</template>
+<script>
+    import { getTestPaperContent } from '../../../api/api';
+    export default {
+        name: 'testPaper',
+        data() {
+            return {
+                questionAnswers: [],
+                testPaperContentData: [],
+                testPaperFormData: [],
+                updateData: [],
+                currentTab: 0,
+                selectedGroup: this.$store.state.mystudent.patientList,
+                selectedPacientIDS: '',
+                selectedGroupPacientes: [],
+                PatientAgents: []
+//                testData: {
+//                    ID: 'ASDGHJ',
+//                    options: [
+//                        {Sequence: 1,Name: 'a'},
+//                        {Sequence: 2,Name: 'a'},
+//                        {Sequence: 3,Name: 'a'}
+//                    ],
+//                },
+//                testResult: {
+//                    QuestionID: '',
+//                    Result: ''
+//                }
+            };
+        },
+        methods: {
+            requesTestPaperData() {
+                let params = this.$route.params.id;
+                getTestPaperContent(params).then(res => {
+                    console.log('测试内容');
+                    console.log(res);
+//                    this.setFormData(res);
+                  this.testPaperFormData = Object.assign({},res);
+                    this.testPaperContentData = res;
+                });
+            },
+          submitTestContent() {
+            let qustionAnswers = [];
+            let originData = this.testPaperFormData.Papers;
+            for(let i=0;i<originData.length;i++) {   //试卷
+
+              for (let j = 0; j < originData[i].Sections.length; j++) {  //章节
+
+                for (let k = 0; k < originData[i].Sections[j].Questions.length; k++) {  //问题
+
+                  let unitForm = {
+                    QuestionID: originData[i].Sections[j].Questions[k].ID,
+                    Result: originData[i].Sections[j].Questions[k].Result
+                  };
+                  console.log('单个问题');
+                  console.log(unitForm);
+                  qustionAnswers.push(unitForm);
+
+                }
+              }
+            }
+            console.log('已经填写的表单');
+            console.log(qustionAnswers);
+          },
+          filterPacient(val) {
+            this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+          },
+            setFormData(res) {
+                let formContaioner = [];
+                let updataitmes= [];
+//                let unitForm = {
+//                    QuestionID: '',
+//                    Result: ''
+//                };
+                //解开for循环，得到一个三层嵌套数组。
+                let originData = res.Papers
+                for(let i=0;i<originData.length;i++){   //试卷
+
+
+                    for (let j=0;j<originData[i].Sections.length;j++) {  //章节
+
+
+                        for (let k=0;k<originData[i].Sections[j].Questions.length;k++) {  //问题
+
+                          formContaioner.push(originData[i].Sections[j].Questions[k]);
+                          let unitForm = {
+                            QuestionID: originData[i].Sections[j].Questions[k].ID,
+                            Result: ''
+                          };
+                          updataitmes.push(unitForm);
+//                            for (let l=0;l<originData[i].Sections[j].Questions[k].Options.length;l++) { //选项
+
+
+                        }
+                    }
+                }
+                this.testPaperFormData = formContaioner;
+              this.updateData = updataitmes;
+                console.log('表单数组的内容');
+                console.log(this.testPaperFormData);
+            }
+        },
+        mounted() {
+            this.requesTestPaperData();
+        }
+    };
+</script>
+<style scoped>
+    .testPaper {position: absolute;width: 100%;top: 40px;left: 0;height: 586px;z-index: 10;}
+    .studentBox {width: 100%;height: 56px}
+    .submitBox{width: 100%;height: 102px;display: flex;justify-content: center;align-items: center}
+
+    .formBox {position: relative;width: 100%;height: 428px}
+    .tabs {position: relative;width: 95%;height: 428px;margin: 0 auto}
+    .tabs-chose {position: absolute;width: 94px;height: 428px;background-color: #EEEFF0;border-right: 1px solid #EFEFEF;}
+    .tabs-content {
+        position: absolute;
+        left: 94px;
+        top: 0;
+        width: 1185px;
+        height: 428px;
+        overflow-y: scroll
+    }
+    .tabs-chose li{
+        width: 94px;
+        height: 60px;
+        background-color: RGBA(238, 239, 240, 1.00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .tabs-chose .active {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+        border-left: 6px solid #31BBFC;
+    }
+    .optionsSpace {width: 100%;height: 20px}
+    .testWrap {width: 100px}
+    .questionDescrib {font-size: 16px}
+</style>

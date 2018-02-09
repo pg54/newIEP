@@ -1,0 +1,177 @@
+<template>
+    <div class="reportPaper">
+        <el-form>
+            <div class="toolBox">
+
+                <el-row :gutter="5">
+                    <el-col :xs="4" :sm="4" :md="4" :lg="4">
+                        <el-form-item label="小组">
+                            <el-select v-model="selectedPacientIDS" placeholder="" @change="filterPacient" >
+                                <el-option
+                                        v-for="(item, index) in selectedGroup"
+                                        :key="item.groupName"
+                                        :label=item.groupName
+                                        :value=index>
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+
+                    </el-col>
+
+                    <el-col :xs="4" :sm="4" :md="4" :lg="4">
+                        <el-form-item label="患者">
+                            <el-select v-model="form.patient" multiple placeholder="" >
+                                <el-option
+                                        v-for="(item, index) in selectedGroupPacientes"
+                                        :key="item.Name"
+                                        :label=item.Name
+                                        :value=item.PatientID>
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+
+                    </el-col>
+
+                    <el-col :xs="4" :sm="4" :md="4" :lg="4">
+                        <el-form-item label="性别">
+                            <el-select v-model="form.sex" multiple placeholder="">
+                                <el-option
+                                        v-for="(item, index) in sexOptions"
+                                        :key="item.value"
+                                        :label=item.label
+                                        :value=item.value>
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+
+                    </el-col>
+
+                    <el-col :xs="4" :sm="4" :md="4" :lg="4">
+                        <el-form-item label="出生日期">
+                            <el-date-picker type="date" placeholder="" v-model="form.date1" ></el-date-picker>
+                        </el-form-item>
+                    </el-col>
+
+                    <el-col :xs="4" :sm="4" :md="4" :lg="4">
+                        <el-form-item label="诊断日期">
+                            <el-time-picker type="fixed-time" placeholder="" v-model="form.date2" ></el-time-picker>
+                        </el-form-item>
+
+                    </el-col>
+
+                    <el-col :xs="4" :sm="4" :md="4" :lg="4">
+                        <el-form-item label="诊断人">
+                            <el-input v-model="form.name" ></el-input>
+                        </el-form-item>
+                    </el-col>
+
+                </el-row>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+            <div class="tabs">
+                <div class="tabs-chose">
+                    <li v-for="(section, index) in reportSections"
+                        :class="{active : currentTab === index }"
+                        @click="currentTab = index">
+                        <p>{{section}}</p>
+                    </li>
+                </div>
+                <div class="tabs-content">
+                    <div v-show="currentTab === 0" class="tab-content">
+
+                    </div>
+                    <div v-show="currentTab === 1" class="tab-content">
+
+                    </div>
+                    <div v-show="currentTab === 2" class="tab-content">
+
+                    </div>
+                    <div v-show="currentTab === 3" class="tab-content">
+
+                    </div>
+                </div>
+            </div>
+        </el-form>
+
+        <el-button @click="goback">提交</el-button>
+    </div>
+</template>
+<script>
+
+    export default {
+        name: 'testReport',
+        data() {
+            return {
+                currentTab: 0,
+                reportSections: ['学生基本资料','家庭资料','优势，劣势','学习能力综合分析'],
+                form : {
+                    patient: [],
+                    sex: '',
+                    date1: '',
+                    date2: '',
+                    name: ''
+                },
+                sexOptions: [
+                    {label: '男', value: '1'},
+                    {label: '男', value: '0'}
+                ],
+                selectedGroup: this.$store.state.mystudent.patientList,
+                selectedPacientIDS: '',
+                selectedGroupPacientes: [],
+            }
+        },
+        methods: {
+            filterPacient(val) {
+                this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+            },
+            goback() {
+              this.$router.go(-1);
+              this.$parent.tabsShow = true;
+            }
+        },
+        mounted() {
+
+        }
+    };
+</script>
+<style scoped>
+    .reportPaper {position: absolute;width: 100%;top: 40px;left: 0;height: 586px;z-index: 20;}
+    .toolBox {width: 1180px;height: 86px;margin: 0 auto}
+    .tabs {position: relative;width: 1180px;height: 500px;margin: 0 auto}
+    .tabs-chose {position: absolute;width: 106px;height: 428px;background-color: #EEEFF0;border-right: 1px solid #EFEFEF;}
+    .tabs-content {
+        position: absolute;
+        left: 106px;
+        top: 0;
+        width: 1074px;
+        height: 500px;
+        overflow-y: scroll
+    }
+    .tabs-chose li{
+        width: 106px;
+        height: 60px;
+        background-color: RGBA(238, 239, 240, 1.00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .tabs-chose .active {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+        border-left: 6px solid #31BBFC;
+    }
+
+</style>

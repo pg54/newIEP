@@ -1,0 +1,187 @@
+<template>
+    <div class="cpepTemplate">
+        <table class="tg">
+            <thead>
+            <tr>
+                <th class="tg-baqh" colspan="4">任务项目</th>
+                <th class="tg-baqh" colspan="3">材料</th>
+                <th class="tg-baqh" colspan="7">实施方法</th>
+                <th class="tg-baqh" colspan="3">领域</th>
+                <th class="tg-baqh" colspan="7">评分</th>
+
+            </tr>
+            </thead>
+
+            <template v-for="ele in submitData">
+                <!--<tr v-if=" setNowMaterialType(ele)" >-->
+                    <!--<td class="tg-yw4l" colspan="4">{{ele.Name}}</td>-->
+                    <!--<td class="tg-yw4l" colspan="3">{{ ele.Material}}</td>-->
+                    <!--<td class="tg-yw4l" colspan="7">{{ ele.Description}}</td>-->
+                    <!--<td class="tg-yw4l" colspan="3">{{ ele.Domain}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>-->
+                    <!--<td class="tg-yw4l" colspan="7">-->
+                        <!--<p v-for="item in ele.Options" class="optionBox">-->
+                            <!--<input type="radio" :value="item.Option"-->
+                                   <!--:id="item.ID" class="radioclass"-->
+                                   <!--@change="selectOption(item.QuestionID,item.Option)"-->
+                            <!--&gt;-->
+                            <!--<label :for="item.ID" class="simbleBox"></label>-->
+                            <!--<label :for="item.ID" class="clickLabel">-->
+                                <!--<span>{{item.Option}}:&nbsp;&nbsp;{{item.Description}}</span>-->
+                            <!--</label>-->
+                            <!--&lt;!&ndash;<label :for="item.ID" class="clickLabel">{{item.ID}}{{item.Description}}</label>&ndash;&gt;-->
+                        <!--</p>-->
+                    <!--</td>-->
+                <!--</tr>-->
+
+                    <tr v-if="!setNowMaterialType(ele)">
+                        <td class="tg-yw4l leftAlign bondText" colspan="24">{{ele.MaterialType}}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="tg-yw4l" colspan="4">{{ele.Name}}</td>
+                        <td class="tg-yw4l" colspan="3">{{ ele.Material}}</td>
+                        <td class="tg-yw4l" colspan="7">{{ ele.Description}}</td>
+                        <td class="tg-yw4l" colspan="3">{{ ele.Domain}}</td>
+                        <td class="tg-yw4l" colspan="7">
+                            <p v-for="item in ele.Options" class="optionBox">
+                                <input type="radio" :value="item.Option"
+                                       :id="item.ID" class="radioclass"
+                                       @change="selectOption(item.QuestionID,item.Option)"
+                                >
+                                <label :for="item.ID" class="simbleBox"></label>
+                                <label :for="item.ID" class="clickLabel">
+                                    <span>{{item.Option}}:&nbsp;&nbsp;{{item.Description}}</span>
+                                </label>
+                                <!--<label :for="item.ID" class="clickLabel">{{item.ID}}{{item.Description}}</label>-->
+                            </p>
+                        </td>
+                    </tr>
+
+            </template>
+
+        </table>
+        <el-button style="position: fixed;top: 675px;left: 1170px" @click.native="submitResultContent">提交测试</el-button>
+    </div>
+
+</template>
+
+<script>
+    import api from '../api/index.js';
+    export default {
+        name: 'serviceCPEP',
+        props: ['cpepData','pacientID'],
+        data() {
+            return {
+                frstMaterialType: '',
+                //difMaterialTypeEle: '',
+                selectedChoses: [],
+                numberIndex:1,
+            }
+        },
+        computed: {
+           submitData: function () {
+               return Object.assign({},this.cpepData)
+           },
+            resultPaperID: function () {
+                return this.cpepData[0].PaperID
+            }
+        },
+        methods: {
+            selectOption(id,option) {
+                console.log(id)
+                console.log(option)
+            },
+            setNowMaterialType(param) {
+//                if(this.numberIndex >139 && this.numberIndex<=200 ){
+//                    console.log(param)
+//                }
+//                this.numberIndex++;
+                console.log('JJJJJJJJJJJJJJ')
+                if (param.MaterialType === this.frstMaterialType) {
+
+                    return true
+                } else {
+                    //this.difMaterialTypeEle = param;
+                    this.frstMaterialType = param.MaterialType;
+                    return false;
+                }
+            },
+            submitResultContent() {
+                let arr = this.submitData
+                console.log(typeof arr)
+                let resultArr = []
+                for (var ele in arr) {
+                    var obj = {
+                        Result: arr[ele].Result,
+                        QuestionID: arr[ele].ID
+                    }
+                    resultArr.push(obj)
+                }
+                let params = {
+                    PatientAgentID: this.pacientID,
+                    PaperID: this.resultPaperID,
+                    Result: resultArr
+                }
+                api.postCPEPResult(params).then(res => {
+                    if (res.data.Status) {
+                       this.$message.success(res.data.Msg)
+                    } else {
+                        this.$message.error(res.data.Msg)
+                    }
+                })
+
+            }
+        }
+    }
+</script>
+<style scoped>
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-baqh{text-align:center;vertical-align:middle}
+    .tg .tg-yw4l{text-align: left;vertical-align: top}
+
+    .leftAlign {text-align: left}
+    .cpepTemplate {width: 80%;margin: 10px auto}
+
+    .bondText {font-weight: bold}
+
+    .optionBox {
+        position: relative;
+        margin-bottom: 6px;
+    }
+
+    .radioclass {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+    .simbleBox {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        background-image: url("../assets/images/serviceToolImg/默认选框.png");
+    }
+    .clickLabel {
+        margin-left: 30px;
+        display: inline-block;
+        cursor: pointer;
+        width: calc(100% - 60px);
+    }
+    input[type=radio]:checked + label {
+        background-image: url("../assets/images/serviceToolImg/选中选框.png");
+    }
+
+
+</style>

@@ -1,0 +1,141 @@
+.title {
+    width: 80%;
+    height: 583px;
+    margin: 20px auto 0
+}
+
+.logoIMG {
+    width: 80px;
+    height: 80px;
+    -webkit-border-radius: 40px;
+    -moz-border-radius: 40px;
+    border-radius: 40px;
+}
+
+.headTitle {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333333;
+    margin-bottom: 14px
+}
+
+.mainContent {
+    width: 1186px;
+    height: 583px;
+    padding: 0 28px
+}
+
+.person {
+    width: 1130px;
+    margin: 20px 0;
+    font-size: 16px
+}
+
+.profession {
+    width: 1130px;
+    margin: 20px 0
+}
+
+.toolBox {
+    width: 1130px;
+    margin: 16px 0;
+    display: flex;
+    justify-content: flex-end
+}
+
+.logoArea {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 152px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
+}
+
+.drDetails {
+    position: absolute;
+    left: 152px;
+    top: 0;
+    width: 136px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
+}
+
+.detailItem {
+    margin-bottom: 26px;
+}
+
+.detailItem span {
+}
+
+.serviceInfo {
+    position: absolute;
+    left: 279px;
+    top: 0;
+    width: 584px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around
+}
+
+.serviceItem {
+    margin-bottom: 20px
+}
+
+.servicePrice {
+    font-size: 18px;
+    color: #23BAFF
+}
+
+.order {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
+}
+
+.orderNumber {
+    font-size: 18px;
+    color: #333333;
+    margin-bottom: 20px
+}
+
+.totalOrder {
+    position: absolute;
+    left: 863px;
+    top: 0;
+    width: 264px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center
+}
+
+.professionItem {
+    margin-bottom: 26px;
+    margin-left: 24px
+}
+
+.workContent {
+    font-size: 16px;
+    color: #999999
+}
+
+.workArea {
+    margin-top: 24px
+}
+
+.tag {
+    margin-right: 20px
+}
+
+.avatar-uploader {
+}

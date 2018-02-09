@@ -1,0 +1,32 @@
+<template>
+    <div>
+
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'iepPrinter',
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+
+        },
+        methods: {
+
+        },
+        created() {
+
+        },
+        beforeMount() {
+
+        },
+        mounted() {
+
+        }
+    }
+
+</script>

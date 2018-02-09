@@ -1,0 +1,48 @@
+<template>
+  <div>
+    <div id="sidebar">
+      <div class="sidelinks">
+        <ul slot="links">
+          <li><router-link class='link' to="/informCoope/noticeReminder">通报提醒</router-link></li>
+          <li><router-link class='link' to="/informCoope/dynamicTracking">动态跟踪</router-link></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mainContent">
+      <router-view></router-view>
+    </div>
+  </div>
+</template>
+<script>
+  import Navbar from '../../components/Navbar.vue';
+  export default {
+    name: '',
+    components: {
+      Navbar
+    },
+    mounted() {
+      this.$router.push({path: '/informCoope/noticeReminder'});
+    }
+  };
+</script>
+<style scoped>
+  .mainContent {position: absolute;left: 95px;top: 0;width: calc(100% - 95px);height: 626px;overflow: scroll}
+  #sidebar {position: absolute;left: 0;top: 0;width: 95px;height: 626px;background-color: RGBA(238, 239, 240, 1.00);}
+  .sidelinks {}
+  .link {
+      width: 94px;
+      height: 60px;
+      background-color: RGBA(238, 239, 240, 1.00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+  }
+
+  .router-link-active {
+      background-color: #ffffff;
+      color: RGBA(32, 160, 255, 1.00);
+      border-left: 6px solid #31BBFC;
+  }
+
+
+</style>

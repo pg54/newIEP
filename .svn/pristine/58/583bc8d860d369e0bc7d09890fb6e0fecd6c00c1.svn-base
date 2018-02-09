@@ -1,0 +1,69 @@
+<template>
+    <div>
+        <reportPaper :testID="testTestID" :paticentID="testPaticentID"></reportPaper>
+    </div>
+</template>
+<script>
+    import { getPacientTestReport } from '../../../api/api';
+    import reportPaper from '../../rehabilitationFile/RF-Analysis/child/reportPaper.vue';
+
+    export default {
+        name: 'testReport',
+        components: {
+            reportPaper
+        },
+        data() {
+            return {
+                testTestID: '',
+                testPaticentID: ''
+            }
+        },
+        methods: {
+            setComponProps() {
+                this.testTestID = this.$route.params.id;
+                this.testPaticentID = this.$route.params.patiend_id;
+            }
+        },
+        mounted() {
+            this.setComponProps();
+        }
+    };
+</script>
+<style scoped>
+    .reportPaper {position: absolute;width: 100%;top: 42px;left: 0;height: 583px;z-index: 20;}
+    .toolBox {width: 1180px;margin: 0 auto;height: 66px;}
+    .tabs {position: relative;width: 1180px;height: 520px;margin: 0 auto}
+    .tabs-chose {position: absolute;width: 106px;height: 428px;background-color: #EEEFF0;border-right: 1px solid #EFEFEF;border-radius: 6px 0 0 6px;padding-top: 0.5px}
+    .tabs-content {
+        position: absolute;
+        left: 106px;
+        top: 0;
+        width: 1074px;
+        height: 520px;
+        overflow-y: scroll;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px 0 rgba(0,0,0,.12), 0 0 6px 0 rgba(0,0,0,.04);
+    }
+    .tab-content {}
+    .tabs-chose li{
+        width: 106px;
+        height: 60px;
+        background-color: RGBA(238, 239, 240, 1.00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .tabs-chose .active {
+        background-color: #ffffff;
+        color: RGBA(32, 160, 255, 1.00);
+        border-left: 6px solid #31BBFC;
+    }
+    .courseHeader {font-size: 16px;font-weight: bold}
+    .center-content {
+        width: 1034px;
+        margin: 0 20px;
+    }
+    .toolBox { }
+    .textBlock {display: inline-block;width: 140px;margin-right: 10px}
+    .blockItem {display: inline-block;height: 60px;margin-right: 20px;line-height: 60px}
+</style>

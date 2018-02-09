@@ -1,0 +1,94 @@
+<template>
+    <div>
+        <div class="paperform-content">
+
+            <div class="paperform-form">
+                <table class="tg">
+                    <caption><b style="font-size: 24px">智力残疾康复教育月教学计划</b></caption>
+                    <tr>
+                        <th class="tg-031e" colspan="2" rowspan="2">领域</th>
+                        <th class="tg-s6z2" colspan="9" rowspan="2">教学目标</th>
+                        <th class="tg-s6z2" colspan="9" rowspan="2">教学内容</th>
+                        <th class="tg-031e" colspan="4">末次评测详情</th>
+                    </tr>
+                    <tr>
+                        <td class="tg-031e">A</td>
+                        <td class="tg-yw4l">B</td>
+                        <td class="tg-yw4l">C</td>
+                        <td class="tg-031e">D</td>
+                    </tr>
+
+                    <tr v-for="ele in iepMothInfo">
+                        <td class="tg-031e" colspan="2">{{ ele.Name }}</td>
+                        <td class="tg-031e" colspan="9">{{ ele.TeachTarget}}</td>
+                        <td class="tg-031e" colspan="9">{{ ele.TeachContent }}</td>
+                        <td class="tg-031e" v-for="item in ele.History">
+                            {{item.Count}}
+                        </td>
+                    </tr>
+
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'iepPrinter',
+        props: ['iepMothInfo'],
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+
+        },
+        methods: {
+
+        },
+        created() {
+
+        },
+        beforeMount() {
+
+        },
+        mounted() {
+
+        }
+    }
+
+</script>
+
+<style>
+    @media screen {
+        .print-content {
+            /*box-sizing: border-box;*/
+        }
+
+        .paperform-title {
+            font-size: 22px;
+            text-align: center
+        }
+
+        .paperform-subTitle {
+            text-align: center;
+        }
+
+        .paperform-form {
+            width: 100%;
+        }
+
+        /*1080*1920 页面展示时设置padding:2px 10px   打印时的设置  padding:10px 18px*/
+        .tg  {border-collapse:collapse;border-spacing:0;width: 100%}
+        .tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+        .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+        .tg .tg-s6z2{text-align:center;vertical-align:center}
+        .tg .tg-baqh{text-align:center;vertical-align:center}
+        .tg .tg-yw4l{text-align:center;vertical-align:center}
+        .tg .tg-textleft{text-align:left;vertical-align:top}
+    }
+</style>

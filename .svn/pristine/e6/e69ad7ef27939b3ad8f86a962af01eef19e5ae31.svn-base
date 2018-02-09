@@ -1,0 +1,51 @@
+/*   css reset*/
+.fullWidthContent {
+    width: 100vw;
+}
+.centerContent {
+    margin: 0 auto;
+    width: 1280px;
+    position: relative;
+}
+
+.clearfix:after {
+    display: block;
+    content: '';
+    clear: both;
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+a:visited {
+    color: #444;
+    text-decoration: none;
+}
+/*   css reset------------------------------------------------end*/
+
+#container {
+  background-color: #F6F6F6;
+}
+/*   content*/
+
+.centerContent {
+  margin: 0 auto;
+  width: 1280px;
+  position: relative;
+}
+.clearfix:after {
+  display: block;
+  content: '';
+  clear: both;
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
+
+/*   content------------------------------------------------end*/
+
+/*时间标志*/
+.timeIcon {
+    margin-top: 5px;
+}

@@ -1,0 +1,416 @@
+<template>
+  <div class="dyma-data">
+  
+    <el-card class="box-card announcement" body-style="padding-top:10px">
+  
+      <div class="clearfix newsHeader">
+        <img src="../../../assets/images/dyma/新闻快讯icon.png" alt="">
+        <span class="header-title">新闻快讯</span>
+        <el-button style="float: right;color: #333333" @click="goNews" type="text">更多
+          <i class="el-icon-d-arrow-right"></i>
+        </el-button>
+  
+      </div>
+  
+      <div class="newsList quikNews">
+        <div v-for="o in recCompanyNewsData" class="text item">
+          <img :src="o.Logo" alt="logo" style="width: 66px;height: 40px">
+            <a :href="o.Path">
+                <span class="newsTitle">{{ shortTitle(o.Title) }}</span>
+            </a>
+          <span class="newsTime">{{ o.CreatedOn.split(' ')[0] }}</span>
+        </div>
+      </div>
+  
+    </el-card>
+  
+    <el-card class="box-card notification" body-style="padding-top:10px">
+      <div class="clearfix newsHeader">
+        <span style="line-height: 20px;">
+          <img src="../../../assets/images/dyma/患教中心--icon.png" alt="">
+        </span>
+        <span class="header-title">患教中心</span>
+        <el-button style="float: right;color: #333333" @click="goEdu" type="text">更多
+          <i class="el-icon-d-arrow-right"></i>
+        </el-button>
+      </div>
+      <!---->
+
+      <div class="newsList quikNews">
+        <div v-for="o in recEduData"  class="text item" @click="goLink(o.Path)">
+          <img :src="o.Logo" alt="logo" style="width: 66px;height: 40px">
+            <a :href="o.Path" target="_blank">
+                <span class="newsTitle">{{ shortTitle(o.Title) }}</span>
+            </a>
+          <span class="newsTime" style="float: right">{{ o.CreatedOn.split(' ')[0] }}</span>
+        </div>
+
+      </div>
+  
+    </el-card>
+  
+    <el-card class="box-card diagnostic-trends" body-style="padding-top:10px">
+  
+      <div class="clearfix newsHeader">
+        <span style="line-height: 20px;">
+          <img src="../../../assets/images/dyma/医生文章-icon.png" alt="">
+        </span>
+        <span class="header-title">医生文章</span>
+        <el-button style="float: right;color: #333333" @click="goArticle" type="text">更多
+          <i class="el-icon-d-arrow-right"></i>
+        </el-button>
+      </div>
+  
+      <div class="newsList quikNews">
+        <div v-for="o in recArticleData" class="text item" @click="goLink(o.Path)">
+          <img :src="o.Logo" alt="logo" style="width: 66px;height: 40px">
+            <a :href="o.Path" target="_blank">
+                <span class="newsTitle">{{ shortTitle(o.Title) }}</span>
+            </a>
+          <span class="newsTime" style="float: right">{{ o.CreatedOn.split(' ')[0] }}</span>
+        </div>
+      </div>
+  
+    </el-card>
+  
+    <el-card class="box-card diagnostic-distribution" body-style="padding-top:10px">
+  
+      <div class="clearfix newsHeader">
+        <span style="line-height: 20px;">
+          <img src="../../../assets/images/dyma/培训活动-icon.png" alt="">
+        </span>
+        <span class="header-title">培训活动</span>
+        <el-button style="float:right;color: #333333" @click="goTraining" type="text">更多
+          <i class="el-icon-d-arrow-right"></i>
+        </el-button>
+      </div>
+  
+      <div class="trainingList">
+        <div v-for="o in recTrainingData" class="item hoverEle">
+          <a target="_blank" :href="o.Path">
+            <img :src="o.Logo" alt="logo">
+            <p class="activityWrap">
+              <span class="activity">公益活动</span>
+            </p>
+            <p class="traningnewsTitle">{{ o.Title }}</p>
+          </a>
+        </div>
+      </div>
+    </el-card>
+  
+  </div>
+</template>
+<script>
+import { requestArticle } from '../../../api/api';
+export default {
+  name: 'dynaInfo',
+  data() {
+    return {
+      recCompanyNewsData: [],
+      recEduData: [],
+      recArticleData: [],
+      recTrainingData: [],
+    }
+  },
+  methods: {
+    shortTitle(originStr) {
+        return originStr;
+      if (originStr.length > 26) {
+        let newStr = originStr.substr(0, 23) + '...';
+        return newStr;
+      } else {
+        return originStr;
+      }
+    },
+    changeValue() {
+      this.recCompanyNewsData = [];
+    },
+    goLink(path) {
+    },
+    goNews() {
+      this.$store.state.questionPaper.showGeneralNews = false;
+      //this.$parent.showGeneralNews = false;
+      this.$router.push({ path: '/dynamicConsultation/dymaNews' });
+    },
+    goEdu() {
+      this.$store.state.questionPaper.showGeneralNews = false;
+      // this.$parent.showGeneralNews = false;
+      this.$router.push({ path: '/dynamicConsultation/dymaEdu' });
+    },
+    goArticle() {
+      this.$store.state.questionPaper.showGeneralNews = false;
+      //this.$parent.showGeneralNews = false;
+      this.$router.push({ path: '/dynamicConsultation/dymaArticle' });
+    },
+    goTraining() {
+      this.$store.state.questionPaper.showGeneralNews = false;
+      // this.$parent.showGeneralNews = false;
+      this.$router.push({ path: '/dynamicConsultation/dymaTraining' });
+    },
+    requestCompanyNews(pageIndex) {
+      var params = {
+        'CategoryType': 5,
+        'IsRecommend': 0,
+        'PageIndex': pageIndex,
+        'PageSize': 10
+      };
+      requestArticle(params).then(res => {
+        // console.log('行业新闻全部');
+        // console.log(res.Records);
+        this.recCompanyNewsData = res.Records.splice(0, 4);
+        return res.Records;
+      });
+      var params = {
+        'CategoryType': 5,
+        'IsRecommend': 0,
+        'PageIndex': pageIndex,
+        'PageSize': 10
+      };
+      requestArticle(params).then(res => {
+        //console.log('行业新闻全部');
+        //console.log(res.Records);
+        this.recCompanyNewsData = res.Records.splice(0, 4);
+        return res.Records;
+      });
+    },
+    requestEduNews(pageIndex) {
+      var params = {
+        'CategoryType': 6,
+        'IsRecommend': 0,
+        'PageIndex': pageIndex,
+        'PageSize': 10
+      };
+      requestArticle(params).then(res => {
+        //console.log(res.Records);
+        this.recEduData = res.Records.splice(0, 3);
+      });
+    },
+    requestArticleNews(pageIndex) {
+      var params = {
+        'CategoryType': 2,
+        'IsRecommend': 0,
+        'PageIndex': pageIndex,
+        'PageSize': 10
+      };
+      requestArticle(params).then(res => {
+        this.recArticleData = res.Records.splice(0, 3);
+      });
+    },
+    requestTrainingNews(pageIndex) {
+      var params = {
+        'CategoryType': 3,
+        'IsRecommend': 0,
+        'PageIndex': pageIndex,
+        'PageSize': 8
+      };
+      requestArticle(params).then(res => {
+        this.recTrainingData = res.Records.splice(0, 3);
+      });
+    },
+    fourDataRequest() {
+      this.requestCompanyNews(1);
+      this.requestEduNews(1);
+      this.requestArticleNews(1);
+      this.requestTrainingNews(1);
+    },
+    requestEduNews(pageIndex) {
+      var params = {
+        'CategoryType': 6,
+        'IsRecommend': 0,
+        'PageIndex': pageIndex,
+        'PageSize': 10
+      };
+      requestArticle(params).then(res => {
+        //console.log(res.Records);
+        this.recEduData = res.Records.splice(0, 3);
+      });
+    },
+    requestArticleNews(pageIndex) {
+      var params = {
+        'CategoryType': 2,
+        'IsRecommend': 0,
+        'PageIndex': pageIndex,
+        'PageSize': 10
+      };
+      requestArticle(params).then(res => {
+        this.recArticleData = res.Records.splice(0, 3);
+      });
+    },
+
+    requestTrainingNews(pageIndex) {
+      var params = {
+        'CategoryType': 3,
+        'IsRecommend': 0,
+        'PageIndex': pageIndex,
+        'PageSize': 10
+      };
+      requestArticle(params).then(res => {
+        this.recTrainingData = res.Records.splice(0, 3);
+      });
+    },
+    fourDataRequest() {
+      this.requestCompanyNews(1);
+      this.requestEduNews(1);
+      this.requestArticleNews(1);
+      this.requestTrainingNews(1);
+    }
+  },
+  mounted() {
+    console.log('dymaininf   afd aso');
+    this.fourDataRequest();
+  }
+};
+</script>
+<style scoped>
+.dyma-data {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-top: 40px
+}
+
+.box-card {
+  display: inline-block;
+  width: 592px;
+  height: 264px;
+  padding: 0
+}
+
+.box-card:nth-child(1) {
+  margin-right: 18px;
+  margin-left: calc((100% - 1244px) /2);
+  margin-bottom: 6px
+}
+
+.box-card:nth-child(2) {
+  margin-left: 18px;
+  margin-right: calc((100% - 1244px) /2);
+  margin-bottom: 6px
+}
+
+.box-card:nth-child(3) {
+  margin-right: 18px;
+  margin-left: calc((100% - 1244px) /2)
+}
+
+.box-card:nth-child(4) {
+  margin-left: 18px;
+  margin-right: calc((100% - 1244px) /2)
+}
+
+
+
+.announcement {
+  border-top: 4px solid RGBA(36, 218, 181, 1.00)
+}
+
+.announcement .text {
+  margin: 10px 0
+}
+
+.notification {
+  border-top: 4px solid RGBA(49, 187, 252, 1.00)
+}
+
+.notification .text {
+  margin: 10px 0
+}
+
+.diagnostic-trends {
+  border-top: 4px solid RGBA(135, 205, 39, 1.00)
+}
+
+.diagnostic-trends .text {
+  margin: 10px 0
+}
+
+.diagnostic-distribution {
+  border-top: 4px solid RGBA(253, 185, 44, 1.00)
+}
+
+.item {
+  width: 100%;
+  height: 108px;
+  align-items: center
+}
+
+.quikNews .item {
+  width: 100%;
+  height: 40px;
+  position: relative;
+}
+
+.newsTitle {
+  font-size: 16px;
+  left: 70px;
+  position: absolute;
+  bottom: 0px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 380px;
+  top: 20px;
+}
+
+.newsTime {
+  float: right;
+  font-size: 16px;
+  color: #989999;
+  margin-top: 20px
+}
+
+.newsHeader {
+  position: relative;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: bold;
+  position: absolute;
+  left: 40px;
+}
+
+.trainingList .item {
+  display: inline-block;
+  width: 160px;
+  height: 190px;
+  margin: 5px 10px
+}
+
+.trainingList .item a {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center
+}
+
+.trainingList .item img {
+  width: 160px;
+  height: 100px
+}
+
+.trainingList .activityWrap {
+  width: 160px;
+  margin: 6px
+}
+
+.trainingList .activity {
+  width: 50px;
+  background-color: rgba(255, 187, 0, 1);
+  color: white;
+}
+
+.trainingList .traningnewsTitle {
+  width: 160px;
+  color: black;
+  font-size: 14px
+}
+
+.trainingList .hoverEle:hover {
+  box-shadow: 0 17px 50px 0 rgba(0, 0, 0, .19);
+  transform: translate3d(0, -2px, 0);
+  transition: all .3s cubic-bezier(.55, 0, .1, 1);
+}
+</style>

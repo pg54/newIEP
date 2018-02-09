@@ -1,0 +1,84 @@
+<template>
+  <div v-bind:class="{ showScroll: items.length > 5 }" class="consultWrap">
+    <li v-for="item in items" class="consultBox">
+
+      <div class="logoWrap">
+        <img :src="item.PatientLogo" alt="">
+      </div>
+
+      <div class="patientInfo">
+        <div>
+          <span>{{ item.Name }}</span>
+          <span>{{ (item.Sex===1)?'男':'女' }}</span>
+          <span>{{ item.Status }}</span>
+        </div>
+        <div>
+          <span>{{ item.ServiceName }}</span>
+          <span>{{ item.Price }}</span>
+        </div>
+      </div>
+
+      <div class="createdOnWrap">
+        <p>下单时间: {{ item.CreatedOn }}</p>
+      </div>
+    </li>
+  </div>
+</template>
+<script>
+
+  import { orderSearch } from '../../../../api/api';
+  export default {
+    name: 'dymaConsult',
+    props: ['dymaConsultStatus', 'serviceCategory'],
+    data() {
+      return {
+        items: []
+      };
+    },
+    methods: {
+      requestTest() {
+        console.log(this.dymaConsultStatus);
+        var drProfile = this.$store.state.questionPaper.drProfile;
+        var serviceID = drProfile.Services[this.serviceCategory].ID;
+        var params = {
+          'ServiceID': serviceID,
+          'Status': this.dymaConsultStatus,
+          'pageIndex': 1,
+          'pageSize': 10
+        };
+        orderSearch(params).then(res => {
+          var sourceData = res.Records;
+          console.log(sourceData);
+          if (sourceData.length) {
+            this.items = sourceData;
+          } else {
+          }
+        });
+      }
+    },
+    mounted() {
+      this.requestTest();
+    }
+  };
+</script>
+<style scoped>
+  .consultWrap {width: 1078px;height: 564px;padding: 0 20px;}
+  .consultBox {width: 1000px;height: 86px;background-color: RGBA(239, 239, 239, 1.00);margin-bottom: 20px;margin-left: 30px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+    border-radius:5px;
+    display: flex;
+    align-items: center;
+  }
+  .consultBox>div {}
+
+  .logoWrap {margin-left: 25px}
+  .logoWrap>img {display: inline-block;width: 71px;height: 71px;
+    -webkit-border-radius:35px;
+    -moz-border-radius:35px;
+    border-radius:35px;
+    background-color: #F6F6F6;
+  }
+  .createdOnWrap {margin-left: 372px}
+  .patientInfo {margin-left: 32px}
+</style>

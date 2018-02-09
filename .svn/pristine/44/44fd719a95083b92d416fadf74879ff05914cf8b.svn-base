@@ -1,0 +1,99 @@
+<template>
+    <div class="course-content" v-show="showCourseContent">
+        <div class="contentBox">
+
+            <el-select v-for="(item, index) in sourceData" style="display: block;margin-top: 10px;margin-bottom: 10px" v-model="childCollection[index]" multiple :placeholder="item.Name">
+                <el-option
+                        v-for="ele in item.Child"
+                        :label="ele.Name "
+                        :value="ele.ID">
+                </el-option>
+            </el-select>
+
+            <div class="toolBox">
+                <el-button @click="submitContents">提交课程</el-button>
+            </div>
+
+        </div>
+    </div>
+</template>
+<script>
+    import { editPlan } from '../../../../api/api';
+    export default {
+        name: 'iepCourse',
+        components: {
+        },
+      data() {
+          return {
+            childCollection: []
+          }
+      },
+        computed: {
+            sourceData: function () {
+                console.log('课程详情');
+                let len = this.$store.state.questionPaper.courseDetails.List.length;
+                for (let i=0;i<len;i++) {
+                  this.childCollection.push([]);
+                }
+                console.log(this.$store.state.questionPaper.courseDetails);
+                return this.$store.state.questionPaper.courseDetails.List;
+            },
+          lineID: function () {
+            return this.$store.state.questionPaper.lineID;
+          },
+          showCourseContent: function () {
+            return this.$store.state.questionPaper.showCourseContent;
+          }
+        },
+        methods: {
+          submitContents() {
+            let len = this.childCollection.length;
+            let originData = this.childCollection;
+            let data = [];
+            for (let i=0;i<len;i++) {
+              data = data.concat(originData[i]);
+            }
+            let params = {
+              LineID: this.lineID,
+              CourseIds: data
+            };
+            editPlan(params).then(res => {
+              console.log('编辑计划返回');
+              console.log(res);
+              if (res.Status) {
+                  this.$message.success(res.Message);
+                  this.$store.dispatch('setIepPlanChaptStatus', false);
+                  this.$store.dispatch('setIepPlanCourseStatus', true);
+                  this.$router.push({path: '/iep/iepPlan/planItemDetail'})
+              } else {
+                  this.$message.error('提交失败');
+              }
+            });
+          }
+        }
+
+    };
+</script>
+<style scoped>
+    .course-content {
+        position: absolute;;
+        width: 1080px;
+        height: 626px;
+        top: 0;
+        left: 106px;
+        z-index: 40;
+        overflow-y: scroll;
+    }
+
+    ..toolBox {margin-bottom: 10px;margin-top: 10px}
+
+    .planBox {position: absolute;top: 32px;right: 0;width: 100%;height: 72px;background-color: #E9F8FF;}
+    .courseContent {position: absolute;top: 104px;right: 0;width: 100%;height: 100px;background-color: #3BBDF9;
+        -webkit-border-radius: 0 0 6px 6px;
+        -moz-border-radius: 0 0 6px 6px;
+        border-radius: 0 0 6px 6px;}
+
+    .planBoxLeft {position: absolute;border-right: 1px dotted #30BCFC;width: 252px;height: 100%;display: flex;flex-direction: column;justify-content: center;align-items: center}
+    .planBoxRight {position: absolute;top: 0;left: 510px;width: 510px;height: 100%;display: flex;justify-content: center;align-items: center}
+
+</style>

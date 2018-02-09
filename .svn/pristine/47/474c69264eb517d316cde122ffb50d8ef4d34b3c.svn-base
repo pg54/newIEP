@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+    <meta name="render" content="webkit">
+  <title>一新康复-IEP</title>
+    <link rel="icon" href="./dist/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="./dist/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./dist/styles/iview.css">
+    <!--<script language="javascript" src="LodopFuncs.js"></script>-->
+    <!--<object  id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0>-->
+        <!--<embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0></embed>-->
+    <!--</object>-->
+</head>
+
+<body>
+  <div id="app">
+      <router-view></router-view>
+  </div>
+  <!-- built files will be auto injected -->
+</body>
+
+</html>

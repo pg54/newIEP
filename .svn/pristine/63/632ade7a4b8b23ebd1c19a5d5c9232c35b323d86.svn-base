@@ -1,0 +1,967 @@
+<template>
+    <div class="printWrap">
+        <div class="print-sider">
+            <h2 class="print-sider-title">广东省智力残疾儿童康复档案</h2>
+            <li class="print-sider-paper" @click="paperIndex = 0">
+                <p class="print-sider-paperTitle">智力残疾儿童入学登记表</p>
+                <div class="print-sider-paperNav">
+                    <span class="print-sider-paperIndex">1</span>
+                    <span class="print-sider-paperIndex">2</span>
+                </div>
+            </li>
+            <li class="print-sider-paper" @click="paperIndex = 1">
+                <p class="print-sider-paperTitle">智力残疾儿童学习能力评估表</p>
+            </li>
+            <li class="print-sider-paper" @click="paperIndex = 2">
+                <p class="print-sider-paperTitle">
+                    学习能力评估结果综合分析报告
+                </p>
+            </li>
+            <li class="print-sider-paper" @click="paperIndex = 2">
+                <p class="print-sider-paperTitle">智力残疾康复个性化教育计划（IEP）</p>
+            </li>
+        </div>
+        <div class="print-content">
+            <div id="print-content-paper">
+                <div v-if="paperIndex === 0">
+                    <registerPrinter :userInfo="stuData" :dpData="diagnosisesDeptData" :fcData="fiveConditionData"></registerPrinter>
+                </div>
+                <!--<div class="paperform-content">-->
+                    <!--<p class="paperform-title">智力残疾儿童入学登记表</p>-->
+                    <!--<p class="paperform-filecode">档案编号：________</p>-->
+                    <!--<div class="paperform-form">-->
+                        <!--<table class="tg">-->
+                            <!--<tr>-->
+                                <!--<th class="tg-s6z2" rowspan="5">儿<br>童<br>信<br>息</th>-->
+                                <!--<th class="tg-s6z2" colspan="3">姓名</th>-->
+                                <!--<th class="tg-031e" colspan="3">{{ userInfo.Name }}</th>-->
+                                <!--<th class="tg-s6z2">性<br>别</th>-->
+                                <!--<th class="tg-s6z2" colspan="3">{{ (userInfo.Sex === 1)? '男':'女' }}</th>-->
+                                <!--<th class="tg-s6z2" colspan="3">出生日期</th>-->
+                                <!--<th class="tg-s6z2" colspan="5">{{ userInfo.BirthDate }}</th>-->
+                                <!--<th class="tg-s6z2" colspan="5" rowspan="4">-->
+                                    <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+                                    <!--贴照片-->
+                                    <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-->
+                                <!--</th>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">临床诊断</td>-->
+                                <!--<td class="tg-031e" colspan="7">{{ userInfo.DiagnosisName }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">诊断日期</td>-->
+                                <!--<td class="tg-s6z2" colspan="5">{{ userInfo.DiagnosisDate }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">诊断科室</td>-->
+                                <!--<td class="tg-031e" colspan="7">{{ diagnosisName }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">入学时间</td>-->
+                                <!--<td class="tg-s6z2" colspan="5"></td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">户籍<br>所在地</td>-->
+                                <!--<td class="tg-031e" colspan="15">{{ userInfo.Area}}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">现居住<br>地址</td>-->
+                                <!--<td class="tg-031e" colspan="12">{{ userInfo.Address2 }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">家庭电话</td>-->
+                                <!--<td class="tg-s6z2" colspan="5"></td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" rowspan="8">家<br>庭<br>情<br>况</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">父亲姓名</td>-->
+                                <!--<td class="tg-031e" colspan="3">{{ userInfo.Member1.Name }}</td>-->
+                                <!--<td class="tg-s6z2" rowspan="3">年<br>龄</td>-->
+                                <!--<td class="tg-s6z2" colspan="2">{{ userInfo.Member1.Age }}</td>-->
+                                <!--<td class="tg-s6z2" rowspan="3">文<br>化<br>程<br>度</td>-->
+                                <!--<td class="tg-s6z2" colspan="2">{{ userInfo.Member1.Degree }}</td>-->
+                                <!--<td class="tg-s6z2" rowspan="3">工<br>作<br>单<br>位<br>及<br>职<br>务</td>-->
+                                <!--<td class="tg-s6z2" colspan="4">{{ userInfo.Member1.WorkUnit }}</td>-->
+                                <!--<td class="tg-s6z2" rowspan="3">联<br>系<br>电<br>话</td>-->
+                                <!--<td class="tg-s6z2" colspan="5">{{ userInfo.Member1.Mobile }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">母亲姓名</td>-->
+                                <!--<td class="tg-031e" colspan="3">{{ userInfo.Member2.Name }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="2">{{ userInfo.Member1.Age }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="2">{{ userInfo.Member1.Degree }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="4">{{ userInfo.Member1.WorkUnit }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="5">{{ userInfo.Member1.Mobile }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">其他成员</td>-->
+                                <!--<td class="tg-031e" colspan="3">{{ userInfo.Member3.Name }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="2"> {{ userInfo.Member3.Age }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="2"> {{ userInfo.Member3.Degree }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="4"> {{ userInfo.Member3.WorkUnit }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="5"> {{ userInfo.Member3.Mobile }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">家庭模式</td>-->
+                                <!--<td class="tg-031e" colspan="20">-->
+                                    <!--<span v-for="(ele,index) in familyModels">{{ele.Name}}（-->
+                                        <!--<img v-if="userInfo.FamilyModel === ele.Name" src="../../src/assets/images/print/勾.png" alt="print">-->
+                                        <!--）&nbsp;&nbsp;&nbsp;</span>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">居住社区</td>-->
+                                <!--<td class="tg-031e" colspan="20">-->
+                                    <!--<span v-for="(ele,index) in communities">{{ele.Name}}（-->
+                                        <!--<img v-if="userInfo.Community === ele.Name" src="../../src/assets/images/print/勾.png" alt="print">-->
+                                        <!--）&nbsp;&nbsp;&nbsp;</span>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">教养方式</td>-->
+                                <!--<td class="tg-031e" colspan="20">-->
+                                    <!--<span v-for="(ele,index) in educationStyles">{{ele.Name}}（-->
+                                        <!--<img v-if="userInfo.EducationStyle === ele.Name" src="../../src/assets/images/print/勾.png" alt="print">-->
+                                        <!--）&nbsp;&nbsp;&nbsp;</span>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">语言环境</td>-->
+                                <!--<td class="tg-031e" colspan="20">-->
+                                    <!--<span v-for="(ele,index) in languages">{{ele.Name}}（-->
+                                        <!--<img v-if="userInfo.Language === ele.Name" src="../../src/assets/images/print/勾.png" alt="print">-->
+                                        <!--）&nbsp;&nbsp;&nbsp;</span>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3">抚养/<br>带教人</td>-->
+                                <!--<td class="tg-031e" colspan="20">-->
+                                    <!--<span v-for="(ele,index) in dependents">{{ele.Name}}（<Icon v-if="userInfo.Dependents === ele.Name" type="checkmark-round"></Icon>）&nbsp;&nbsp;&nbsp;</span>-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" rowspan="8">儿<br>童<br>自<br>身<br>状<br>况<br>介<br>绍</td>-->
+                                <!--<td class="tg-s6z2" colspan="3" rowspan="2">妊娠史</td>-->
+                                <!--<td class="tg-031e" colspan="3">母妊娠年龄</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">{{ userInfo.MotherGestationalAge }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">胎教情况</td>-->
+                                <!--<td class="tg-baqh" colspan="3"> {{ userInfo.PrenatalEducation }}</td>-->
+                                <!--<td class="tg-baqh" colspan="3">先兆流产</td>-->
+                                <!--<td class="tg-baqh" colspan="5"> {{ (userInfo.ThreatenedAbortion == null)?'无':userInfo.ThreatenedAbortion }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-031e" colspan="3">心理状态</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">{{ userInfo.Mentation }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">生理状况</td>-->
+                                <!--<td class="tg-baqh" colspan="3">{{ userInfo.Physiological }}</td>-->
+                                <!--<td class="tg-baqh" colspan="3"></td>-->
+                                <!--<td class="tg-baqh" colspan="5">{{ userInfo.Environmental }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3" rowspan="2">分娩史</td>-->
+                                <!--<td class="tg-031e" colspan="3">足月</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">{{ userInfo.Mature }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">产程</td>-->
+                                <!--<td class="tg-baqh" colspan="3">{{ userInfo.Labor }}</td>-->
+                                <!--<td class="tg-baqh" colspan="3">分娩方式</td>-->
+                                <!--<td class="tg-baqh" colspan="5">{{ userInfo.Parturition }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-031e" colspan="3">早产或过期</td>-->
+                                <!--<td class="tg-s6z2" colspan="3"></td>-->
+                                <!--<td class="tg-s6z2" colspan="3">窒息</td>-->
+                                <!--<td class="tg-baqh" colspan="3">{{ userInfo.Suffocate }}</td>-->
+                                <!--<td class="tg-baqh" colspan="3">出生体重</td>-->
+                                <!--<td class="tg-baqh" colspan="5">{{ userInfo.BirthWeight }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3" rowspan="4">生长<br>发育史</td>-->
+                                <!--<td class="tg-031e" colspan="3">母乳喂养</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">{{ userInfo.Breastfeeding }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">人工喂养</td>-->
+                                <!--<td class="tg-baqh" colspan="3">{{ userInfo.ArtificialFeeding }}</td>-->
+                                <!--<td class="tg-baqh" colspan="3">高热抽搐</td>-->
+                                <!--<td class="tg-baqh" colspan="5">{{ userInfo.HighFeverTwitching }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-031e" colspan="3">会抬头时间</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">{{ userInfo.LookedUpTime }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">会翻身时间</td>-->
+                                <!--<td class="tg-baqh" colspan="3">{{ userInfo.TurnOverTime }}</td>-->
+                                <!--<td class="tg-baqh" colspan="3">会爬行时间</td>-->
+                                <!--<td class="tg-baqh" colspan="5">{{ userInfo.CrawlingTime }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-031e" colspan="3">会笑时间</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">{{ userInfo.LaughTime }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="3">会坐时间</td>-->
+                                <!--<td class="tg-baqh" colspan="3">{{ userInfo.SitTime }}</td>-->
+                                <!--<td class="tg-baqh" colspan="3">会爬行时间</td>-->
+                                <!--<td class="tg-baqh" colspan="5">{{ userInfo.CrawlingTime }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-yw4l" colspan="3">会发声时间</td>-->
+                                <!--<td class="tg-yw4l" colspan="3">{{ userInfo.PronouncedTime }}</td>-->
+                                <!--<td class="tg-yw4l" colspan="3">说单词时间</td>-->
+                                <!--<td class="tg-yw4l" colspan="3">{{ userInfo.SayWordTime }}</td>-->
+                                <!--<td class="tg-yw4l" colspan="3">说词语时间</td>-->
+                                <!--<td class="tg-yw4l" colspan="5">{{ userInfo.SpeakTime }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<th class="tg-baqh" rowspan="8"></th>-->
+                                <!--<th class="tg-baqh" colspan="4">既往病史<br>（心脏病、癫痫等）</th>-->
+                                <!--<th class="tg-baqh" colspan="7">{{ userInfo.IllnessHistory }}</th>-->
+                                <!--<th class="tg-baqh" colspan="4"> 过敏史<br>（含药物、食物等）</th>-->
+                                <!--<th class="tg-yw4l" colspan="8">{{ userInfo.AllergyHistory }}</th>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-baqh" colspan="4">特殊的饮食习惯</td>-->
+                                <!--<td class="tg-baqh" colspan="7">{{ userInfo.SpecialEatingHabits }}</td>-->
+                                <!--<td class="tg-baqh" colspan="4">特殊的睡眠时间</td>-->
+                                <!--<td class="tg-yw4l" colspan="8">{{ userInfo.SpecialSleepingTime}}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="3" rowspan="2">最喜欢<br>的活动</td>-->
+                                <!--<td class="tg-baqh">室<br>内</td>-->
+                                <!--<td class="tg-baqh" colspan="7">{{ userInfo.FavouriteActivityIn }}</td>-->
+                                <!--<td class="tg-baqh" colspan="4">最爱看的<br>电视节目</td>-->
+                                <!--<td class="tg-yw4l" colspan="8">{{ userInfo.FavouriteTV }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-baqh">室<br>外</td>-->
+                                <!--<td class="tg-baqh" colspan="7">{{ userInfo.FavouriteActivityOut }}</td>-->
+                                <!--<td class="tg-s6z2" colspan="4">最常玩的玩具</td>-->
+                                <!--<td class="tg-yw4l" colspan="8">{{ userInfo.FavouriteToy }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-baqh" colspan="4">独处时常做的事情</td>-->
+                                <!--<td class="tg-baqh" colspan="7">{{ userInfo.AloneThing }}</td>-->
+                                <!--<td class="tg-baqh" colspan="4">经常一起的玩伴</td>-->
+                                <!--<td class="tg-yw4l" colspan="8">{{ userInfo.FavouritePlaymate }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-baqh" colspan="4">语言表达能力</td>-->
+                                <!--<td class="tg-baqh" colspan="7">{{ userInfo.LanguageExpressionAbility }}</td>-->
+                                <!--<td class="tg-baqh" colspan="4">认知/认字能力</td>-->
+                                <!--<td class="tg-yw4l" colspan="8">{{ userInfo.CognitiveAbility}}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-baqh" colspan="4">数数</td>-->
+                                <!--<td class="tg-baqh" colspan="7">{{ userInfo.Counting }}</td>-->
+                                <!--<td class="tg-baqh" colspan="4">穿衣服</td>-->
+                                <!--<td class="tg-yw4l" colspan="8">{{ userInfo.WearClothes }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-baqh" colspan="4">吃饭</td>-->
+                                <!--<td class="tg-baqh" colspan="7">{{ userInfo.Eat }}</td>-->
+                                <!--<td class="tg-baqh" colspan="4">大小便</td>-->
+                                <!--<td class="tg-yw4l" colspan="8">{{ userInfo.Toilet }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" rowspan="3">特<br>殊<br>行<br>为</td>-->
+                                <!--<td class="tg-baqh" colspan="4">伤害自己/他人</td>-->
+                                <!--<td class="tg-baqh" colspan="19">{{ userInfo.HurtSelfOrOthers }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-baqh" colspan="4">逃跑</td>-->
+                                <!--<td class="tg-baqh" colspan="19">{{ userInfo.RunAway }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-baqh" colspan="4">其他</td>-->
+                                <!--<td class="tg-baqh" colspan="19">{{ userInfo.OtherBehavior }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="5" rowspan="3">-->
+                                    <!--&nbsp;<br>智障成因<br>&nbsp;-->
+                                <!--</td>-->
+                                <!--<td class="tg-baqh" colspan="19" rowspan="3">{{ userInfo.MentalRetardationReason }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="5" rowspan="3">-->
+                                    <!--&nbsp;<br>目前主要障碍情况<br>&nbsp;-->
+                                <!--</td>-->
+                                <!--<td class="tg-baqh" colspan="19" rowspan="3">-->
+                                    <!--{{userInfo.ObstacleState}}-->
+                                <!--</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" colspan="5" rowspan="3">-->
+                                    <!--&nbsp;<br>既往康复教育情况<br>&nbsp;-->
+                                <!--</td>-->
+                                <!--<td class="tg-baqh" colspan="19" rowspan="3">{{ userInfo.RecoveryHistory }}</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                                <!--<td class="tg-s6z2" rowspan="2">说<br>明</td>-->
+                                <!--<td class="tg-textleft" colspan="23" rowspan="2">本人             是智力残疾孩子        之父（母），如实反映了孩子的病情和行为状况，如有隐<br>瞒，愿承担相应责任。</td>-->
+                            <!--</tr>-->
+                            <!--<tr>-->
+                            <!--</tr>-->
+                        <!--</table>-->
+                    <!--</div>-->
+                <!--</div>-->
+
+                <div class="paperform-content" v-if="paperIndex === 1">
+                    <p class="paperform-title">学习能力评估结果综合分析报告</p>
+                    <p class="paperform-subtitle">
+                        <span>儿童姓名：________</span>
+                        <span>性别_________</span>
+                        <span>出生日期_______年________月_________日</span>
+                    </p>
+                    <p class="paperform-subtitle">
+                        <span>教育诊断人：________ </span>
+                        <span>教育诊断日期_______年________月_________日</span>
+                    </p>
+                    <div class="paperform-form">
+                        <table class="tg">
+                            <tr>
+                                <th class="tg-031e" rowspan="4">学<br>生<br>基<br>本<br>资<br>料</th>
+                                <th class="tg-031e" colspan="3">姓名</th>
+                                <th class="tg-031e" colspan="4"></th>
+                                <th class="tg-031e" colspan="3">性别</th>
+                                <th class="tg-031e" colspan="4"></th>
+                                <th class="tg-031e" colspan="3">出生日期</th>
+                                <th class="tg-031e" colspan="6"></th>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">家庭电话</td>
+                                <td class="tg-031e" colspan="4">421125199006277311</td>
+                                <td class="tg-031e" colspan="3">入学时间</td>
+                                <td class="tg-031e" colspan="4">421125199006277311</td>
+                                <td class="tg-031e" colspan="3">身份证号码</td>
+                                <td class="tg-031e" colspan="6">421125199006277311</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">户籍所在地</td>
+                                <td class="tg-031e" colspan="20"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">现居住地址</td>
+                                <td class="tg-031e" colspan="20"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" rowspan="8">家<br>庭<br>情<br>况</td>
+                                <td class="tg-s6z2" colspan="3">父亲姓名</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" rowspan="3">年<br>龄</td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" rowspan="3">文<br>化<br>程<br>度</td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" rowspan="3">工<br>作<br>单<br>位<br>及<br>职<br>务</td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" rowspan="3">联<br>系<br>电<br>话</td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">母亲姓名</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">其他成员</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">家庭模式</td>
+                                <td class="tg-031e" colspan="20">大家庭（）       核心家庭（）  单亲家庭（）   寄养家庭（）  </td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">居住社区</td>
+                                <td class="tg-031e" colspan="20">花园小区（）    独家居住（）  租住房（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">教养方式</td>
+                                <td class="tg-031e" colspan="20">教育型（）       娇惯型（）     放任自流型（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">语言环境</td>
+                                <td class="tg-031e" colspan="20">普通话（）       广州话（）     地方方言（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">抚养/<br>带教人</td>
+                                <td class="tg-031e" colspan="20">父母（）          爷爷奶奶（）  外公外婆（）   保姆（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" rowspan="6">粗<br>大<br>运<br>动<br>能<br>力</td>
+                                <td class="tg-031e" colspan="3" rowspan="3"><br>优势<br></td>
+                                <td class="tg-031e" colspan="20" rowspan="3"></td>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3" rowspan="3">劣势</td>
+                                <td class="tg-031e" colspan="20" rowspan="3"></td>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="4" rowspan="3">学习能力综合分析</td>
+                                <td class="tg-031e" colspan="20" rowspan="3"></td>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="paperform-content" v-if="paperIndex === 2"></div>
+            </div>
+
+        </div>
+        <div class="print-tool" @click="printSth">打印</div>
+        <div class="print-back" @click="goback">返回</div>
+    </div>
+</template>
+<script>
+    import _ from 'lodash'
+    import axios from 'axios'
+    import api from '../api/index.js';
+    import registerPrinter from '../components/registerPrinter.vue'
+    export default {
+        name: 'print',
+        components: {
+            registerPrinter
+        },
+        data() {
+            return {
+                paperIndex: 0,
+                stuData: {},
+                diagnosisesDeptData: [],
+                fiveConditionData: [],
+                IEPdata: [],
+//                userInfo: {
+//                    PatientAgentID: "",//患者ID
+//                    InDate: "",//入学时间
+//                    Area: "",//户籍地址
+//                    Address2: null,//现在住址
+//                    FamilyModel: null,//家庭模式，这是个列表，获取方面下面描述
+//                    Community: null,//居住小区，这是个列表，获取方面下面描述
+//                    EducationStyle: null,//教育方式，这是个列表，获取方面下面描述
+//                    Language: null,//语言环境，这是个列表，获取方面下面描述
+//                    Dependents: null,//抚养/带教人，这是个列表，获取方面下面描述
+//                    MotherGestationalAge: null,//母妊娠年龄
+//                    PrenatalEducation: null,//胎教情况
+//                    ThreatenedAbortion: null,//先兆流产
+//                    Mentation: null,//心理状态
+//                    Physiological: null,//生理状况
+//                    Environmental: null,//环境状况
+//                    Mature: null,//足 月
+//                    Labor: null,//产 程
+//                    Logo: '',
+//                    Parturition: null,//分娩方式
+//                    PrematureOrExpired: null,//早产或过期
+//                    Suffocate: null,//窒 息
+//                    BirthWeight: null,//出生体重
+//                    Breastfeeding: null,//母乳喂养
+//                    ArtificialFeeding: null,//人工喂养
+//                    HighFeverTwitching: null,//高热抽搐
+//                    LookedUpTime: null,//会抬头时间
+//                    TurnOverTime: null,//会翻身时间
+//                    CrawlingTime: null,//会爬行时间
+//                    LaughTime: null,//会笑时间
+//                    SitTime: null,//会坐时间
+//                    WalkTime: null,//会走时间
+//                    PronouncedTime: null,//会发音时间
+//                    SayWordTime: null,//说单词时间
+//                    SpeakTime: null,//说词语时间
+//                    IllnessHistory: null,//既往病史
+//                    AllergyHistory: null,//过　敏　史
+//                    SpecialEatingHabits: null,//特殊的饮食习惯
+//                    SpecialSleepingTime: null,//特殊的睡眠时间
+//                    FavouriteActivityIn: null,//最喜欢的活动，内
+//                    FavouriteActivityOut: null,//最喜欢的活动，外
+//                    FavouriteTV: null,//最爱看的电视节目
+//                    FavouriteToy: null,//最常玩的玩具
+//                    AloneThing: null,//独处时常做事情
+//                    FavouritePlaymate: null,//经常一起的玩伴
+//                    LanguageExpressionAbility: null,//语言表达能力
+//                    CognitiveAbility: null,//认知/认字能力
+//                    Counting: null,//数　　　　数
+//                    WearClothes: null,//穿　衣　服
+//                    Eat: null,//穿　衣　服
+//                    Toilet: null,//大　小　便
+//                    HurtSelfOrOthers: null,//伤害自己/他人
+//                    RunAway: null,//伤害自己/他人
+//                    OtherBehavior: null,//其　　　　他
+//                    MentalRetardationReason: null,//智障成因
+//                    ObstacleState: null,//目前主要障碍情况
+//                    RecoveryHistory: null,//既往康复教育情况
+//                    DiagnosisID: '',//病种名称
+//                    Sex: 1,
+//                    BirthDate: '',
+//                    IDCard: '',
+//                    DiagnosisDate: '',//诊断时间
+//                    Comments: '',//诊断结果
+//                    Mobile: '',
+//                    Member1: {//家庭成员信息，顺序 是父亲，母亲，其它成员
+//                        ID: "",
+//                        Name: "",
+//                        Age: '',
+//                        Degree: '',
+//                        WorkUnit: '',
+//                        Title: '',
+//                        Mobile: ''
+//                    },
+//                    Member2: {
+//                        ID: "",
+//                        Name: "",
+//                        Age: '',
+//                        Degree: '',
+//                        WorkUnit: '',
+//                        Title: '',
+//                        Mobile: ''
+//                    },
+//                    Member3: {
+//                        ID: "",
+//                        Name: "",
+//                        Age: '',
+//                        Degree: '',
+//                        WorkUnit: '',
+//                        Title: '',
+//                        Mobile: ''
+//                    },
+//                },
+                isTest: false
+            }
+        },
+        methods: {
+            requestDiagnosises() {
+                let _this = this;
+                api.requestDept().then(res => {
+                    _this.diagnosisesDeptData = res.data.List;
+                }).catch(err => {
+                    _this.$message.error('病种数据请求失败,请稍后再试');
+                });
+            },
+            printSth() {
+
+//                let printpage = document.getElementById('print-content-paper')
+//                let link = document.createElement('link');
+//                link.type='text/css';
+//                link.rel = 'stylesheet'
+//                link.href= './src/assets/css/print.css'
+//                document.getElementsByTagName('head')[0].appendChild(link);
+//                var newstr = printpage.innerHTML;
+//                var oldstr = document.body.innerHTML;
+//                document.body.innerHTML = newstr;
+//                window.print();
+//                document.body.innerHTML=oldstr;
+//                return true;
+
+
+//                let printWrap = document.getElementsByClassName('printWrap')[0]
+//                let print_content_paper = document.getElementById('print-content-paper')
+//                printWrap.style.visibility = 'hidden'
+//                print_content_paper.style.visibility = 'visible'
+//                window.print()
+//                printWrap.style.visibility = 'visible'
+
+                let codestr = document.getElementsByClassName("print-content")[0].innerHTML;   //获取需要生成pdf页面的div代码
+
+                let newWindow = window.open("_blank");   //打开新窗口
+
+//                let link = newWindow.createElement('link');
+//                link.type='text/css';
+//                link.rel = 'stylesheet'
+//                link.href= 'http://osp49ppau.bkt.clouddn.com/print.css'
+//                newWindow.getElementsByTagName('head')[0].appendChild(link);
+
+                newWindow.document.write(codestr);   //向文档写入HTML表达式或者JavaScript代码
+                let num;
+                num = 595;
+                newWindow.document.write(`
+<style>
+     #print-content-paper {
+        width: ${num}px;
+        height: 842px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    .print-content {
+        /*box-sizing: border-box;*/
+    }
+
+    .print-content .el-col {
+        margin: 0;
+    }
+
+    .paperform-title {
+        font-size: 22px;
+        text-align: center
+    }
+
+    .paperform-filecode {
+        text-align: right
+    }
+
+    .paperform-form {
+        width: 100%;
+    }
+     .tg{border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center;vertical-align:center}
+    .tg .tg-baqh{text-align:center;vertical-align:center}
+    .tg .tg-yw4l{text-align:center;vertical-align:center}
+    .tg .tg-textleft{text-align:left;vertical-align:top}
+</style>
+`);
+                newWindow.document.close();     //关闭document的输出流, 显示选定的数据
+                setTimeout(function () {
+                    newWindow.print();
+                },500)
+                return true;
+            },
+            goback() {
+                console.log('goback');
+                this.$router.go(-1);
+            },
+            initData() {
+//                this.registerRequest();
+                this.IEPRequest();
+                this.testRequest();
+            },
+            registerRequest() {
+                let _this = this;
+                let patientId = _this.$store.state.mystudent.currentPatientId.ID;
+                api.getPatientAgentDetails(patientId).then(res => {
+                    _this.stuData = res.data;
+//                    if (_this.userInfo.Member1 == null) {
+//                        _this.userInfo.Member1 = {
+//                            ID: "",
+//                            Name: "",
+//                            Age: '',
+//                            Degree: '',
+//                            WorkUnit: '',
+//                            Title: '',
+//                            Mobile: ''
+//                        };
+//                    }
+//
+//                    if (_this.userInfo.Member2 == null) {
+//                        _this.userInfo.Member2 = {
+//                            ID: "",
+//                            Name: "",
+//                            Age: '',
+//                            Degree: '',
+//                            WorkUnit: '',
+//                            Title: '',
+//                            Mobile: ''
+//                        };
+//                    }
+//
+//                    if (_this.userInfo.Member3 == null) {
+//                        _this.userInfo.Member3 = {
+//                            ID: "",
+//                            Name: "",
+//                            Age: '',
+//                            Degree: '',
+//                            WorkUnit: '',
+//                            Title: '',
+//                            Mobile: ''
+//                        };
+//                    }
+                    _this.requestDiagnosises();
+                }).catch(err => {
+                    _this.$message.error('获取患者信息失败！');
+                });
+                //获取家庭模式(FAMILYMODEL)、居住社区(COMMUNITY)、教养方式(EDUCATIONSTYLE)、语言环境(LANGUAGE)、抚养带教人(DEPENDENTS)
+//                let arr = [];
+//                function step1() {
+//                    return new Promise(function (resolve, reject) {
+//                        api.getDictionaryData('FAMILYMODEL').then(res => {
+//                            arr.push(res.data.List)
+//                            resolve()
+//                        })
+//                    })
+//                }
+//                function step2() {
+//                    return new Promise(function (resolve, reject) {
+//                        api.getDictionaryData('COMMUNITY').then(res => {
+//                            arr.push(res.data.List)
+//                            resolve()
+//                        })
+//                    })
+//                }
+//                function step3() {
+//                    return new Promise(function (resolve, reject) {
+//                        api.getDictionaryData('EDUCATIONSTYLE').then(res => {
+//                            arr.push(res.data.List)
+//                            resolve()
+//                        })
+//                    })
+//                }
+//                function step4() {
+//                    return new Promise(function (resolve, reject) {
+//                        api.getDictionaryData('LANGUAGE').then(res => {
+//                            arr.push(res.data.List)
+//                            resolve()
+//                        })
+//                    })
+//                }
+//                function step5() {
+//                    return new Promise(function (resolve, reject) {
+//                        api.getDictionaryData('DEPENDENTS').then(res => {
+//                            arr.push(res.data.List)
+//                            resolve()
+//                        })
+//                    })
+//                }
+//                step1().then(step2()).then(step3()).then(step4).then(step5).then(function () {
+//                    console.log('promise 完成');
+//                    console.log(arr)
+//                    this.fiveConditionData = arr
+//                })
+                axios.all([api.getDictionaryData('FAMILYMODEL'),api.getDictionaryData('COMMUNITY'),api.getDictionaryData('EDUCATIONSTYLE'),api.getDictionaryData('LANGUAGE'),api.getDictionaryData('DEPENDENTS')])
+                    .then(axios.spread(function (one,two,three,four,five) {
+                        // Both requests are now complete
+                        _this.fiveConditionData.push(one.data.List,two.data.List,three.data.List,four.data.List,five.data.List)
+                    }));
+//                api.getDictionaryData('EDUCATIONSTYLE').then(res => {
+//                    this.fiveConditionDatapush({3:res.data.List})
+//                }).catch(err => {
+//
+//                });
+//
+//                api.getDictionaryData('LANGUAGE').then(res => {
+//                    this.fiveConditionDatapush({4:res.data.List})
+//                }).catch(err => {
+//
+//                });
+//
+//                api.getDictionaryData('DEPENDENTS').then(res => {
+//                    this.fiveConditionDatapush(res.data.List)
+//                }).catch(err => {
+//                });
+            },
+            IEPRequest() {
+                let _this = this;
+                let params = {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    planType: 1,
+                    StudentID: this.$store.state.mystudent.currentPatientId.ID
+                }
+                api.drTeachingPlan(params).then(res => {
+                    console.log('返回的内容');
+                    console.log(res.data);
+                    let ID = res.data.Records[0].ID  // li标签
+                    _this.getSingleIEPData(ID)
+                });
+            },
+            getSingleIEPData(id) {
+                var _this = this
+                api.getPlanDetail(id).then( res => {
+                    let months = res.MonthPlans.map(function (ele) {
+                        return ele.ID
+                    })
+                    let MonthNames = res.MonthPlans.map(function (ele) {
+                        return ele.Name
+                    })
+                    axios.all([api.getPlanItemDetail(months[0]),api.getPlanItemDetail(months[1]),api.getPlanItemDetail(months[2]),api.getPlanItemDetail(months[3]),api.getPlanItemDetail(months[4])])
+                        .then(axios.spread(function (one, two, three, four, five) {
+                            one.Name = MonthNames[0]
+                            two.Name = MonthNames[1]
+                            three.Name = MonthNames[2]
+                            four.Name = MonthNames[3]
+                            five.Name = MonthNames[4]
+                            _this.IEPdata.push(one,two,three,four,five)
+                            console.log(_this.IEPdata)
+                        }))
+                })
+            },
+            testRequest() {
+                let _this = this;
+                let params = {
+                    PageIndex: 1,
+                    PageSize: 100,
+                    PatientAgentID: _this.$store.state.mystudent.currentPatientId.ID
+                };
+                api.requestTestList(params).then(res => {
+//                    this.testPaperListData = res.Records;
+                    console.log('res.Records');
+                    console.log(res.Records);
+                });
+            },
+            requestTestPaticent(pageIndex) {
+                let params = {
+                    ExamID: this.examID,
+                    PageIndex: pageIndex,
+                    PageSize: 10
+                };
+                api.requestTestMembers(params).then(res => {
+                    this.testedPatientListData = res.Records;
+                    this.testedPatientListTotal = res.Total;
+                });
+            },
+            requesTestResultData() {
+                getPacientTestDetails(this.testID).then(res => {
+                    console.log('返回的内容');
+                    console.log(res);
+                    if (!this.isComplete) {
+                        this.showSummary = this.JudgShowSummary(res);
+                    }
+                    this.form.testDate = res.CreatedOn;
+                    this.testPaperFormData = Object.assign({},res);
+                    this.testPaperContentData = res;
+                });
+            },
+            requestTestReportData() {
+                getPacientTestReport(this.testID).then(res => {
+                        console.log('返回的值');
+                        console.log(res);
+                        this.rourseData = res;
+                })
+            }
+        },
+        created() {
+            this.initData()
+//            let id,type;
+////          1. 获取全局ID属性
+//            2. 发起四个网络请求
+//            3. 根据穿过了的type值，li决定active，右边显示哪一个
+//            4.
+        },
+        mounted() {
+
+        }
+    }
+</script>
+<style scoped>
+    .printWrap {
+        position: relative;
+        width: 100%;
+        height: 720px;
+        border: 1px solid #cccccc
+    }
+
+    .print-sider {
+        float: left;
+        width: 320px;
+        box-sizing: border-box;
+        height: 100%;
+        border-right: 1px solid #cccccc;
+        padding: 10px;
+    }
+
+    .print-sider-title {
+        margin-bottom: 40px;
+    }
+
+    .print-sider-paper {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .print-sider-paperNav {
+
+    }
+
+    .print-sider-paperIndex {
+        display: inline-block;
+        margin-right: 5px;
+        width: 18px;
+        height: 18px;
+        text-align: center;
+        line-height: 18px;
+        border-radius: 50%;
+        color: white;
+        background-color: black;
+    }
+    .print-content {
+        position: relative;
+        margin-left: 320px;
+        width: 860px;
+        height: 100%;
+        padding: 5px 0;
+        overflow: scroll;
+    }
+
+    #print-content-paper {
+        width: 595px;
+        /*height: 842px;*/
+        margin: 0 auto;
+        box-sizing: border-box;
+        box-shadow: 0 0 0 3px #edf7ff
+    }
+
+    .print-content {
+        /*box-sizing: border-box;*/
+    }
+
+    .paperform-title {
+        font-size: 22px;
+        text-align: center
+    }
+
+    .paperform-filecode {
+        text-align: right
+    }
+
+    .paperform-form {
+        width: 100%;
+    }
+
+    .print-tool {
+        position: absolute;
+        top: 100px;
+        right: 100px;
+        width: 100px;
+        height: 40px;
+        color: #252729;
+        background-color: #FFCF71;
+        border-color: #FFCF71;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    .print-back {
+        position: absolute;
+        top: 160px;
+        right: 100px;
+        width: 100px;
+        height: 40px;
+        color: #252729;
+        background-color: #FFCF71;
+        border-color: #FFCF71;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    /*1080*1920 页面展示时设置padding:2px 10px   打印时的设置  padding:10px 18px*/
+
+
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center;vertical-align:center}
+    .tg .tg-baqh{text-align:center;vertical-align:center}
+    .tg .tg-yw4l{text-align:center;vertical-align:center}
+
+    .tg .tg-textleft{text-align:left;vertical-align:top}
+
+</style>

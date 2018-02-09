@@ -1,0 +1,20 @@
+/**
+ * Created by pangang on 2017/4/23.
+ */
+import actions from './actions';
+import mutations from './mutations';
+export default {
+  state: {
+    patientList: []
+  },
+  actions: actions,
+  mutations: mutations,
+  getters: {
+    filterDoned: function() {
+      return 1;
+    },
+    filterNoDoned: function() {
+      return 0;
+    }
+  }
+};

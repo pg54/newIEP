@@ -1,0 +1,140 @@
+<template>
+  <div class="totalPage">
+    <div class="tabs" v-show="showTabsContent">
+
+      <div class="pageNavbar">
+        <span style="cursor: none;color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+        <span>康复档案&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </div>
+  
+      <div class="tabs-chose" v-bind:class="{ showScroll: tabs.length > 8 }">
+        <li v-for="(tab, index) in tabs" :class="{active : currentTab === index }" @click="currentTab = index">{{tab.groupName}}
+        </li>
+      </div>
+  
+      <div class="tabs-content">
+        <div v-for="(tab,index) in tabs" class="tab-content" v-show="currentTab === index">
+          <MystudentList :groupData="tab.groupPatients" :groupID="tab.groupID" :groupName="tab.groupName">
+          </MystudentList>
+
+        </div>
+      </div>
+  
+    </div>
+  
+    <router-view :key="key"></router-view>
+  </div>
+</template>
+<script>
+import MystudentList from './MystudentList.vue';
+export default {
+  name: 'studentFile',
+  components: {
+    MystudentList
+  },
+  computed: {
+    tabs: function () {
+      return this.$store.state.mystudent.patientList;
+    },
+    showTabsContent: function () {
+      return this.$store.state.questionPaper.showPacientList;
+    },
+    key() {
+      if (this.$router.currentRoute.path == '/studentFile/') {
+        this.$store.state.questionPaper.showPacientList = true;
+      }
+      return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date();
+    }
+  },
+  methods: {
+  },
+  data() {
+    return {
+      currentTab: 0
+    };
+  },
+  mounted() {
+  }
+};
+</script>
+<style scoped>
+.totalPage {
+  width: 1280px;
+  height: 626px;
+  position: relative
+}
+
+.tabs {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0
+}
+
+.tabs-chose {
+  position: absolute;
+  width: 94px;
+  height: 583px;
+  top:43px;
+  border-right: 1px solid #EFEFEF;
+  background-color: #EFEFEF;
+}
+
+.tabs-content {
+  position: absolute;
+  top: 0;
+  left: 95px;
+  top: 40px;
+  width: 1185px;
+  height: 100%;
+}
+
+.tabs-chose li {
+  width: 100%;
+  height: 70px;
+  text-align: center;
+  line-height: 70px;
+  cursor: pointer;
+  color: black;
+}
+
+.tabs-chose .active {
+  color: #48C4FC;
+  background-color: RGBA(254, 255, 255, 1.00);
+  color: RGBA(47, 189, 252, 1.00);
+  border-left: 6px solid #31BBFC
+}
+
+/*.navigation {
+  font-size: 16px;
+  padding-left: 18px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  width: 100%;
+  padding-top: 10px;
+  border-bottom: 1px solid gray;
+}
+
+.navigation span:hover {
+  text-decoration: underline;
+  color: #42ABD8;
+}*/
+
+.pageNavbar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1280px;
+    height: 42px;
+    border-bottom: 1px solid #cccccc;
+}
+.pageNavbar span {
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 42px;
+}
+.pageNavbar span:hover {
+    color: rgb(66, 171, 216);
+}
+</style>

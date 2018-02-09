@@ -1,0 +1,171 @@
+<template>
+    <div class="main">
+        <div class="pageNavbar">
+            <span style="color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span @click="goBack" ><i style="font-size: 16px;font-weight: bold">{{ chosedPatientName}}&nbsp;</i>的康复档案&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span @click="backList">评测分析&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span v-show="!resultPaperMiss"><span style="color: rgba(49, 187, 252, 1)">{{ chosedPatient }}</span>的能力评估&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+        </div>
+        <div v-if="resultPaperMiss" class="registerBox">
+            <div class="center-content">
+                <div >
+                    <el-card class="cardBox colorHeader " :body-style="{ padding: '0px'}" style="height:558px">
+                        <div class="tableWrap ">
+                            <el-table :data="assessmentData" style="width: 100%">
+                                <el-table-column type="index" width="80">
+                                </el-table-column>
+
+                                <el-table-column prop="ExamName" label="评测名称">
+                                </el-table-column>
+
+                                <el-table-column prop="Name" label="姓名">
+                                </el-table-column>
+
+                                <el-table-column label="评测时间">
+                                    <template scope="scope">
+                                        <p>{{ scope.row.CreatedOn.substring(0,10)}}</p>
+                                    </template>
+                                </el-table-column>
+
+                                <el-table-column label="操作">
+                                    <template scope="scope">
+                                        <el-button v-if="!scope.row.Status" size="small" :plain="true" type="warning" @click="showMsg">未完成</el-button>
+                                        <el-button v-else size="small" :plain="true" type="warning" @click="checkPacientTestReport(scope.$index, scope.row, true)">评估报告</el-button>
+                                    </template>
+                                </el-table-column>
+                            </el-table>
+                        </div>
+                        <el-pagination layout="prev, pager, next" @current-change="assessmentPaperListChange" :page-size="10" :total="assessmentPaperTotal" style="float:right;"></el-pagination>
+                    </el-card>
+                </div>
+            </div>
+        </div>
+        <div v-else class="reportWrap">
+            <reportPaper :paticentID="TestPaticentID" :testID="TesttestID"></reportPaper>
+        </div>
+    </div>
+</template>
+<script>
+    import {  requestTestMembers } from '../../../api/api';
+    import reportPaper from '../../../components/reportPaper.vue';
+
+    export default {
+        name: 'rFAnalysis',
+        components: {
+            reportPaper
+        },
+        computed: {
+            chosedPatientName: function () {
+                return this.$store.state.mystudent.currentPatientId.Name;
+            }
+        },
+        data () {
+            return {
+                resultPaperMiss: true,
+                assessmentData: [],
+                assessmentPaperTotal: 1,
+                assessmentCurrentPage: 1,
+                TestPaticentID: '',
+                TesttestID: '',
+                testComplete: false,
+                chosedPatient: ''
+            }
+        },
+        methods: {
+           backList() {
+               if (!this.resultPaperMiss){
+                   this.resultPaperMiss = true;
+               }
+           },
+            goBack() {
+                this.$store.dispatch('setShowPacientList', true);
+                this.$router.push({ path: '/studentFile' });
+            },
+            showMsg() {
+               this.$message.warning('评测未完成，暂未生成评估报告');
+            },
+            assessmentPaperListChange(currentPage) {
+                console.log('当前页');
+                console.log(currentPage);
+                this.assessmentCurrentPage = currentPage;
+                this.requestAssessment(this.assessmentCurrentPage);
+            },
+            checkPacientTestReport(index, row, isComplete) {
+                this.TesttestID = row.ID;
+                this.TestPaticentID = row.PatientAgentID;
+                this.resultPaperMiss = false;
+                this.chosedPatient = row.Name;
+                this.testComplete = isComplete;
+            },
+            requestAssessment(pageIndex) {
+                let patientId = this.$store.state.mystudent.currentPatientId.ID;
+                let params = {
+                    PatientAgentID: patientId,
+                    PageIndex: pageIndex,
+                    PageSize: 10
+                };
+                requestTestMembers(params).then(res => {
+                    console.log('学生已评测的试卷');
+                    console.log(res);
+                    this.assessmentData = res.Records;
+                    this.assessmentPaperTotal = res.Total;
+                });
+            },
+        },
+        created() {
+            this.requestAssessment(1);
+        }
+    };
+</script>
+<style scoped>
+    .main {
+        width: 100%;
+        height: 626px;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+    .pageNavbar {
+        position: absolute;
+        left: -94px;
+        top: 0;
+        width: 1280px;
+        height: 42px;
+        border-bottom: 1px solid #cccccc;
+        line-height: 42px;
+        font-size: 16px;
+    }
+    .registerBox {
+        width: 100%;
+        height: 583px;
+        position: absolute;
+        left: 0;
+        top: 43px;
+        padding-top:25px;
+    }
+    .reportWrap {
+        width: 1185px;
+        height: 583px;
+        position: absolute;
+        left: 0;
+        top: 43px;
+    }
+    .center-content {
+        width: 1125px;
+        height: 558px;
+        position: relative;
+        margin: 0 auto;
+    }
+    .colorHeader {
+        border-top: 4px solid RGBA(49, 187, 252, 1.00)
+    }
+    .cardBox {
+        width: 100%;
+        height: 520px
+    }
+    .tableWrap {
+        width: 100%;
+        height: 520px;
+    }
+
+</style>

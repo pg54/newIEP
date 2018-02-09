@@ -1,0 +1,199 @@
+<template>
+    <div class="rhFile">
+        <!--<div class="navigation">
+                <p>当前位置&nbsp;&nbsp;>&nbsp;&nbsp;
+                    <span @click="goBack()" style="cursor:pointer">康复档案</span>&nbsp;&nbsp;> &nbsp;&nbsp;
+                    <span @click="goBack()" style="cursor:pointer">患者档案</span>&nbsp;&nbsp;> &nbsp;&nbsp;
+                    <span style="color:#42ABD8">患者详情</span>
+                </p>
+            </div>-->
+
+        <div class="pageNavbar">
+            <span style="cursor: none;color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span @click="goBack" >康复档案&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span>患者详情</span>
+        </div>
+    
+        <div class="mainContent">
+            <div id="sidebar">
+                <ul slot="links" class="links">
+                    <li>
+                        <router-link class='link' to="/studentFile/rehabilitationFile/rFRegister">
+                            <p>入学登记</p>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link class='link' to="/studentFile/rehabilitationFile/rFAssessment">
+                            <p>能力评估</p>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link class='link' to="/studentFile/rehabilitationFile/rFAnalysis">
+                            <p>评测分析</p>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link class='link' to="/studentFile/rehabilitationFile/rFPlan">
+                            <p>教学计划</p>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link class='link' to="/studentFile/rehabilitationFile/rFRecord">
+                            <p>成绩记录</p>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link class='link' to="/studentFile/rehabilitationFile/rFTrack">
+                            <p>后续跟踪</p>
+                        </router-link>
+                    </li>
+                    <li>
+                        <router-link class='link' to="/studentFile/rehabilitationFile/rFAttachment">
+                            <p>附件上传</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </div>
+    
+            <div class="main">
+                <router-view :key="key"></router-view>
+            </div>
+        </div>
+    
+    </div>
+</template>
+<script>
+export default {
+    name: 'rehabilitationFile',
+    components: {
+    },
+    computed: {
+        // breadcrumbList() {
+        //     let bread = this.$store.state.questionPaper.breadcrumbList;
+        //     console.log(bread);
+        //     let str= "";
+        //     for(let i=0;i<bread.length;i++){
+        //         str += bread[i].breadcrumbList.label+"   ";
+        //     }
+        //     return str;
+        // },
+        key() {
+            if (this.$router.currentRoute.path == '/studentFile/rehabilitationFile') {
+                this.$router.push({ path: '/studentFile/rehabilitationFile/rFRegister' });
+            }
+            this.$store.dispatch('setShowPacientList', false);
+            return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date();
+        }
+    },
+    methods: {
+        goBack() {
+            this.$store.dispatch('setShowPacientList', true);
+            this.$router.push({ path: '/studentFile' });
+        }
+    },
+    created() {
+        //,query:{id:this.$route.params.id}
+        //console.log(this.$router.currentRoute);
+        //console.log(this.$route.params.id);
+        //this.$router.push({ path: '/studentFile/rehabilitationFile/rFRegister' });
+    }
+};
+</script>
+<style scoped>
+.rhFile {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 626px;
+    z-index: 100;
+}
+
+.mainContent {
+    position: absolute;
+    width: 100%;
+    height: 583px;
+    top: 43px;
+    left: 0
+}
+
+#sidebar {
+    width: 94px;
+    height: 583px;
+    position: absolute;
+    top:0;
+    left:0px;
+    background-color: #EFEFEF
+}
+
+.main {
+    position: absolute;
+    left: 95px;
+    height: 583px;
+    top: 0;
+    width: calc(100% - 95px)
+}
+
+.links {
+    width: 94px;
+    height: 100%;
+    background-color: #EFEFEF
+}
+
+.link {
+    display: flex;
+    width: 94px;
+    height: 70px;
+    font-size: 14px;
+    color: #333333;
+    align-items: center;
+    justify-content: center
+}
+
+.link span {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 20px;
+}
+
+.router-link-active {
+    background-color: RGBA(254, 255, 255, 1.00);
+    color: RGBA(47, 189, 252, 1.00);
+    border-left: 6px solid #31BBFC
+}
+
+/*.navigation {
+    font-size: 16px;
+    padding-left: 18px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    width: 100%;
+    padding-top: 10px;
+    border-bottom: 1px solid gray;
+}
+
+.navigation span:hover {
+    text-decoration: underline;
+    color: #42ABD8;
+}*/
+
+.pageNavbar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1280px;
+    height: 42px;
+    border-bottom: 1px solid #cccccc;
+}
+.pageNavbar span {
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 42px;
+}
+.pageNavbar span:hover {
+    color: rgb(66, 171, 216);
+}
+
+</style>
+

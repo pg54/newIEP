@@ -1,0 +1,12 @@
+<template>
+    <div>
+        <p>{{ ServiceDynamics }}</p>
+    </div>
+
+</template>
+
+<script>
+    export default {
+        name: 'serviceDynamics'
+    }
+</script>

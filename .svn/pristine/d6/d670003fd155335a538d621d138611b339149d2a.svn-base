@@ -1,0 +1,212 @@
+<template>
+    <div>
+        <p class="paperform-title">学习能力评估结果综合分析报告</p>
+        <p class="paperform-subtitle">
+            <span>儿童姓名：________</span>
+            <span>性别_________</span>
+            <span>出生日期_______年________月_________日</span>
+        </p>
+        <p class="paperform-subtitle">
+            <span>教育诊断人：________ </span>
+            <span>教育诊断日期_______年________月_________日</span>
+        </p>
+        <div class="paperform-form">
+            <table class="tg">
+
+                <!--<tr>-->
+                    <!--<th class="tg-031e" rowspan="4">学<br>生<br>基<br>本<br>资<br>料</th>-->
+                    <!--<th class="tg-031e" colspan="3">姓名</th>-->
+                    <!--<th class="tg-031e" colspan="4">{{ userInfo.PatientAgentDetails.Name}}</th>-->
+                    <!--<th class="tg-031e" colspan="3">性别</th>-->
+                    <!--<th class="tg-031e" colspan="4">{{ (userInfo.PatientAgentDetails.Sex === 1)? '男':'女' }}</th>-->
+                    <!--<th class="tg-031e" colspan="3">出生日期</th>-->
+                    <!--<th class="tg-031e" colspan="6">{{ userInfo.PatientAgentDetails.BirthDate }}</th>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td class="tg-031e" colspan="3">家庭电话</td>-->
+                    <!--<td class="tg-031e" colspan="4">421125199006277311</td>-->
+                    <!--<td class="tg-031e" colspan="3">入学时间</td>-->
+                    <!--<td class="tg-031e" colspan="4">421125199006277311</td>-->
+                    <!--<td class="tg-031e" colspan="3">身份证号码</td>-->
+                    <!--<td class="tg-031e" colspan="6">{{ userInfo.PatientAgentDetails.IDCard}}</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td class="tg-031e" colspan="3">户籍所在地</td>-->
+                    <!--<td class="tg-031e" colspan="20">{{ userInfo.PatientAgentDetails.Area}}</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<td class="tg-031e" colspan="3">现居住地址</td>-->
+                    <!--<td class="tg-031e" colspan="20">{{ userInfo.PatientAgentDetails.Address2 }}</td>-->
+                <!--</tr>-->
+
+                <!--<tr v-if="userInfo.PatientAgentDetails.Member1">-->
+                <!--<td class="tg-s6z2" rowspan="8">家<br>庭<br>情<br>况</td>-->
+                <!--<td class="tg-s6z2" colspan="3">父亲姓名</td>-->
+                <!--<td class="tg-031e" colspan="3">{{ userInfo.PatientAgentDetails.Member1.Name }}</td>-->
+                <!--<td class="tg-s6z2" rowspan="3">年<br>龄</td>-->
+                <!--<td class="tg-s6z2" colspan="2">{{ userInfo.PatientAgentDetails.Member1.Age }}</td>-->
+                <!--<td class="tg-s6z2" rowspan="3">文<br>化<br>程<br>度</td>-->
+                <!--<td class="tg-s6z2" colspan="2">{{ userInfo.PatientAgentDetails.Member1.Degree }}</td>-->
+                <!--<td class="tg-s6z2" rowspan="3">工<br>作<br>单<br>位<br>及<br>职<br>务</td>-->
+                <!--<td class="tg-s6z2" colspan="4">{{ userInfo.PatientAgentDetails.Member1.WorkUnit }}</td>-->
+                <!--<td class="tg-s6z2" rowspan="3">联<br>系<br>电<br>话</td>-->
+                <!--<td class="tg-s6z2" colspan="5">{{ userInfo.PatientAgentDetails.Member1.Mobile }}</td>-->
+                <!--</tr>-->
+
+                <!--<tr v-if="userInfo.PatientAgentDetails.Member2">-->
+                <!--<td class="tg-s6z2" colspan="3">母亲姓名</td>-->
+                <!--<td class="tg-031e" colspan="3">{{ userInfo.PatientAgentDetails.Member2.Name }}</td>-->
+                <!--<td class="tg-s6z2" colspan="2">{{ userInfo.PatientAgentDetails.Member1.Age }}</td>-->
+                <!--<td class="tg-s6z2" colspan="2">{{ userInfo.PatientAgentDetails.Member1.Degree }}</td>-->
+                <!--<td class="tg-s6z2" colspan="4">{{ userInfo.PatientAgentDetails.Member1.WorkUnit }}</td>-->
+                <!--<td class="tg-s6z2" colspan="5">{{ userInfo.PatientAgentDetails.Member1.Mobile }}</td>-->
+                <!--</tr>-->
+
+                <!--<tr v-if="userInfo.PatientAgentDetails.Member3">-->
+                <!--<td class="tg-s6z2" colspan="3">其他成员</td>-->
+                <!--<td class="tg-031e" colspan="3">{{ userInfo.PatientAgentDetails.Member3.Name }}</td>-->
+                <!--<td class="tg-s6z2" colspan="2"> {{ userInfo.PatientAgentDetails.Member3.Age }}</td>-->
+                <!--<td class="tg-s6z2" colspan="2"> {{ userInfo.PatientAgentDetails.Member3.Degree }}</td>-->
+                <!--<td class="tg-s6z2" colspan="4"> {{ userInfo.PatientAgentDetails.Member3.WorkUnit }}</td>-->
+                <!--<td class="tg-s6z2" colspan="5"> {{ userInfo.PatientAgentDetails.Member3.Mobile }}</td>-->
+                <!--</tr>-->
+
+
+                <tr>
+                    <td class="tg-s6z2" colspan="3">家庭模式</td>
+                    <td class="tg-031e" colspan="20">
+
+
+                                    <span v-for="(ele,index) in fcData[0]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.FamilyModel === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="3">居住社区</td>
+                    <td class="tg-031e" colspan="20">
+                                    <span v-for="(ele,index) in fcData[1]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.Community === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="3">教养方式</td>
+                    <td class="tg-031e" colspan="20">
+                                    <span v-for="(ele,index) in fcData[2]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.EducationStyle === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="3">语言环境</td>
+                    <td class="tg-031e" colspan="20">
+                                    <span v-for="(ele,index) in fcData[3]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.Language === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                        <span>{{userInfo.Language}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="tg-s6z2" colspan="3">抚养/<br>带教人</td>
+                    <td class="tg-031e" colspan="20">
+                        <span v-for="(ele,index) in fcData[4]">{{ele.Name}}（
+                                        <img v-if="userInfo.PatientAgentDetails.Language === ele.Name" src="../assets/images/print/勾.png" alt="print">
+                                        ）&nbsp;&nbsp;&nbsp;</span>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="tg" v-for="ele in userInfo.Courses[0].Subjects">
+                <tr>
+                    <td class="tg-s6z2" colspan="4" rowspan="6">
+                        {{ ele.Name }}
+                    </td>
+                    <td class="tg-031e" colspan="2" rowspan="3">优势</td>
+                    <td class="tg-031e" colspan="18" rowspan="3">
+                        <p v-for="item in ele.Advantages">
+                            {{item}}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                    <td class="tg-031e" colspan="2" rowspan="3">劣势</td>
+                    <td class="tg-031e" colspan="18" rowspan="3">
+                        <p v-for="item in ele.Disadvantages">
+                            {{item}}
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                </tr>
+            </table>
+
+            <table class="tg">
+                <tr>
+                    <td class="tg-031e" colspan="4" rowspan="3">学习能力综合分析</td>
+                    <td class="tg-031e" colspan="20" rowspan="3">{{ userInfo.Summary}}</td>
+                </tr>
+                <tr>
+                </tr>
+                <tr>
+                </tr>
+            </table>
+
+
+        </div>
+    </div>
+</template>
+
+<script>
+    export default {
+        name: 'analysisReportPrinter',
+        props: ['userInfo', 'fcData'],
+        data() {
+            return {
+
+            }
+        },
+        computed: {
+
+
+        },
+        methods: {
+
+        },
+        created() {
+
+        },
+        beforeMount() {
+
+        },
+        mounted() {
+
+        }
+    }
+
+</script>
+<style scoped>
+    .paperform-title {font-size: 22px; text-align: center}
+    .paperform-filecode {
+        text-align: right
+    }
+    .paperform-form {
+        width: 595px;
+    }
+
+    .nextPage {PAGE-BREAK-AFTER: always;margin-top: 40px;width: 100%}
+    .tg{border-collapse:collapse;border-spacing:0;width: 100%}
+    .tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center;vertical-align:center}
+    .tg .tg-baqh{text-align:center;vertical-align:center}
+    .tg .tg-yw4l{text-align:center;vertical-align:center}
+    .tg .tg-textleft{text-align:left;vertical-align:top}
+
+</style>

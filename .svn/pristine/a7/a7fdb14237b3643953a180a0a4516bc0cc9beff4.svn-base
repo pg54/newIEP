@@ -1,0 +1,15 @@
+<template>
+  <div>
+  </div>
+</template>
+<script>
+
+  export default {
+    name: 'dataAnalysis',
+    components: {
+    }
+  };
+</script>
+<style scoped>
+
+</style>

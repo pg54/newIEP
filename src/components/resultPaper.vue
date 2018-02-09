@@ -1,0 +1,447 @@
+<template>
+    <div class="testPaper">
+        <div class="formBox">
+            <div class="tabs">
+                <div class="tabs-chose">
+                    <li v-for="(paper, index) in testPaperContentData.Papers" :class="{active : currentTab === index }" @click="currentTab = index;secondTab = 0">
+                        <p>{{paper.Name}}</p>
+                    </li>
+                </div>
+                <div class="tab-content" v-show="paperIndex === currentTab" v-for="(paper, paperIndex) in testPaperContentData.Papers">
+                    <div class="secondLevel">
+                        <div v-for="(section, sectionIndex) in paper.Sections">
+                            <li class="chaptTitle" :class="{secondActive : secondTab === sectionIndex }" @click="secondTab = sectionIndex">
+                                {{section.Name}}
+                                <span v-show="section.Status" class="sectionhasAnswered"></span>
+                            </li>
+                            <div v-show="secondTab === sectionIndex" class="questionsBox">
+                                <p class="testTitle">{{paper.Name}}评测</p>
+                                <p class="testSubTitle">{{paper.Name}}-----{{section.Name}}</p>
+                                <div class="questionContent">
+                                    <div v-for="(question, questionIndex) in section.Questions" class="questiones">
+                                        <p class="questionDescrib">题{{questionIndex+1}}: {{ question.Description}}</p>
+
+                                        <div v-for="(option, optionIndex) in question.Options" class="questionChoses">
+                                            <input class="radioclass " type="radio" :disabled="isComplete" :value="option.Code" :id="option.ID" :name="question.ID" v-model="testPaperFormData.Papers[paperIndex].Sections[sectionIndex].Questions[questionIndex].Result"
+                                                @change="questionOptionChecked($event)" @click="changeClear($event)">
+                                            <label :for="option.ID" class="simbleBox"></label>
+                                            <label :for="option.ID" class="testLabel">{{ option.Code }}&nbsp;{{ option.Name }}</label>
+                                        </div>
+
+                                        <br>
+                                    </div>
+                                </div>
+                                <div class="submitBox iepSubmit" v-bind:class="{narrowSubmitBox : narrow}" v-show="!isComplete">
+                                    <el-button type="primary" @click="submitTestContent()">完成</el-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <el-dialog :visible="showSummary" size="large" :close-on-click-modal="false" :modal-append-to-body="false">
+
+            <div class="paperContent">
+                <el-form ref="form" :model="summaryForm" label-width="80px">
+                    <el-form-item label="建议对策">
+                        <el-input type="textarea" :rows="6" v-model="summaryForm.suggest"></el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+
+            <div slot="footer" class="dialog-footer">
+                <el-button @click.native="showSummary = false;summaryForm.suggest = ''">返回</el-button>
+                <el-button @click.native="updateSummary">提交</el-button>
+            </div>
+        </el-dialog>
+    </div>
+</template>
+<script>
+    import {
+        getTestPaperContent,
+        sendTestPaper,
+        getPacientTestDetails,
+        sendTestSummary
+    } from '../api/api';
+    export default {
+        name: 'reslutPaper',
+        computed: {
+            paticentID: function () {
+                return this.$store.state.serviceArrangement.testPaticentID;
+            },
+            testID: function () {
+                return this.$store.state.serviceArrangement.testID;
+            },
+            isComplete: function () {
+                return this.$store.state.serviceArrangement.testIsComplete;
+            }
+        },
+        data() {
+            return {
+                questionAnswers: [],
+                testPaperContentData: [],
+                testPaperFormData: [],
+                updateData: [],
+                currentTab: 0,
+                secondTab: 0,
+                selectedGroup: this.$store.state.mystudent.patientList,
+                selectedPacientIDS: '',
+                selectedGroupPacientes: [],
+                patientAgents: [],
+                sexOptions: [{
+                        label: '男',
+                        value: '1'
+                    },
+                    {
+                        label: '女',
+                        value: '0'
+                    }
+                ],
+                form: {
+                    patient: '',
+                    sex: '',
+                    date1: '',
+                    date2: ''
+                },
+                notChosed: false,
+                showPacientInfo: false,
+                showSummary: false,
+                summaryForm: {
+                    suggest: ''
+                },
+                narrow: false,
+                changed: false,
+            };
+        },
+        methods: {
+            submitTestContent() {
+                let qustionAnswers = [];
+                let originData = this.testPaperFormData.Papers;
+                for (let i = 0; i < originData.length; i++) { //试卷
+                    for (let j = 0; j < originData[i].Sections.length; j++) { //章节
+                        for (let k = 0; k < originData[i].Sections[j].Questions.length; k++) { //问题
+                            if (originData[i].Sections[j].Questions[k].Result) {
+                                let unitForm = {
+                                    QuestionID: originData[i].Sections[j].Questions[k].ID,
+                                    Result: originData[i].Sections[j].Questions[k].Result
+                                };
+                                qustionAnswers.push(unitForm);
+                            }
+                        }
+                    }
+                }
+                sendTestPaper(this.testID, qustionAnswers).then(res => {
+                    if (res.Code === 0) {
+                        this.$message.success('提交成功');
+                        this.requesTestPaperData();
+                    } else if (res.Code === 1) {
+                        this.$message.wraning('指定的评估不存在');
+                    } else if (res.Code === 2) {
+                        this.$message.wraning('指定的评估不属于当前用户');
+                    } else if (res.Code === 3) {
+                        this.$message.wraning('请指定患者');
+                    } else if (res.Code === 4) {
+                        this.$message.wraning('指定的患者不属于当前医生');
+                    } else {
+                        this.$message.error(res.Msg);
+                    }
+                });
+            },
+            changeClear(event) {
+                console.log('changeClear');
+                let _this = this;
+                setTimeout(() => {
+                    if (!_this.changed) {
+                        event.target.checked = false;
+                    }
+                    _this.changed = false;
+                }, 0)
+            },
+            questionOptionChecked(event) {
+                this.changed = true;
+            },
+            requesTestPaperData() {
+                getPacientTestDetails(this.testID).then(res => {
+                    if (!this.isComplete) {
+                        this.showSummary = this.JudgShowSummary(res);
+                    }
+                    this.form.testDate = res.CreatedOn;
+                    this.testPaperFormData = Object.assign({}, res);
+                    this.testPaperContentData = res;
+                });
+            },
+            JudgShowSummary(res) {
+                let originArr = res.Papers;
+                let arr = [];
+                for (let i = 0; i < originArr.length; i++) {
+                    let originLength = originArr[i].Sections.length;
+                    let statusArr = originArr[i].Sections.filter(function (item) {
+                        return item.Status;
+                    })
+                    let foo = statusArr.length === originLength;
+                    arr.push(foo)
+                }
+                let resultArr = arr.filter(function (item) {
+                    return item === true
+                })
+                return resultArr.length === res.Papers.length
+            },
+            updateSummary() {
+                let params = {
+                    ExamMemberID: this.testID,
+                    Summary: this.summaryForm.suggest
+                }
+                sendTestSummary(params)
+                    .then(res => {
+                        if (res.Code === 0) {
+                            this.$message.success('成功');
+                            this.showSummary = false;
+                            this.summaryForm.suggest = ''
+                        } else if (res.Code === 1) {
+                            this.$message.warning('指定的评估不存在');
+                        }
+                    })
+                    .catch(err => {
+                        this.$message.error('网络问题，请重试');
+                    })
+            },
+            filterPacient(val) {
+                this.selectedGroupPacientes = this.selectedGroup[val].groupPatients;
+            }
+        },
+        created() {
+            if (window.innerHeight < 768) {
+                this.narrow = true;
+            } else {
+                this.narrow = false;
+            }
+            this.requesTestPaperData();
+        },
+        mounted() {
+            window.onresize = () => {
+                return (() => {
+                    if (window.innerHeight < 768) {
+                        this.narrow = true;
+                    } else {
+                        this.narrow = false;
+                    }
+                })()
+            }
+        }
+    };
+
+</script>
+<style scoped>
+    .testPaper {
+        position: relative;
+        width: 1185px;
+        height: 583px;
+        /*z-index: 10;*/
+        /*margin-left: -30px*/
+    }
+
+    .formBox {
+        width: 1125px;
+        height: 580px;
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+
+    .blockItem {
+        display: inline-flex;
+        height: 60px;
+        margin-right: 5px;
+        justify-content: center;
+        align-items: center
+    }
+
+    .tabs {
+        position: absolute;
+        width: 1180px;
+        height: 580px;
+        top: 0;
+        left: 0;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .12), 0 0 6px 0 rgba(0, 0, 0, .04);
+    }
+
+    .tabs-chose {
+        position: absolute;
+        width: 170px;
+        height: 580px;
+        border-right: 1px solid #EFEFEF;
+    }
+
+    .secondLevel {
+        position: absolute;
+        width: 170px;
+        height: 580px;
+        left: 170px;
+        top: 0
+    }
+
+    .questionsBox {
+        position: absolute;
+        width: 845px;
+        height: 580px;
+        left: 170px;
+        top: 0;
+        border-left: 1px solid #EFEFEF;
+        padding: 0 68px
+    }
+
+    .questionContent {
+        position: absolute;
+        width: 709px;
+        height: 495px;
+        left: 68px;
+        top: 70px;
+        overflow-y: scroll;
+        border-bottom: 1px dotted #cccccc
+    }
+
+    .testTitle {
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        margin: 5px 0
+    }
+
+    .testSubTitle {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    .questiones {}
+
+    .tab-content {
+        width: 1000px;
+        margin: 30px auto;
+    }
+
+    .tabs-chose li {
+        width: 170px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 10px;
+        font-size: 14px;
+    }
+
+    .tabs-chose .active {
+        color: #31BBFC;
+    }
+
+    .chaptTitle {
+        width: 170px;
+        height: 40px;
+        font-size: 14px;
+        padding-left: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-right: 4px;
+    }
+
+    .secondActive {
+        background-color: #ffffff;
+        color: #31BBFC;
+    }
+
+    .optionsSpace {
+        width: 100%;
+        height: 20px
+    }
+
+    .testWrap {
+        width: 100px
+    }
+
+    .questionDescrib {
+        font-size: 16px;
+        margin-top: 24px;
+        margin-bottom: 12px
+    }
+
+    .sectionhasAnswered {
+        width: 18px;
+        height: 18px;
+        background-image: url("../assets/images/iep/sectionStatus.png");
+        background-repeat: no-repeat;
+    }
+
+    .radioclass {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        opacity: 0;
+        cursor: pointer;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+        filter: alpha(opacity=0);
+    }
+
+    .simbleBox {
+        display: inline-block;
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+        cursor: pointer;
+        background-image: url("../assets/images/serviceToolImg/默认选框.png");
+    }
+
+    .testLabel {
+        cursor: pointer;
+        display: inline-block;
+        width: calc(100% - 41px);
+    }
+
+    input[type=radio]:checked+label {
+        background-image: url("../assets/images/serviceToolImg/选中选框.png");
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: opacity .5s
+    }
+
+    .fade-enter,
+    .fade-leave-active {
+        opacity: 0
+    }
+
+    .submitBox {
+        width: 100px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        position: fixed;
+        top: 660px;
+        left: calc(50% + 300px);
+    }
+
+    .iepSubmit {
+        left: calc(50% + 450px);
+    }
+
+    .narrowSubmitBox {
+        top: 85%;
+    }
+
+    .questionChoses {
+        display: flex;
+        align-items: center;
+        height: 28px;
+        margin: 5px 0;
+        z-index: 1000;
+        cursor: pointer;
+    }
+
+    .questionChoses:hover {
+        background-color: rgba(239, 239, 239, 1);
+    }
+
+</style>

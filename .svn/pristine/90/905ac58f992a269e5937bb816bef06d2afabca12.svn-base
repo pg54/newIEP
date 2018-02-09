@@ -1,0 +1,595 @@
+<template>
+  <div class="tabs">
+
+    <div class="tabsChoserWrap">
+      <div class="tabs-chose">
+        <li v-for="(tab, index) in tabs"
+            :class="{active : currentTab === index }"
+            @click="currentTab = index">{{tab}}
+        </li>
+      </div>
+    </div>
+
+    <div class="tabContentWrap">
+      <div class="tabs-content">
+        <div v-for="(tab,index) in tabs" class="tab-content" v-show="currentTab === index">
+
+          <div v-if="index === 0">
+            <ConsultManage></ConsultManage>
+          </div>
+
+          <div v-if="index === 1">
+            <el-dialog title="服务编辑" v-model="editFormVisible" :close-on-click-modal="false">
+              <el-form ref="addServiceformEle" :model="addServiceform" label-width="80px">
+
+                <el-form-item label="服务图例">
+                  <el-upload
+                          class="avatar-uploader"
+                          :action="getuploadURL()"
+                          :headers="getAuth()"
+                          :show-file-list="false"
+                          :on-success="handleAvatarScucess"
+                          :before-upload="beforeAvatarUpload">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar" v-model="addServiceform.Logo" style="width: 84px;height: 84px">
+                    <Icon v-else type="upload" size="60"></Icon>
+                  </el-upload>
+                </el-form-item>
+
+                <el-form-item label="服务名称:">
+                  <el-input v-model="addServiceform.Name"></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务价格:">
+                  <el-input v-model="addServiceform.Price"></el-input>
+                </el-form-item>
+
+                <el-form-item label="单次服务咨询次数:">
+                  <el-input v-model="addServiceform.Count"></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务地址:">
+                  <el-input v-model="addServiceform.Location"></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务类型:">
+                  <el-select v-model="categroryType"  placeholder="请选择">
+                    <el-option label="评估" value="1"></el-option>
+                    <el-option label="训练" value="2"></el-option>
+                    <el-option label="教学" value="3"></el-option>
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="病种选择:">
+                  <el-select v-model="tagsArr" multiple placeholder="请选择">
+                    <el-option
+                            v-for="item in tagsOptions"
+                            :key="item.ID"
+                            :label="item.Name"
+                            :value="item.ID">
+                    </el-option>
+                  </el-select>
+
+                </el-form-item>
+
+                <el-form-item label="服务详情:">
+                  <el-input type="textarea" v-model="addServiceform.Comments"></el-input>
+                </el-form-item>
+
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click.native="editFormVisible = false">返回</el-button>
+                <el-button type="primary" @click.native="addServiceSubmit">提交</el-button>
+              </div>
+            </el-dialog>
+
+
+            <el-dialog title="服务查看" v-model="serviceOrderVisible" :close-on-click-modal="false">
+
+              <el-form ref="addServiceformEle" :model="addServiceform" label-width="80px">
+
+                <el-form-item label="服务图例">
+                  <img :src="addServiceform.Logo" alt="logo" style="width: 84px;height: 84px">
+                </el-form-item>
+
+                <el-form-item label="服务名称:">
+                  <el-input v-model="addServiceform.Name" disabled ></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务价格:">
+                  <el-input v-model="addServiceform.Price" disabled ></el-input>
+                </el-form-item>
+
+                <el-form-item label="单次服务咨询次数:">
+                  <el-input v-model="addServiceform.Count" disabled ></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务地址:">
+                  <el-input v-model="addServiceform.Location" disabled ></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务类型:">
+                  <el-select v-model="categroryType"  disabled placeholder="请选择">
+                    <el-option label="评估" value="1"></el-option>
+                    <el-option label="训练" value="2"></el-option>
+                    <el-option label="教学" value="3"></el-option>
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="病种选择:">
+                  <el-select v-model="tagsArr" multiple disabled placeholder="请选择">
+                    <el-option
+                            v-for="item in tagsOptions"
+                            :key="item.ID"
+                            :label="item.Name"
+                            :value="item.ID">
+                    </el-option>
+                  </el-select>
+
+                </el-form-item>
+
+                <el-form-item label="服务详情:">
+                  <el-input type="textarea" v-model="addServiceform.Comments" disabled></el-input>
+                </el-form-item>
+
+              </el-form>
+
+              <div slot="footer" class="dialog-footer">
+                <el-button @click.native="serviceOrderVisible = false">返回</el-button>
+              </div>
+            </el-dialog>
+
+
+            <el-dialog title="新增服务" v-model="addServiceFormVisible" :close-on-click-modal="false">
+
+              <el-form ref="addServiceformEle" :model="addServiceform" label-width="80px">
+
+                <el-form-item label="服务图例">
+                  <el-upload
+                    class="avatar-uploader"
+                    :action="getuploadURL()"
+                    :headers="getAuth()"
+                    :show-file-list="false"
+                    :on-success="handleAvatarScucess"
+                    :before-upload="beforeAvatarUpload">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar" v-model="addServiceform.Logo" style="width: 84px;height: 84px">
+                      <Icon v-else type="upload" size="60"></Icon>
+                  </el-upload>
+                </el-form-item>
+
+                <el-form-item label="服务名称:">
+                  <el-input v-model="addServiceform.Name"></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务价格:">
+                  <el-input v-model="addServiceform.Price"></el-input>
+                </el-form-item>
+
+                <el-form-item label="单次服务咨询次数:">
+                  <el-input v-model="addServiceform.Count"></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务地址:">
+                  <el-input v-model="addServiceform.Location"></el-input>
+                </el-form-item>
+
+                <el-form-item label="服务类型:">
+                  <el-select v-model="categroryType" placeholder="请选择">
+                    <el-option label="评估" value="1"></el-option>
+                    <el-option label="训练" value="2"></el-option>
+                    <el-option label="教学" value="3"></el-option>
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="病种选择:">
+                  <el-select v-model="addServiceform.Tags" multiple placeholder="请选择">
+                    <el-option
+                      v-for="item in tagsOptions"
+                      :key="item.ID"
+                      :label="item.Name"
+                      :value="item.ID">
+                    </el-option>
+                  </el-select>
+
+                </el-form-item>
+
+                <el-form-item label="服务详情:">
+                  <el-input type="textarea" v-model="addServiceform.Comments"></el-input>
+                </el-form-item>
+
+              </el-form>
+              <div slot="footer" class="dialog-footer">
+                <el-button @click.native="addServiceCancel()">返回</el-button>
+                <el-button type="primary" @click.native="addServiceSubmit()">提交</el-button>
+              </div>
+            </el-dialog>
+
+            <div class="toolArea">
+              <el-select v-model="filterStatus" filterable @change="selectedStatus">
+                <el-option
+                  v-for="item in statusOptions"
+                  :key="item.label"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <el-button @click="addService()">新增服务</el-button>
+            </div>
+
+            <el-table
+              :data="drServiceList"
+              style="width: 100%">
+
+              <el-table-column
+                label="服务名称"
+                width="180">
+                <template scope="scope">{{ scope.row.DeptName }}</template>
+              </el-table-column>
+
+              <el-table-column prop="Status" label="状态" width="150" :formatter="formatStatus" :filters="[
+              { text: '等待审核', value: 1 },
+              { text: '审核失败', value: 2 },
+              { text: '审核通过', value: 3 },
+              { text: '已上线', value: 4 },
+              { text: '已下线', value: 5 }
+              ]" :filter-method="filterTag">
+                <!--<template scope="scope">-->
+                  <!--<el-tag :type="scope.row.Status === 1 ? 'primary' : 'success'" close-transition>{{scope.row.Status}}</el-tag>-->
+                <!--</template>-->
+              </el-table-column>
+
+              <el-table-column
+                prop="Location"
+                label="地点"
+                show-overflow-tooltip
+                width="200">
+              </el-table-column>
+
+              <el-table-column
+                prop="DeptName"
+                label="科室"
+                width="110">
+              </el-table-column>
+
+
+              <!--<el-table-column-->
+              <!--prop="Tags"-->
+              <!--label="标签"-->
+              <!--width="100"-->
+              <!--:filters="[{ text: '家', value: '家' }, { text: '公司', value: '公司' }]"-->
+              <!--:filter-method="filterTag">-->
+              <!--<template scope="scope">-->
+              <!--<el-tag-->
+              <!--close-transition v-for="tag in scope.row.TagName" :key="tag.TagName">{{tag.TagName}}</el-tag>-->
+              <!--</template>-->
+              <!--</el-table-column>-->
+
+              <el-table-column
+                prop="Tags"
+                label="病种"
+                show-overflow-tooltip
+                width="110">
+              </el-table-column>
+
+              <el-table-column
+                label="详情"
+                width="100">
+                <template scope="scope">
+                  <el-button
+                    @click.native.prevent="checkList(scope.$index, scope.row)"
+                    type="text"
+                    size="small">
+                    <i class="el-icon-document"></i>
+                  </el-button>
+                </template>
+              </el-table-column>
+
+              <el-table-column
+                label="编辑"
+                width="100">
+                <template scope="scope">
+                  <el-button
+                    @click.native.prevent="editgo(scope.$index, scope.row)"
+                    type="text"
+                    size="small">
+                    <i class="el-icon-edit"></i>
+                  </el-button>
+                </template>
+              </el-table-column>
+
+
+              <el-table-column
+                label="删除"
+                width="100">
+                <template scope="scope">
+                  <el-button
+                    @click.native.prevent="deleteRow(scope.$index, scope.row)"
+                    type="text"
+                    size="small">
+                    <i class="el-icon-delete"></i>
+                  </el-button>
+                </template>
+              </el-table-column>
+
+            </el-table>
+            <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="10"
+                           :total="total" style="float:right;"></el-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  import { getDrServiceList, serviceOrders, uploadIMGURL, deleteService, getDiagnosises, addDrService } from '../../../api/api';
+  import ConsultManage from './MyServiceManageConsult.vue';
+
+  export default {
+    name: 'serviceManage',
+    components: {
+      ConsultManage
+    },
+    data() {
+      return {
+        currentTab: 0,
+        consultData: [],
+        tabs: ['咨询管理', '服务管理'],
+        drServiceList: [],
+        serviceOrderData: [],
+        total: 1,
+        filterStatus: '',
+        orderTotal: '',
+        serviceOrderVisible: false,
+        addServiceFormVisible: false,
+        editFormVisible: false,
+        serviceID: '',
+        imageUrl: '',
+        imgMsg: '',
+        tagsOptions: [],
+        serivceListPage: 1,
+          tagsArr: [],
+          categroryType: '',
+        addServiceform: {
+          Name: '',
+          Logo: '',
+          Price: '',
+          Type: '',
+          Comments: '',
+          Location: '',
+          Count: '',
+          Tags: []
+        },
+        statusOptions: [
+          {
+            label: '等待审核',
+            value: '1'
+          },
+          {
+            label: '审核失败',
+            value: '2'
+          },
+          {
+            label: '审核通过',
+            value: '3'
+          },
+          {
+            label: '已上线',
+            value: '4'
+          },
+          {
+            label: '已下线',
+            value: '5'
+          }
+        ]
+      };
+    },
+    methods: {
+      filterTag(value, row) {
+        return row.Status === value;
+      },
+        setCategroryType() {
+          this.categroryType = String(this.addServiceform.Type);
+        },
+        getTagesArr(obj) {
+          let tagsArr = []
+          for (let ele in obj) {
+              tagsArr.push(obj[ele].TagID);
+          }
+          this.tagsArr = tagsArr;
+        },
+      checkList(index, row) {
+          this.addServiceform = row;
+          console.log(typeof this.addServiceform.Type);
+          this.getTagesArr(this.addServiceform.Tags)
+          this.setCategroryType();
+        this.serviceOrderVisible = true;
+        console.log('输出row');
+        console.log(row);
+
+//        serviceOrders(id, 1, 10).then(res => {
+//          this.addServiceform = res.data.Records;
+//            console.log('表格的数据源');
+//            console.log(res.data.Records);
+//          this.orderTotal = res.data.Total;
+//        });
+      },
+      formatStatus: function(row, column) {
+        var status = row.Status;
+        console.log(status);
+        var resulut;
+        switch (status) {
+          case 1:
+            resulut = '等待审核';
+            break;
+          case 2:
+            resulut = '审核失败';
+            break;
+          case 3:
+            resulut = '审核通过';
+            break;
+          case 4:
+            resulut = '已上线';
+            break;
+          case 5:
+            resulut = '已下线';
+            break;
+        }
+        return resulut;
+      },
+      toGetDiagnosises() {
+        getDiagnosises().then(res => {
+          this.tagsOptions = res.List[0].Diagnosises;
+        });
+      },
+      getuploadURL() {
+        return uploadIMGURL;
+      },
+      selectedStatus(val) {
+        console.log('选中了val');
+        console.log(val);
+        this.filterStatus();
+      },
+      filterStatus(value, row) {
+        return row.Status === value;
+      },
+      addServiceCancel() {
+        var obj = {
+          Name: '',
+          Logo: '',
+          Price: '',
+          Type: '',
+          Comments: '',
+          Location: '',
+          Count: '',
+          Tags: []
+        };
+        this.addServiceform = obj;
+        this.addServiceFormVisible = false;
+      },
+      addServiceSubmit() {
+        console.log(this.addServiceform);
+        this.addServiceform.Type = Number(this.categroryType);
+        var arr = this.addServiceform.Tags;
+        var tags = [];
+        for (var i = 0, j = arr.length; i < j; i++) {
+          tags.push({
+            'TagID': arr[i]
+          });
+        }
+        this.addServiceform.Tags = tags;
+        console.log('表单数据');
+        console.log(this.addServiceform);
+        addDrService(this.addServiceform).then(res => {
+          if (res.Code === 0) {
+            this.$message.success('成功');
+          }
+          this.addServiceFormVisible = false;
+          this.editFormVisible = false;
+          this.categroryType = '';
+          this.getUsers();
+        });
+      },
+      getUsers() {
+        getDrServiceList(this.serivceListPage, 10).then(res => {
+          this.drServiceList = res.data.Records;
+          this.total = res.data.Total;
+        });
+      },
+      getAuth() {
+        return {'authorization': sessionStorage.getItem('accessToken')};
+      },
+      editgo(index, row) {
+          this.addServiceform = row;
+          this.imageUrl = this.addServiceform.Logo;
+          this.getTagesArr(this.addServiceform.Tags);
+          this.setCategroryType();
+        this.editFormVisible = true;
+      },
+      addService() {
+        this.addServiceFormVisible = true;
+        this.addServiceform = {
+          Name: '',
+          Logo: '',
+          Price: '',
+          Type: '',
+          Comments: '',
+          Location: '',
+          Count: '',
+          Tags: []
+        };
+        this.imageUrl = '';
+      },
+      deleteRow(index, row) {
+        var params = row.ID;
+        deleteService(params).then(res => {
+          var code = res.Code;
+          if (code === 0) {
+            this.$message.success('删除成功');
+          } else if (code === 1) {
+            this.$message.success('服务存在');
+          } else if (code === 2) {
+            this.$message.success('服务正在使用');
+          } else {
+            this.$message.success('操作异常');
+          }
+          this.getUsers();
+        });
+      },
+      handleCurrentChange(val) {
+        this.serivceListPage = val;
+        this.getUsers();
+      },
+      handleOrderChange(change) {
+        var id = this.serviceID;
+        serviceOrders(id, change, 10).then(res => {
+          this.serviceOrderData = res.data.Records;
+          this.orderTotal = res.data.Total;
+        });
+      },
+      handleAvatarScucess(res, file) {
+        if (res.Code === 0) {
+          this.imageUrl = res.Path;
+          this.addServiceform.logo = res.Msg;
+        } else {
+          this.$message.error('没有找到文件');
+        }
+      },
+      beforeAvatarUpload(file) {
+//        const isJPG = file.type === 'image/jpg/';
+//        const isLt2M = file.size / 1024 / 1024 < 2;
+//        if (!isJPG) {
+//          this.$message.error('上传头像图片只能是 JPG 格式!');
+//        }
+//        if (!isLt2M) {
+//          this.$message.error('上传头像图片大小不能超过 2MB!');
+//        }
+//        return isJPG && isLt2M;
+      }
+    },
+    mounted() {
+        this.toGetDiagnosises();
+      this.getUsers();
+    }
+  };
+</script>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+  .tabs {width: 100%;display: flex;align-items: stretch}
+  .tabsChoserWrap {}
+  .tabs-chose {width: 106px;height: 626px;border-right: 1px solid #EFEFEF}
+  .tabs-content {width: 1080px;border-left: 1px solid #EFEFEF;height: 626px;}
+  .tabs-chose li{
+    width: 106px;
+    height: 70px;
+    text-align: center;
+    line-height: 70px;
+    cursor: pointer;
+  }
+
+  .toolArea {margin: 20px 0}
+  .icon-msnui-cloud-upload {font-size: 60px}
+  .tabs-chose .active {
+    color: #48C4FC;
+  }
+</style>

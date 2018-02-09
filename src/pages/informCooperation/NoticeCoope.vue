@@ -1,0 +1,195 @@
+<template>
+    <div class="contentWrap">
+        <div class="center-content">
+            <div class="toolArea">
+                <el-row :gutter="20" type="flex" justify="start">
+                    <!--<el-col :span="6">-->
+                    <!--<div class="grid-content">-->
+                    <!--<span style="font-size: 18px;font-weight: bold">请选择时间范围</span>-->
+                    <!--</div>-->
+                    <!--</el-col>-->
+                    <el-col :span="6">
+                        <div class="grid-content">
+                            <span style="font-size: 14px;">开始时间:&nbsp;</span>
+                            <el-date-picker v-model="serviceStartDate" type="date" placeholder="选择开始日期">
+                            </el-date-picker>
+                        </div>
+                    </el-col>
+                    <el-col :span="6">
+                        <div class="grid-content">
+                            <span style="font-size: 14px;">结束时间:&nbsp;</span>
+                            <el-date-picker v-model="serviceEndDate" type="date" placeholder="选择结束日期">
+                            </el-date-picker>
+                        </div>
+                    </el-col>
+                    <el-col :span="6">
+                        <el-button @click="getTimeRangeData">查询</el-button>
+                    </el-col>
+                </el-row>
+            </div>
+            <el-card class="cardBox colorHeader" :body-style="{ padding: '0px'}">
+                <div class="tableWrap">
+                    <el-table :data="sourceData" style="width: 100%">
+                        <el-table-column type="index" width="80">
+                        </el-table-column>
+    
+                        <el-table-column prop="StudentName" label="患者">
+                        </el-table-column>
+    
+                        <el-table-column prop="BirthDate" label="年龄">
+                            <template scope="scope">
+                                <span>{{ getPatientAge(scope.row.BirthDate)}}</span>
+                            </template>
+                        </el-table-column>
+    
+                        <el-table-column prop="DiagnosisName" label="诊断结果">
+                        </el-table-column>
+    
+                        <el-table-column prop="DoctorName" label="操作人">
+                        </el-table-column>
+    
+                        <el-table-column prop="PatientFrom" label="患者来源">
+                             <template scope="scope">
+                                <span>{{ getPatientFrom(scope.row.PatientFrom)}}</span>
+                            </template>
+                        </el-table-column>
+    
+                        <el-table-column prop="PatientSrc"  label=" 患者来源路径">
+                             <template scope="scope">
+                                <span>{{ getPatientSrc(scope.row.PatientSrc)}}</span>
+                            </template>
+                        </el-table-column>
+    
+                        <el-table-column prop="CreatedOn" label="时间">
+                        </el-table-column>
+    
+                    </el-table>
+                </div>
+                <div style="float: right">
+                    <el-pagination @current-change="nextPage" layout="prev, pager, next" :total="pageTotal">
+                    </el-pagination>
+                </div>
+            </el-card>
+        </div>
+    
+    </div>
+</template>
+<script>
+import api from '../../api/index.js';
+export default {
+    name: 'noticeCoope',
+    data() {
+        return {
+            nowDate: (new Date()).toISOString(),
+            sourceData: [],
+            pageIndex: '',
+            pageTotal: 1,
+            currentPage: 1,
+            serviceStartDate: '',
+            serviceEndDate: ''
+        }
+    },
+    methods: {
+        getPatientAge(strBirthday) {
+            let strBirthdayArr = strBirthday.substr(0, 10);
+            let age = this.ageTool(strBirthdayArr);
+            return age;
+        },
+        ageTool(str) {
+            var r = str.match(/^(\d{1,4})(-|\/)(\d{1,2})\2(\d{1,2})$/);
+            if (r == null) return false;
+            var d = new Date(r[1], r[3] - 1, r[4]);
+            if (d.getFullYear() == r[1] && (d.getMonth() + 1) == r[3] && d.getDate() == r[4]) {
+                var Y = new Date().getFullYear();
+                return ((Y - r[1]) + "   周岁");
+            }
+            return ("输入的日期格式错误！");
+        },
+        getPageData(pageIndex, startTime, endTime) {
+            let params = {
+                PageIndex: pageIndex,
+                PageSize: 10,
+                StartDate: startTime,
+                EndDate: endTime
+            }
+            api.getServiceReviewData(params)
+                .then(res => {
+                    this.pageTotal = res.data.Total;
+                    this.pageIndex = res.data.Index;
+                    this.sourceData = res.data.Records;
+                })
+                .catch(err => {
+
+                })
+        },
+        nextPage(curPage) {
+            this.currentPage = curPage;
+            this.getPageData(this.currentPage, this.serviceStartDate, this.serviceEndDate);
+        },
+        getTimeRangeData() {
+            this.getPageData(1, this.serviceStartDate, this.serviceEndDate)
+        },
+        initData() {
+            this.serviceStartDate = '2017-01-01';
+            this.serviceEndDate = '2017-12-30';
+            this.getPageData(1, this.serviceStartDate, this.serviceEndDate);
+        },
+        getPatientFrom(type){
+            if(type===1){
+                return "一新康复平台";
+            }
+            return "IEP平台";
+        },
+        getPatientSrc(type){
+            if(type===1){
+                return "服务购买";
+            }
+            return "新增";
+        }
+    },
+    created() {
+        this.initData();
+    }
+};
+</script>
+<style scoped>
+.contentWrap {
+    width: 1280px;
+    height: 626px;
+    position: absolute;
+}
+
+.center-content {
+    width: 100%;
+    height: 626px;
+    padding: 5px 20px;
+}
+
+.infores {
+    width: 100%;
+    height: 540px;
+    overflow-y: scroll;
+}
+
+.toolArea {
+    width: 100%;
+    height: 40px;
+    /*display: flex;*/
+    /*justify-content: flex-end;*/
+    margin-bottom: 5px;
+}
+
+.cardBox {
+    width: 100%;
+    height: 522px
+}
+
+.tableWrap {
+    width: 100%;
+    height: 480px;
+}
+
+.colorHeader {
+    border-top: 4px solid RGBA(49, 187, 252, 1.00)
+}
+</style>

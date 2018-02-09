@@ -1,0 +1,36 @@
+<template>
+  <div>
+    <p>header</p>
+    <div>
+      <h2>我是子组件的标题</h2>
+      <slot name="zs">张三的位置</slot>
+      <slot name="ls">李四的位置</slot>
+    </div>
+    <button @click="setSession">setSession</button>
+    <button @click="showSession">showSession</button>
+    <p>footer</p>
+  </div>
+</template>
+<script>
+
+  export default {
+    name: 'slotSTH',
+    methods: {
+      setSession: function() {
+        var user = {
+          name: 'pg',
+          password: '123456'
+        };
+        sessionStorage.setItem('user', JSON.stringify(user));
+      },
+      showSession: function() {
+        var user;
+        user = sessionStorage.getItem('user');
+        console.log(user);
+      }
+    }
+  };
+</script>
+<style scoped>
+
+</style>

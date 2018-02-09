@@ -1,0 +1,15 @@
+<template>
+  <div>
+
+
+  </div>
+</template>
+<script>
+
+  export default {
+    name: 'serviceToolAdvisory'
+  };
+</script>
+<style scoped>
+
+</style>

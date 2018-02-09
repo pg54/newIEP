@@ -1,0 +1,173 @@
+<template>
+    <div class="planWrap" v-show="showPlanWrap">
+    
+        <vueTab :tabtitles="['学期计划','月计划','周计划']" :current-page="1">
+            <div class="tab-content-container">
+    
+                <div class="center-content">
+                    <div class="toolBox">
+    
+                    </div>
+                    <div class="contentBox">
+                        <div v-for="(item, index) in sourceData.TremPlans" class="item">
+                            <div class="titleBox">
+                                <span>{{ item.Name}}</span>
+    
+                                <el-button @click="editMouthPlan(item.ParentID)">编辑月计划</el-button>
+                                <el-button >查看详情</el-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+            </div>
+    
+            <div class="tab-content-container">
+    
+                <div class="center-content">
+                    <div class="toolBox">
+    
+                    </div>
+                    <div class="contentBox">
+                        <div v-for="(item, index) in sourceData.MonthPlans" class="item">
+                            <div class="titleBox">
+                                <span>{{ item.Name}}</span>
+    
+                                <el-button @click="editWeekPlan(item.ParentID)">编辑周计划</el-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content-container">
+                <div class="center-content">
+                    <div class="toolBox">
+    
+                    </div>
+                    <div class="contentBox">
+                        <div v-for="(item, index) in sourceData.WeekPlans" class="item">
+                            <div class="titleBox">
+                                <span>{{ item.Name}}</span>
+    
+                                <el-button >详情</el-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </vueTab>
+        
+    </div>
+</template>
+<script>
+import { getPlanDetail } from '../../../../api/api';
+import vueTab from '../../../../components/vue-tab.vue';
+
+export default {
+    name: 'iepPlanDetail',
+    components: {
+        vueTab
+    },
+    computed: {
+        sourceData: function () {
+            console.log(this.$store.state.questionPaper.planDetails);
+            return this.$store.state.questionPaper.planDetails;
+        },
+        showPlanWrap: function () {
+            return this.$store.state.questionPaper.showPlanWrap;
+        }
+    },
+    data() {
+        return {
+            activeName: 'first',
+        }
+    },
+    methods: {
+        goItemDetails: function (id) {
+            this.$store.dispatch('setPlanItemDetails', id);
+            this.$store.dispatch('getLineID', id);
+            this.$store.dispatch('setIepPlanItemStatus', false);
+            this.$store.dispatch('setIepPlanCourseStatus', true);
+            this.$router.push({ path: '/iep/iepPlan/PlanItemDetail' });
+        }
+    },
+    mounted() {
+        //console.log('is mouned');
+    }
+};
+</script>
+<style scoped>
+.planWrap {
+    position: absolute;
+    ;
+    width: 1080px;
+    height: 626px;
+    top: 0;
+    left: 106px;
+    z-index: 10;
+    overflow-y: scroll;
+}
+
+.center-content {
+    width: 1080px;
+    padding: 30px;
+    height: 540px;
+}
+
+.item {
+    position: relative;
+    width: 1020px;
+    height: 104px;
+    margin-bottom: 20px
+}
+
+.titleBox {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #3BBDF9;
+    -webkit-border-radius: 6px 6px 6px 6px;
+    -moz-border-radius: 6px 6px 6px 6px;
+    border-radius: 6px 6px 6px 6px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.planBox {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    width: 100%;
+    height: 72px;
+    background-color: #E9F8FF;
+    -webkit-border-radius: 0 0 6px 6px;
+    -moz-border-radius: 0 0 6px 6px;
+    border-radius: 0 0 6px 6px;
+}
+
+.planBoxLeft {
+    position: absolute;
+    border-right: 1px dotted #30BCFC;
+    width: 252px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center
+}
+
+.planBoxRight {
+    position: absolute;
+    top: 0;
+    left: 510px;
+    width: 510px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center
+}
+</style>

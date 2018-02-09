@@ -1,0 +1,598 @@
+<template>
+    <div class="printWrap">
+        <div class="print-sider">
+            <h2 class="print-sider-title">广东省智力残疾儿童康复档案</h2>
+            <li class="print-sider-paper" @click='choseRegister'>
+                <p class="print-sider-paperTitle">智力残疾儿童入学登记表</p>
+                <div class="print-sider-paperNav">
+                    <span class="print-sider-paperIndex">1</span>
+                    <span class="print-sider-paperIndex">2</span>
+                </div>
+            </li>
+
+            <li class="print-sider-paper" v-for="ele in testPaperListData">
+                <p @click="requestTestPaticent(ele.ID)">
+                    <span >{{ ele.Name}}</span>
+                    <span >{{ ele.PackageName}}</span>
+                    <span >{{ ele.Summary}}</span>
+                </p>
+
+            </li>
+
+
+            <li class="print-sider-paper" @click="paperIndex = 3">
+                <p class="print-sider-paperTitle">智力残疾康复个性化教育计划（IEP）</p>
+            </li>
+        </div>
+        <div class="print-content">
+            <div id="print-content-paper">
+                <div v-if="paperIndex === 0">
+                    <registerPrinter :userInfo="stuData" :dpData="diagnosisesDeptData" :fcData="fiveConditionData"></registerPrinter>
+                </div>
+
+                <div class="paperform-content" v-if="paperIndex === 1">
+                    <p class="paperform-title">学习能力评估结果综合分析报告</p>
+                    <p class="paperform-subtitle">
+                        <span>儿童姓名：________</span>
+                        <span>性别_________</span>
+                        <span>出生日期_______年________月_________日</span>
+                    </p>
+                    <p class="paperform-subtitle">
+                        <span>教育诊断人：________ </span>
+                        <span>教育诊断日期_______年________月_________日</span>
+                    </p>
+                    <div class="paperform-form">
+                        <table class="tg">
+                            <tr>
+                                <th class="tg-031e" rowspan="4">学<br>生<br>基<br>本<br>资<br>料</th>
+                                <th class="tg-031e" colspan="3">姓名</th>
+                                <th class="tg-031e" colspan="4"></th>
+                                <th class="tg-031e" colspan="3">性别</th>
+                                <th class="tg-031e" colspan="4"></th>
+                                <th class="tg-031e" colspan="3">出生日期</th>
+                                <th class="tg-031e" colspan="6"></th>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">家庭电话</td>
+                                <td class="tg-031e" colspan="4">421125199006277311</td>
+                                <td class="tg-031e" colspan="3">入学时间</td>
+                                <td class="tg-031e" colspan="4">421125199006277311</td>
+                                <td class="tg-031e" colspan="3">身份证号码</td>
+                                <td class="tg-031e" colspan="6">421125199006277311</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">户籍所在地</td>
+                                <td class="tg-031e" colspan="20"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3">现居住地址</td>
+                                <td class="tg-031e" colspan="20"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" rowspan="8">家<br>庭<br>情<br>况</td>
+                                <td class="tg-s6z2" colspan="3">父亲姓名</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" rowspan="3">年<br>龄</td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" rowspan="3">文<br>化<br>程<br>度</td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" rowspan="3">工<br>作<br>单<br>位<br>及<br>职<br>务</td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" rowspan="3">联<br>系<br>电<br>话</td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">母亲姓名</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">其他成员</td>
+                                <td class="tg-031e" colspan="3"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="2"></td>
+                                <td class="tg-s6z2" colspan="4"></td>
+                                <td class="tg-s6z2" colspan="5"></td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">家庭模式</td>
+                                <td class="tg-031e" colspan="20">大家庭（）       核心家庭（）  单亲家庭（）   寄养家庭（）  </td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">居住社区</td>
+                                <td class="tg-031e" colspan="20">花园小区（）    独家居住（）  租住房（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">教养方式</td>
+                                <td class="tg-031e" colspan="20">教育型（）       娇惯型（）     放任自流型（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">语言环境</td>
+                                <td class="tg-031e" colspan="20">普通话（）       广州话（）     地方方言（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-s6z2" colspan="3">抚养/<br>带教人</td>
+                                <td class="tg-031e" colspan="20">父母（）          爷爷奶奶（）  外公外婆（）   保姆（）</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" rowspan="6">粗<br>大<br>运<br>动<br>能<br>力</td>
+                                <td class="tg-031e" colspan="3" rowspan="3"><br>优势<br></td>
+                                <td class="tg-031e" colspan="20" rowspan="3"></td>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="3" rowspan="3">劣势</td>
+                                <td class="tg-031e" colspan="20" rowspan="3"></td>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                                <td class="tg-031e" colspan="4" rowspan="3">学习能力综合分析</td>
+                                <td class="tg-031e" colspan="20" rowspan="3"></td>
+                            </tr>
+                            <tr>
+                            </tr>
+                            <tr>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="paperform-content" v-if="paperIndex === 2">
+                    <P>评测结果</P>
+                </div>
+            </div>
+
+        </div>
+        <div class="print-tool" @click="printSth">打印</div>
+        <div class="print-back" @click="goback">返回</div>
+    </div>
+</template>
+<script>
+    import _ from 'lodash'
+    import axios from 'axios'
+    import api from '../api/index.js';
+    import registerPrinter from '../components/registerPrinter.vue'
+    import analysisReportPrinter from '../components/analysisReportPrinter.vue'
+    export default {
+        name: 'print',
+        components: {
+            registerPrinter
+        },
+        data() {
+            return {
+                paperIndex: 0,
+                stuData: {},
+                diagnosisesDeptData: [],
+                fiveConditionData: [],
+                IEPdata: [],
+//                testPaperListData: [],
+                isTest: false,
+                testID: ''
+            }
+        },
+        watch: {
+            testPaperListData: function () {
+                let _this = this;
+                let params = {
+                    PageIndex: 1,
+                    PageSize: 100,
+                    PatientAgentID: _this.$store.state.mystudent.currentPatientId.ID
+                };
+                api.requestTestList(params).then(res => {
+                    console.log('res.Records');
+                    console.log(res.Records);
+                    let result = []
+                    let arr = res.Records.map(ele => ele.ID);
+
+                    for (let i = 0;i < arr.length; i++) {
+                        console.log('result')
+                        console.log(result)
+                        await costTime(i)
+                    }
+
+                    function costTime(i) {
+                        api.requestTestMembers({
+                            ExamID: arr[i],
+                            PatientAgentID: _this.$store.state.mystudent.currentPatientId.ID,
+                            PageIndex: 1,
+                            PageSize: 100
+                        }).then(res => {
+                            let newEle = res.Records.filter(function (ele) {
+                                ele.Status === 1
+                            })
+                            if (newEle instanceof Array) {
+                                result.concat(newEle)
+                            } else {
+                                result.push(newEle)
+                            }
+                        })
+                    }
+
+                    return result
+                })
+
+            }
+        },
+        methods: {
+            choseRegister() {
+                this.paperIndex = 0
+                this.registerRequest()
+            },
+            requestDiagnosises() {
+                let _this = this;
+                api.requestDept().then(res => {
+                    _this.diagnosisesDeptData = res.data.List;
+                }).catch(err => {
+                    _this.$message.error('病种数据请求失败,请稍后再试');
+                });
+            },
+            printSth() {
+                let codestr = document.getElementsByClassName("print-content")[0].innerHTML;   //获取需要生成pdf页面的div代码
+
+                let newWindow = window.open("_blank");   //打开新窗口
+
+                newWindow.document.write(codestr);   //向文档写入HTML表达式或者JavaScript代码
+                let num;
+                num = 595;
+                newWindow.document.write(`
+<style>
+     #print-content-paper {
+        width: ${num}px;
+        height: 842px;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+
+    .print-content {
+        /*box-sizing: border-box;*/
+    }
+
+    .print-content .el-col {
+        margin: 0;
+    }
+
+    .paperform-title {font-size: 22px; text-align: center}
+    .paperform-filecode {
+        text-align: right
+    }
+    .paperform-form {
+        width: 100%;
+    }
+     .tg{border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center;vertical-align:center}
+    .tg .tg-baqh{text-align:center;vertical-align:center}
+    .tg .tg-yw4l{text-align:center;vertical-align:center}
+    .tg .tg-textleft{text-align:left;vertical-align:top}
+</style>
+`);
+                newWindow.document.close();     //关闭document的输出流, 显示选定的数据
+                setTimeout(function () {
+                    newWindow.print();          //推迟500ms执行打印
+                },500)
+                return true;
+            },
+            goback() {
+                console.log('goback');
+                this.$router.go(-1);
+            },
+            registerRequest() {
+                let _this = this;
+                let patientId = _this.$store.state.mystudent.currentPatientId.ID;
+                api.getPatientAgentDetails(patientId).then(res => {
+                    _this.stuData = res.data;
+//                    if (_this.userInfo.Member1 == null) {
+//                        _this.userInfo.Member1 = {
+//                            ID: "",
+//                            Name: "",
+//                            Age: '',
+//                            Degree: '',
+//                            WorkUnit: '',
+//                            Title: '',
+//                            Mobile: ''
+//                        };
+//                    }
+//
+//                    if (_this.userInfo.Member2 == null) {
+//                        _this.userInfo.Member2 = {
+//                            ID: "",
+//                            Name: "",
+//                            Age: '',
+//                            Degree: '',
+//                            WorkUnit: '',
+//                            Title: '',
+//                            Mobile: ''
+//                        };
+//                    }
+//
+//                    if (_this.userInfo.Member3 == null) {
+//                        _this.userInfo.Member3 = {
+//                            ID: "",
+//                            Name: "",
+//                            Age: '',
+//                            Degree: '',
+//                            WorkUnit: '',
+//                            Title: '',
+//                            Mobile: ''
+//                        };
+//                    }
+                    _this.requestDiagnosises();
+                }).catch(err => {
+                    _this.$message.error('获取患者信息失败！');
+                });
+                //获取家庭模式(FAMILYMODEL)、居住社区(COMMUNITY)、教养方式(EDUCATIONSTYLE)、语言环境(LANGUAGE)、抚养带教人(DEPENDENTS)
+                axios.all([api.getDictionaryData('FAMILYMODEL'),api.getDictionaryData('COMMUNITY'),api.getDictionaryData('EDUCATIONSTYLE'),api.getDictionaryData('LANGUAGE'),api.getDictionaryData('DEPENDENTS')])
+                    .then(axios.spread(function (one,two,three,four,five) {
+                        // Both requests are now complete
+                        _this.fiveConditionData.push(one.data.List,two.data.List,three.data.List,four.data.List,five.data.List)
+                    }));
+//                api.getDictionaryData('EDUCATIONSTYLE').then(res => {
+//                    this.fiveConditionDatapush({3:res.data.List})
+//                }).catch(err => {
+//
+//                });
+//
+//                api.getDictionaryData('LANGUAGE').then(res => {
+//                    this.fiveConditionDatapush({4:res.data.List})
+//                }).catch(err => {
+//
+//                });
+//
+//                api.getDictionaryData('DEPENDENTS').then(res => {
+//                    this.fiveConditionDatapush(res.data.List)
+//                }).catch(err => {
+//                });
+            },
+            IEPRequest() {
+                let _this = this;
+                let params = {
+                    pageIndex: 1,
+                    pageSize: 10,
+                    planType: 1,
+                    StudentID: this.$store.state.mystudent.currentPatientId.ID
+                }
+                api.drTeachingPlan(params).then(res => {
+                    console.log('返回的内容');
+                    console.log(res.data);
+                    let ID = res.data.Records[0].ID  // li标签
+                    _this.getSingleIEPData(ID)
+                });
+            },
+            getSingleIEPData(id) {
+                var _this = this
+                api.getPlanDetail(id).then( res => {
+                    let months = res.MonthPlans.map(function (ele) {
+                        return ele.ID
+                    })
+                    let MonthNames = res.MonthPlans.map(function (ele) {
+                        return ele.Name
+                    })
+                    axios.all([api.getPlanItemDetail(months[0]),api.getPlanItemDetail(months[1]),api.getPlanItemDetail(months[2]),api.getPlanItemDetail(months[3]),api.getPlanItemDetail(months[4])])
+                        .then(axios.spread(function (one, two, three, four, five) {
+                            one.Name = MonthNames[0]
+                            two.Name = MonthNames[1]
+                            three.Name = MonthNames[2]
+                            four.Name = MonthNames[3]
+                            five.Name = MonthNames[4]
+                            _this.IEPdata.push(one,two,three,four,five)
+                            console.log(_this.IEPdata)
+                        }))
+                })
+            },
+            testRequest() {
+
+                let _this = this;
+                let params = {
+                    PageIndex: 1,
+                    PageSize: 100,
+                    PatientAgentID: _this.$store.state.mystudent.currentPatientId.ID
+                };
+                api.requestTestList(params).then(res => {
+                    console.log('res.Records');
+                    console.log(res.Records);
+                    let result = []
+                    let arr = res.Records.map(ele => ele.ID);
+                    for (let i = 0;i < arr.length; i++) {
+                        api.requestTestMembers({
+                            ExamID: arr[i],
+                            PatientAgentID: _this.$store.state.mystudent.currentPatientId.ID,
+                            PageIndex: 1,
+                            PageSize: 100
+                        }).then(res => {
+                            console.log('最终结果');
+                            console.log(res);
+                            res.Records.filter(function (ele) {
+                                ele.Status === 1
+                            })
+                            if (res.Records instanceof Array) {
+                                result.concat(res.Records)
+                            } else {
+                                result.push(res.Records)
+                            }
+                            return result
+                        })
+                    }
+                })
+
+
+            },
+            requestTestPaticent(pageIndex) {
+                let params = {
+                    ExamID: this.examID,
+                    PageIndex: pageIndex,
+                    PageSize: 10
+                };
+                api.requestTestMembers(params).then(res => {
+                    this.testedPatientListData = res.Records;
+                    this.testedPatientListTotal = res.Total;
+                });
+            },
+            requesTestResultData(id) {
+                this.paperIndex = 2
+                api.getPacientTestDetails(id).then(res => {
+                    console.log('返回的评测结果');
+                    console.log(res);
+                    if (!this.isComplete) {
+                        this.showSummary = this.JudgShowSummary(res);
+                    }
+                    this.form.testDate = res.CreatedOn;
+                    this.testPaperFormData = Object.assign({},res);
+                    this.testPaperContentData = res;
+                });
+            },
+            requestTestReportData(id) {
+                this.paperIndex = 1
+                api.getPacientTestReport(id).then(res => {
+                        console.log('返回评测分析报告');
+                        console.log(res);
+//                        this.rourseData = res;
+                })
+            },
+            initData() {
+                this.requestDiagnosises();  //获取病种信息，多个打印页面都要使用
+                this.choseRegister()  //首次加载页面，先进行入学登记请求
+//                this.testPaperListData = this.testRequest()
+                console.log('pg54')
+//                console.log(this.testRequest())
+            },
+        },
+        created() {
+            this.initData()
+//            let id,type;
+////          1. 获取全局ID属性
+//            2. 发起四个网络请求
+//            3. 根据穿过了的type值，li决定active，右边显示哪一个
+//            4.
+        },
+        mounted() {
+
+        }
+    }
+</script>
+<style scoped>
+    .printWrap {
+        position: relative;
+        width: 100%;
+        height: 720px;
+        border: 1px solid #cccccc
+    }
+
+    .print-sider {
+        float: left;
+        width: 320px;
+        box-sizing: border-box;
+        height: 100%;
+        border-right: 1px solid #cccccc;
+        padding: 10px;
+    }
+
+    .print-sider-title {
+        margin-bottom: 40px;
+    }
+
+    .print-sider-paper {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .print-sider-paperNav {
+
+    }
+
+    .print-sider-paperIndex {
+        display: inline-block;
+        margin-right: 5px;
+        width: 18px;
+        height: 18px;
+        text-align: center;
+        line-height: 18px;
+        border-radius: 50%;
+        color: white;
+        background-color: black;
+    }
+    .print-content {
+        position: relative;
+        margin-left: 320px;
+        width: 860px;
+        height: 100%;
+        padding: 5px 0;
+        overflow: scroll;
+    }
+
+    #print-content-paper {
+        width: 595px;
+        /*height: 842px;*/
+        margin: 0 auto;
+        box-sizing: border-box;
+        box-shadow: 0 0 0 3px #edf7ff
+    }
+
+    .print-content {
+        /*box-sizing: border-box;*/
+    }
+
+    .paperform-title {
+        font-size: 22px;
+        text-align: center
+    }
+
+    .paperform-filecode {
+        text-align: right
+    }
+
+    .paperform-form {
+        width: 100%;
+    }
+
+    .print-tool {
+        position: absolute;
+        top: 100px;
+        right: 100px;
+        width: 100px;
+        height: 40px;
+        color: #252729;
+        background-color: #FFCF71;
+        border-color: #FFCF71;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    .print-back {
+        position: absolute;
+        top: 160px;
+        right: 100px;
+        width: 100px;
+        height: 40px;
+        color: #252729;
+        background-color: #FFCF71;
+        border-color: #FFCF71;
+        border-radius: 4px;
+        text-align: center;
+        line-height: 40px;
+        box-shadow: 0 0 0 rgba(37, 39, 41, 0);
+    }
+
+    /*1080*1920 页面展示时设置padding:2px 10px   打印时的设置  padding:10px 18px*/
+
+
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:12px;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg th{font-family:Arial, sans-serif;font-size:12px;font-weight:normal;padding:4px 8px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;}
+    .tg .tg-s6z2{text-align:center;vertical-align:center}
+    .tg .tg-baqh{text-align:center;vertical-align:center}
+    .tg .tg-yw4l{text-align:center;vertical-align:center}
+
+    .tg .tg-textleft{text-align:left;vertical-align:top}
+
+</style>

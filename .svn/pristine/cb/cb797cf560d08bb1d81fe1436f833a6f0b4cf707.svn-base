@@ -1,0 +1,505 @@
+<template>
+    <div class="iepScheduleBox">
+        <div class="pageNavbar">
+            <span style="color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+            <span style="color: black">课程表&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+        </div>
+        <div class="scheduleBox">
+            <div v-show="!scheduleAddVisible">
+                <div class="toolArea">
+                    <el-button @click="addScheduleItem">添加课程</el-button>
+                </div>
+                <el-card  class="cardBox colorHeader" :body-style="{ padding: '0px'}">
+                    <div class="tableWrap">
+                        <el-table :data="scheduleData" style="width: 100%">
+                            <el-table-column type="index" width="50">
+                            </el-table-column>
+
+                            <el-table-column prop="Name" label="名称" width="180">
+                            </el-table-column>
+
+
+                            <el-table-column prop="CreatedOn" label="创建时间">
+                            </el-table-column>
+
+                            <el-table-column label="操作">
+                                <template scope="scope">
+                                    <el-button size="small" :plain="true" type="info" @click="checkSchedule(scope.$index, scope.row)">详情</el-button>
+                                    <el-button size="small" :plain="true" type="warning" @click="modifySchedule(scope.$index, scope.row)">修改</el-button>
+                                    <el-button size="small" :plain="true" type="danger" @click="toDeleteSchedule(scope.$index, scope.row)">删除</el-button>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                    <el-pagination layout="prev, pager, next" @current-change="schedulePageChange" :page-size="10" :total="scheduleTotal" style="float:right;"></el-pagination>
+                </el-card>
+            </div>
+
+            <div v-show="scheduleAddVisible">
+                <div class="formWrap">
+                    <el-form ref="form" :model="scheduleAddForm" label-width="80px" >
+                        <el-form-item label="课程名称" style="margin-left: 300px">
+                            <el-row :gutter="20">
+                                <el-col :span="13">
+                                    <el-input v-model="scheduleAddForm.Name"  placeholder="请输入课程名称" :disabled="onlyCheck"></el-input>
+                                </el-col>
+                            </el-row>
+                        </el-form-item>
+                        <el-form-item v-if="!onlyCheck" label="课程时间" style="margin-left: 300px">
+                            <el-row :gutter="20">
+                                <el-col :span="5">
+                                    <el-time-picker  placeholder="开始时间" v-model="classStart"
+                                                     format="HH:mm"
+                                                     :picker-options="{selectableRange: '08:00:00 - 20:30:00'}"
+                                                     style="width: 100%;"></el-time-picker>
+                                </el-col>
+                                <!--<el-col class="line" :span="1">-</el-col>-->
+                                <el-col :span="5">
+                                    <el-time-picker  placeholder="结束时间" v-model="classStop"
+                                                     format="HH:mm"
+                                                     :picker-options="{selectableRange: '08:00:00 - 20:30:00'}"
+                                                     style="width: 100%;"></el-time-picker>
+                                </el-col>
+                                <el-col class="line" :span="1">
+                                    <el-button @click="addSchedulePeriod">增加时间段</el-button>
+                                </el-col>
+
+                            </el-row>
+                        </el-form-item>
+
+                        <div class="scheduleCells" :class="{checkCenter: onlyCheck}">
+                            <div class="headWrap">
+                                <div class="headItem">时间</div>
+                                <div class="headItem">
+                                    周一
+                                </div>
+                                <div class="headItem">
+                                    周二
+                                </div>
+                                <div class="headItem">
+                                    周三
+                                </div>
+                                <div class="headItem">
+                                    周四
+                                </div>
+                                <div class="headItem">
+                                    周五
+                                </div>
+                                <div class="headItem" v-if="!onlyCheck">
+                                    操作
+                                </div>
+                            </div>
+                            <div class="blcokWrap" v-for="(item, index) in schedulePeriod">
+                                <div class="blockItem">
+                                    <p class="timeMark">{{ item.Time }}</p>
+                                </div>
+                                <div class="blockItem">
+                                    <el-input
+                                        type="textarea"
+                                        :rows="6"
+                                        placeholder="请输入内容"
+                                        v-model="item.Mon"
+                                        @keyup.enter.native="handleInputConfirm"
+                                        @blur="handleInputConfirm"
+                                        :class="{courseTag: item.Mon}"
+                                        :disabled="onlyCheck">
+                                    </el-input>
+                                </div>
+                                <div class="blockItem">
+                                    <el-input
+                                        type="textarea"
+                                        :rows="6"
+                                        placeholder="请输入内容"
+                                        v-model="item.Tue"
+                                        :class="{courseTag: item.Tue}"
+                                        :disabled="onlyCheck">
+                                    </el-input>
+                                </div>
+                                <div class="blockItem">
+                                    <el-input
+                                        type="textarea"
+                                        :rows="6"
+                                        placeholder="请输入内容"
+                                        v-model="item.Wed"
+                                        :class="{courseTag: item.Wed}"
+                                        :disabled="onlyCheck">
+                                    </el-input>
+                                </div>
+                                <div class="blockItem">
+                                    <el-input
+                                        type="textarea"
+                                        :rows="6"
+                                        placeholder="请输入内容"
+                                        v-model="item.Thu"
+                                        :class="{courseTag: item.Thu}"
+                                        :disabled="onlyCheck">
+                                    </el-input>
+                                </div>
+                                <div class="blockItem">
+                                    <el-input
+                                        type="textarea"
+                                        :rows="6"
+                                        placeholder="请输入内容"
+                                        v-model="item.Fri"
+                                        :class="{courseTag: item.Fri}"
+                                        :disabled="onlyCheck">
+                                    </el-input>
+                                </div>
+                                <div class="blockItem" v-if="!onlyCheck">
+                                    <div style="width: 100%;height: 100%;display: flex;justify-content: center;align-items: center">
+                                        <el-button @click.native.prevent="editgo(index, item)" :plain="true" type="warning" size="large">
+                                            <i class="el-icon-edit"></i>
+                                        </el-button>
+                                        <el-button @click.native.prevent="deleteRow(index, item)" :plain="true" type="danger" size="large">
+                                            <i class="el-icon-delete"></i>
+                                        </el-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </el-form>
+                </div>
+                <el-dialog :visible.sync="dialogTableVisible">
+                    <el-row :gutter="20">
+
+                        <el-col :span="6">
+
+                            <el-time-picker  placeholder="开始时间" v-model="editClassStart"
+                                             format="HH:mm"
+                                             :picker-options="{selectableRange: '08:00:00 - 20:30:00'}"
+                                             style="width: 100%;"></el-time-picker>
+                        </el-col>
+                        <el-col class="line" :span="1">-</el-col>
+                        <el-col :span="6">
+                            <el-time-picker  placeholder="结束时间" v-model="editClassStop"
+                                             format="HH:mm"
+                                             :picker-options="{selectableRange: '08:00:00 - 20:30:00'}"
+                                             style="width: 100%;"></el-time-picker>
+                        </el-col>
+                        <el-col class="line" :span="1">
+                            <el-button @click="confirmNewDate">确认新的时间</el-button>
+                        </el-col>
+
+                    </el-row>
+                </el-dialog>
+
+
+                <div class="footer">
+                    <el-button @click.native="backToList">返回</el-button>
+                    <el-button type="primary" v-if="!onlyCheck" @click="scheduleSubmit()">提交课程</el-button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</template>
+<script>
+    import {  addSchedule, scheduleList, scheduleContent,deleteSchedule } from '../../../api/api';
+    export default {
+        name: 'iepSchedule',
+        data() {
+            return {
+                scheduleAddVisible: false, //切换添加课程表弹窗
+                scheduleAddForm: {
+                    ID: '',
+                    Name: '',
+                    Lines: [],
+                },
+                days: [],
+                schedulePeriod: [],
+                scheduleData: [],
+                scheduleTotal: 1,
+                scheduleCurrentPage: 1,
+                classStart: '',
+                classStop: '',
+                dialogTableVisible: false,
+                editClassStart: '',
+                editClassStop: '',
+                timeIndex: 1,
+                onlyCheck: false
+            };
+        },
+        computed: {
+        },
+        methods: {
+            addScheduleItem() {
+                this.scheduleAddVisible = true
+                this.onlyCheck = false;
+            },
+            checkSchedule(index, row) {
+                let id = row.ID;
+                scheduleContent(id).then(res => {
+                    console.log(res);
+                    this.scheduleAddVisible = true;
+                    this.scheduleAddForm = res.data;
+                    this.schedulePeriod = this.scheduleAddForm.Lines;
+                    this.onlyCheck = true;
+                });
+            },
+            modifySchedule(index, row) {
+                let id = row.ID;
+                scheduleContent(id).then(res => {
+                    console.log('修改')
+                    console.log(res);
+                    this.scheduleAddForm = res.data;
+                    delete this.scheduleAddForm.CreatedOn;
+                    for (let i=0;i<this.scheduleAddForm.Lines.length;i++) {
+                        delete this.scheduleAddForm.Lines[i].ScheduleID;
+                        delete this.scheduleAddForm.Lines[i].Sat;
+                        delete this.scheduleAddForm.Lines[i].Sun;
+                    }
+                    this.schedulePeriod = this.scheduleAddForm.Lines;
+                    this.scheduleAddVisible = true;
+                    this.onlyCheck = false;
+
+
+                });
+            },
+            toDeleteSchedule(index, row) {
+                let id = row.ID;
+                deleteSchedule(id).then(res => {
+                    console.log('删除返回');
+                    console.log(res);
+                    if (res.data.Code === 0) {
+                        this.rquestBaseData(this.scheduleCurrentPage);
+                    }
+                });
+            },
+            addSchedulePeriod() {
+                let classStartStr = this.classStart.getHours() + ':' + this.lessTen(this.classStart.getMinutes())
+                let classStopStr = this.classStop.getHours() + ':' + this.lessTen(this.classStop.getMinutes())
+                let resultStr = classStartStr + '~' + classStopStr;
+                this.schedulePeriod.push(
+                    {
+                        Time: resultStr,
+                        Mon: '',
+                        Tue: '',
+                        Wed: '',
+                        Thu: '',
+                        Fri: '',
+                    }
+                );
+            },
+            editgo(index,item) {
+                this.dialogTableVisible = true;
+                this.editClassStart = new Date(2016,9,10,item.Time.split('~')[0].split(':')[0],item.Time.split('~')[0].split(':')[1]);
+                this.editClassStop = new Date(2016,9,10,item.Time.split('~')[1].split(':')[0],item.Time.split('~')[1].split(':')[1]);
+                this.timeIndex = index
+            },
+            confirmNewDate() {
+                let classStartStr = this.editClassStart.getHours() + ':' + this.lessTen(this.editClassStart.getMinutes())
+                let classStopStr = this.editClassStop.getHours() + ':' + this.lessTen(this.editClassStop.getMinutes())
+                let resultStr = classStartStr + '~' + classStopStr;
+                this.schedulePeriod[this.timeIndex].Time = resultStr;
+                this.dialogTableVisible = false;
+            },
+            lessTen(num) {
+                if (num < 10 ) {
+                    return '0' + num
+                } else {
+                    return '' + num
+                }
+            },
+            deleteRow(index,item) {
+                this.schedulePeriod.splice(index,1);
+            },
+            schedulePageChange(currentPage) {
+                this.scheduleCurrentPage = currentPage;
+                this.rquestBaseData(this.scheduleCurrentPage);
+            },
+            scheduleSubmit() {
+                console.log('最终的数组');
+                this.scheduleAddForm.Lines = this.schedulePeriod;
+                console.log(this.scheduleAddForm);
+                addSchedule(this.scheduleAddForm).then(res => {
+                    console.log('输出返回值');
+                    console.log(res);
+                    if (res.data.Code === 0) {
+                        this.rquestBaseData(this.scheduleCurrentPage);
+                        this.resetScheduleForm();
+                        this.$message.success('成功');
+                        this.scheduleAddVisible = false;
+                    } else {
+                        this.$message.warning('失败');
+                    }
+                });
+            },
+            backToList() {
+                this.resetScheduleForm();
+                this.scheduleAddVisible = false;
+                this.onlyCheck = false;
+            },
+            handleInputConfirm() {
+
+            },
+            resetScheduleForm() {
+                this.scheduleAddForm = { ID: '', Name: '',Lines: []};
+                this.schedulePeriod = [];
+            },
+            outputFormatDay(foo,str) {
+                switch (str) {
+                    case '周一':
+                        foo.Mon = '周一'
+                        break;
+                    case '周二':
+                        foo.Tue = '周二'
+                        break;
+                    case '周三':
+                        foo.Wed =  '周三'
+                        break;
+                    case '周四':
+                        foo.Thu =  '周四'
+                        break;
+                    case '周五':
+                        foo.Fri = '周五'
+                        break;
+                }
+                return foo;
+            },
+            rquestBaseData(index) {
+                let params = {
+                    pageIndex: index,
+                    pageSize: 10
+                }
+                scheduleList(params).then(res => {
+                    console.log('计划列表');
+                    console.log(res);
+                    this.scheduleData = res.data.Records;
+                    this.scheduleTotal = res.data.Total;
+                });
+            },
+            initData() {
+                this.rquestBaseData(1);
+            }
+        },
+        components: {
+        },
+        created() {
+            this.initData()
+        }
+    };
+</script>
+<style scoped>
+    .iepScheduleBox {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    .pageNavbar {
+        position: absolute;
+        left: -94px;
+        top: 0;
+        width: 1280px;
+        height: 42px;
+        border-bottom: 1px solid #cccccc;
+    }
+    .scheduleBox {
+        position: absolute;
+        left: 0;
+        top: 43px;
+        width: 1185px;
+        height: 583px;
+    }
+    .pageNavbar span {
+        font-size: 16px;
+        cursor: pointer;
+        line-height: 42px;
+    }
+    .pageNavbar span:hover {
+        color: rgb(66, 171, 216);
+    }
+    .cardBox {
+        width: 1080px;
+        height: 530px;
+        margin: 5px auto 0;
+    }
+    .colorHeader {
+        border-top: 4px solid RGBA(49, 187, 252, 1.00)
+    }
+    .tableWrap {
+        width: 100%;
+        height: 490px;
+    }
+    .blcokWrap {
+        display: flex;
+        width: 100%;
+        height: 160px;
+        overflow: hidden;
+    }
+    .blockItem {
+        width: 160px;
+        height: 160px;
+        line-height:1;
+        box-sizing: border-box;
+        display: inline-block;
+        border: 1px solid #cccccc;
+        border-left: none;
+        border-top: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    .scheduleCells {
+        width: 1120px;
+        height: 410px;
+        margin: 0 auto;
+        border: 1px solid #cccccc;
+        border-right: none;
+        /*border-bottom: none;*/
+        overflow-y: scroll;
+    }
+    .headWrap {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        overflow: hidden;
+    }
+    .headItem {
+        display: inline-flex;
+        width: 160px;
+        height: 60px;
+        box-sizing: border-box;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        font-weight: bold;
+        border: 1px solid #cccccc;
+        border-left: none;
+        border-top: none;
+    }
+    .timeMark {width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;font-weight: bold;font-size: 20px}
+
+    .formWrap {
+        width: 100%;
+        height: 533px;
+        margin-top: 10px;
+    }
+    .footer{
+        /*position: absolute;*/
+        /*bottom: 0;*/
+        width: 1155px;height: 40px;
+        display: flex;overflow: hidden;
+        margin-left: 15px;
+        justify-content: flex-end;
+        align-items: center;
+        padding-right: 50px;
+    }
+    .toolArea {
+        display: flex;
+        justify-content: flex-end;
+        width: 1080px;
+        margin: 5px auto;
+    }
+    .courseTag {
+        box-shadow: 0 17px 50px 0 rgba(0, 0, 0, .19);
+        transform: translate3d(0, -2px, 0);
+        transition: all .3s cubic-bezier(.55, 0, .1, 1);
+    }
+    .checkCenter {
+        width: 960px;
+    }
+</style>

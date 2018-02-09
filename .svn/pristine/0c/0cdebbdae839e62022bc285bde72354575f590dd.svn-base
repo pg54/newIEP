@@ -1,0 +1,54 @@
+import 'es6-promise/auto';
+import Vue from 'vue';
+import App from './app';
+import router from './router';
+import store from './vuex/store';
+import Vuex from 'vuex';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-default/index.css';
+import iView from 'iview';
+import 'iview/dist/styles/iview.css';
+import api from './api/index.js';
+import './assets/iconfont/iconfont.css'
+
+
+Vue.use(Vuex);
+Vue.use(ElementUI);
+Vue.use(iView);
+
+router.beforeEach((to, from, next) => {
+  if (sessionStorage.getItem('accessToken')) {
+    // let  breadcrumbList  = [];
+    // breadcrumbList.push(from.meta);
+    // breadcrumbList.push(to.meta);
+    //fromBreadcrumbList.concat(toBreadcrumbList);
+    //breadcrumbList.concat({ label: '主页' })
+    //store.dispatch('setBreadcrumbUpdate', breadcrumbList)
+    api.drProfile().then(res => {
+        store.dispatch('addUserProfile', res.data);
+    }).catch(err => {
+        console.log('main.js医生信息网络请求有问题');
+    })
+    next();
+  } else {
+    if (to.path === '/login') {
+      console.log('用户登录界面');
+      sessionStorage.removeItem('token');
+      next();
+    } else {
+      console.log('跳转到登录界面');
+      next({ path: '/login' });
+    }
+  }
+});
+
+router.afterEach(route => {
+  //console.log('after each');
+});
+
+new Vue({ // eslint-disable-line
+  el: '#app',
+  router: router,
+  store,
+  render: h => h(App)
+});

@@ -1,0 +1,136 @@
+<template>
+  <div class="serviceBox">
+
+      <div class="pageNavbar">
+          <span style="color: black">当前位置&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+          <span>{{ nabtitle }}&nbsp;&nbsp;>&nbsp;&nbsp;</span>
+      </div>
+  
+    <div id="sidebar">
+      <ul slot="links" class="links">
+        <!--<li><router-link class='link' to="/myService/serviceDyma"><p>动态</p></router-link></li>-->
+        <li>
+          <router-link class='link' to="/myService/serviceManage" @click.native="nabtitle = '管理'">
+            <p>管理</p>
+          </router-link>
+        </li>
+        <li>
+          <router-link class='link' to="/myService/serviceFile" @click.native="nabtitle = '我的名片'">
+            <p>我的名片</p>
+          </router-link>
+        </li>
+
+        <li v-if="false">
+          <router-link class='link' to="/myService/serviceArchives" @click.native="nabtitle = '我的档案'">
+            <p>我的档案</p>
+          </router-link>
+        </li>
+
+        <li>
+          <router-link class='link' to="/myService/serviceAgency" @click.native="nabtitle = '我的单位'">
+            <p>我的单位</p>
+          </router-link>
+        </li>
+      </ul>
+    </div>
+    <div class="main">
+      <router-view :key="key"></router-view>
+    </div>
+  
+  </div>
+</template>
+<script>
+export default {
+  name: 'myService',
+  computed: {
+    key() {
+      // console.log(this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date());
+      if (this.$router.currentRoute.path == '/myService') {
+        this.jumptoIepChild();
+      }
+      return this.$route.name !== undefined ? this.$route.name + +new Date() : this.$route + +new Date();
+    }
+  },
+  components: {
+  },
+  data() {
+    return {
+      nabtitle: '管理'
+    }
+  },
+  methods: {
+    jumptoIepChild() {
+      this.$router.push({ path: '/myService/serviceManage' });
+    }
+  },
+  mounted() {
+  }
+}; 
+</script>
+<style scoped>
+    .serviceBox {
+        position: relative;
+    }
+#sidebar {
+    position: absolute;
+    left: 0;
+    top: 42px;
+    width: 95px;
+    background-color: #EFEFEF;
+    border-right: 1px solid #EFEFEF;
+}
+
+.main {
+  position: absolute;
+  left: 95px;
+  top: 40px;
+  height: 583px;
+  width: calc(100% - 95px)
+}
+
+.links {
+  width: 94px;
+  height: 583px;
+  background-color: #EFEFEF;
+}
+
+.link {
+  display: flex;
+  width: 94px;
+  height: 70px;
+  font-size: 14px;
+  color: #333333;
+  align-items: center;
+  justify-content: center
+}
+
+.link span {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 20px;
+}
+
+.router-link-active {
+  background-color: RGBA(254, 255, 255, 1.00);
+  color: RGBA(47, 189, 252, 1.00);
+  border-left: 6px solid #31BBFC
+}
+
+.pageNavbar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1280px;
+    height: 42px;
+    border-bottom: 1px solid #cccccc;
+}
+.pageNavbar span {
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 42px;
+}
+.pageNavbar span:hover {
+    color: rgb(66, 171, 216);
+}
+</style>
